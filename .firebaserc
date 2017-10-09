@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "bdteque",
+    "bdtheque": "bdteque"
+  }
+}
