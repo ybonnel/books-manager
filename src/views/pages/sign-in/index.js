@@ -1,20 +1,34 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
 import {connect} from 'react-redux';
+import {withRouter} from "react-router-dom";
+import {Github, Twitter, Chrome} from 'react-feather';
+
 import {authActions} from '../../../core/auth';
 
-import "../../styles/signin.css";
+import './sign-in.css';
 
 export function SignIn({signInWithGithub, signInWithGoogle, signInWithTwitter}) {
     return (
-        <div className="row">
-            <div className="col s2 offset-s5 sign-in">
-                <h1 className="sign-in__heading">Sign in</h1>
-                <a className="waves-effect waves-light btn" onClick={signInWithGithub}><i className="material-icons left">cloud</i>Github</a>
-                <a className="waves-effect waves-light btn" onClick={signInWithGoogle}><i className="material-icons left">cloud</i>Google</a>
-                <a className="waves-effect waves-light btn" onClick={signInWithTwitter}><i className="material-icons left">cloud</i>Twitter</a>
+        <section className="sign-in">
+            <div className="wrapper">
+                <h1 className="sign-in__header">Sign in</h1>
+                <ul className="sign-in__links">
+                    <li className="sign-in__links__link">
+                        <Github className="sign-in__links__link__icon"/>
+                        <a className="sign-in__links__link__label" onClick={signInWithGithub}>Github</a>
+                    </li>
+                    <li className="sign-in__links__link">
+                        <Chrome className="sign-in__links__link__icon"/>
+                        <a className="sign-in__links__link__label" onClick={signInWithGoogle}>Google</a>
+                    </li>
+                    <li className="sign-in__links__link">
+                        <Twitter className="sign-in__links__link__icon"/>
+                        <a className="sign-in__links__link__label" onClick={signInWithTwitter}>Twitter</a>
+                    </li>
+                </ul>
             </div>
-        </div>
+        </section>
     );
 }
 
@@ -29,4 +43,7 @@ SignIn.propTypes = {
 //  CONNECT
 //-------------------------------------
 
-export default connect(null, authActions)(SignIn);
+export default withRouter(connect(
+    null,
+    authActions
+)(SignIn));

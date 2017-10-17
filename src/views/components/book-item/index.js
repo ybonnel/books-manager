@@ -1,6 +1,12 @@
 import React, {Component} from "react";
 import {PropTypes} from 'prop-types';
+import { Eye, Edit2, Trash2, Share } from 'react-feather';
+
+
 import {Book} from "../../../core/books";
+
+import './boookItem.css';
+import '../../styles/card.css'
 
 
 class BookItem extends Component {
@@ -64,61 +70,62 @@ class BookItem extends Component {
         }
     }
 
-    buildheader() {
-        const result = [];
+    buildTitle() {
         const {book} = this.props;
         if (book.serie && book.serie.label) {
-            result.push(book.serie.label);
-            result.push('-');
-            result.push(book.tome);
+            return (
+                <div className="card__right__header">
+                    <h2 className="book__title">{book.serie.label} Tome {book.tome}</h2>
+                    {book.title && <div className="book__subtitle">{book.title}</div>}
+                </div>
+            );
         }
-
-        if (book.title) {
-            if (result.length) {
-                result.push('-');
-            }
-            result.push(book.title);
-        }
-        return result.join(' ');
+        return (
+            <div className="card__right__header">
+                <h2 className="book__title">{book.title}</h2>
+            </div>
+        )
     }
 
     render() {
         const {book} = this.props;
 
         return (
-            <div className="col s12 m4 l3" key={book.key}>
-                <div className="card horizontal">
-                    <div className="card-image">
-                        <img src={`${book.cover ? book.cover : 'https://lorempixel.com/100/190/nature/6'}`} alt="couverture"/>
-                    </div>
-                    <div className="card-stacked">
-                        <div className="card-content book">
-                            <div className="book-header">
-                                {this.buildheader()}
-                            </div>
-                            <div className="book-authors">
-                                <div
-                                    className="authors">{book.authors.reduce((acc, author, index) => acc.concat(author.name), []).join(', ')}{book.artists ? ' - ' : ''}</div>
-                                <div
-                                    className="artists">{book.artists.reduce((acc, author, index) => acc.concat(author.name), []).join(', ')}</div>
-                            </div>
-                            <div className="book-informations">
-                                <div className="book-editor">
-                                    {book.editor.name}
-                                    {book.collection && book.editor ? ', ' : ''}
-                                    {book.collection.label}
-                                </div>
-                                <div className="book-style">{book.style.label}</div>
-                                <div className="book-location">{book.location.name}</div>
-                            </div>
-                        </div>
-                        <div className="card-action right-align">
-                            <a onClick={() => this.showItem()}>Voir</a>
-                            <a onClick={() => this.props.updateBook(this.props.book)}>Modifier</a>
-                            <a onClick={() => this.props.deleteBook(this.props.book)}>Supprimer</a>
-                        </div>
-                    </div>
+            <div className="books__list__item book card" key={book.key}>
+                <div className="card__left">
+                    <img className="book__cover" src={`${book.cover ? book.cover : 'https://lorempixel.com/100/190/cats'}`}
+                         alt="couverture"/>
+                    <div className="book__location">{book.location.name}</div>
+
                 </div>
+                <div className="card__right book__informations">
+                    {this.buildTitle()}
+                    <div className="separator"/>
+                    <div className="card__right__content">
+                        <div className="card__right__part">
+                            <div className="book__authors">{book.authors.reduce((acc, author, index) => acc.concat(author.name), []).join(', ')}</div>
+                            <div className="book__style">{book.style.label}</div>
+                        </div>
+                        <div className="card__right__part">
+                            <div className="book__artists">{book.artists.reduce((acc, author, index) => acc.concat(author.name), []).join(', ')}</div>
+                            <div className="book__editor">{book.editor.name}</div>
+                            <div className="book__collection">{book.collection.label}</div>
+                        </div>
+                    </div>
+                    <ul className="book__actions">
+                        <li><a><Eye/></a></li>
+                        <li><a><Trash2/></a></li>
+                        <li><a><Edit2/></a></li>
+                        <li><a><Share/></a></li>
+                    </ul>
+                </div>
+
+                {/*<div className="book__actions">*/}
+                    {/*<a onClick={() => this.showItem()}>Voir</a>*/}
+                    {/*<a onClick={() => this.props.updateBook(this.props.book)}>Modifier</a>*/}
+                    {/*<a onClick={() => this.props.deleteBook(this.props.book)}>Supprimer</a>*/}
+                    {/*<a onClick={() => console.debug(`pret: ${this.props.book}`)}>Preter</a>*/}
+                {/*</div>*/}
             </div>
         );
     }

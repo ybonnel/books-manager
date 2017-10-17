@@ -1,0 +1,14 @@
+@import "../../styles/variables.scss";
+
+.books .wrapper {
+}
+
+.books__header {
+  font-size: 3em;
+  margin-top: 0;
+}
+
+.books__list {
+  display: flex;
+  flex-wrap: wrap;
+}

@@ -18,7 +18,7 @@ function BookList({deleteBook, books, updateBook, showItem}) {
     });
 
     return (
-        <div className="row book-list">
+        <div className="books__list">
             {bookItems}
         </div>
     );

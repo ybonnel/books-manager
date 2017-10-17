@@ -1,0 +1,15 @@
+* {
+  font-family: 'Roboto', sans-serif; }
+
+h1, H2, h3 {
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase; }
+
+body {
+  padding-top: 75px; }
+
+.wrapper {
+  max-width: 1920px; }
+
+section {
+  padding: 20px; }

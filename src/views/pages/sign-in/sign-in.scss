@@ -1,0 +1,48 @@
+@import "../../styles/variables.scss";
+
+.sign-in .wrapper {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.sign-in__header {
+  font-size: 3em;
+}
+
+.sign-in__links {
+  list-style-type: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  flex-direction: column;
+  width: 15%;
+}
+
+.sign-in__links__link {
+  display: flex;
+  cursor: pointer;
+  padding: 10px 20px;
+  border: 1px solid $color;
+  border-radius: $border-radius;
+  color: $color;
+  justify-content: center;
+
+  &:hover {
+    background-color: $color;
+    color: $color-hover;
+  }
+
+  & + .sign-in__links__link {
+    margin-top: 10px;
+  }
+}
+
+.sign-in__links__link__label {
+  flex-grow: 1;
+  margin-left: 30%;
+
+  font-weight: 600;
+}

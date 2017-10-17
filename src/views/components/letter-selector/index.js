@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {PropTypes} from 'prop-types';
-import "../../styles/letter-selector.css";
 
 export class LetterSelector extends Component {
     static propTypes = {

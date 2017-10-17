@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import {PropTypes} from 'prop-types';
 import {connect} from "react-redux";
 import {createSelector} from "reselect";
+import {withRouter} from 'react-router-dom';
+import {PlusSquare} from 'react-feather';
 
 import {getNotification, notificationActions} from "../../../core/notification";
 import {booksActions, getBookFilter, getVisibleBooks} from "../../../core/books/index";
@@ -18,10 +20,10 @@ import BookFilters from "../../components/book-filters/index";
 import {LetterSelector} from "../../components/letter-selector"
 import BookButtons from "../../components/book-buttons";
 import BookList from "../../components/book-list";
-import CreationModal from "../../components/creation-modal/index";
-import BookModal from "../../components/book-modal/index";
 
-import "../../styles/books.css";
+import {isAuthenticated} from "../../../core/auth/selectors";
+import "./books.css";
+import "../../styles/buttons.css"
 
 export class Books extends Component {
     static propTypes = {
@@ -47,7 +49,8 @@ export class Books extends Component {
         selectBook: PropTypes.func.isRequired,
         loadBook: PropTypes.func.isRequired,
         unselectBook: PropTypes.func.isRequired,
-        openDetailModal: PropTypes.func.isRequired
+        openDetailModal: PropTypes.func.isRequired,
+        isAuthenticated: PropTypes.bool.isRequired
     };
 
     componentWillMount() {
@@ -59,13 +62,7 @@ export class Books extends Component {
         this.props.loadLocations();
         this.props.loadStyles();
         this.props.loadEditors();
-        this.props.filterBooks(this.props.location.query.filter);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.location.query.filter !== this.props.location.query.filter) {
-            this.props.filterBooks(nextProps.location.query.filter);
-        }
+        // this.props.filterBooks(this.props.location.query.filter);
     }
 
     componentWillUnmount() {
@@ -88,14 +85,16 @@ export class Books extends Component {
 
     render() {
         return (
-            <div className="g-row">
-                <div className="g-col">
-                    <BookButtons openModal={this.props.openModal}/>
-                </div>
-
-                <div className="g-col">
-                    <BookFilters filter={this.props.filterType}/>
-                    <LetterSelector filter={this.props.filterBooks}/>
+            <section className="books">
+                <div className="wrapper">
+                    <h1 className="books__header">Books</h1>
+                    <div className="books__actions">
+                        <a className="button button__icon" onClick={this.props.openModal}>
+                            <PlusSquare/>
+                            Ajouter un Livre
+                        </a>
+                        <BookFilters filter={this.props.filterType}/>
+                    </div>
                     <BookList
                         deleteBook={this.props.deleteBook}
                         books={this.props.books}
@@ -103,11 +102,15 @@ export class Books extends Component {
                         showItem={(book) => this.selectAndSeeBook(book)}
                         unselectItem={this.props.unselectBook}
                     />
-                    <CreationModal />
-                    <BookModal />
                 </div>
 
-            </div>
+                <div className="g-col">
+
+                    {/*<LetterSelector filter={this.props.filterBooks}/>*/}
+
+                </div>
+
+            </section>
         );
     }
 }
@@ -121,11 +124,13 @@ const mapStateToProps = createSelector(
     getBookFilter,
     getVisibleBooks,
     getModal,
-    (notification, filterType, books, modal) => ({
+    isAuthenticated,
+    (notification, filterType, books, modal, isAuthenticated) => ({
         notification,
         filterType,
         books,
-        modal
+        modal,
+        isAuthenticated
     })
 );
 
@@ -143,7 +148,7 @@ const mapDispatchToProps = Object.assign(
     modalActions
 );
 
-export default connect(
+export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
-)(Books);
+)(Books));

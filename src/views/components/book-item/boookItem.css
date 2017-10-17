@@ -1,0 +1,49 @@
+.book__cover {
+  margin-left: 10%;
+  margin-top: -10%;
+  max-height: 250px;
+  max-width: 150px;
+  height: auto;
+  width: auto;
+  -webkit-box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
+  overflow: hidden; }
+
+.book__informations {
+  display: flex;
+  flex-direction: column; }
+
+.separator {
+  margin-top: 10px;
+  border: 1px solid #000; }
+
+.book__title {
+  padding-top: 15px;
+  font-size: 1.3em;
+  color: #4B4B4B;
+  margin-bottom: 0; }
+
+.book__subtitle {
+  font-style: italic;
+  font-size: .8em;
+  color: #4B4B4B; }
+
+.book__location {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2em;
+  margin-top: 5px; }
+
+.book__actions {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-grow: 1;
+  align-items: flex-end; }
+  .book__actions a {
+    color: #4B4B4B;
+    cursor: pointer;
+    transition: .3s ease-out; }
+    .book__actions a:hover {
+      color: #656565; }

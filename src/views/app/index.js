@@ -3,32 +3,17 @@ import {PropTypes} from 'prop-types';
 import {connect} from 'react-redux';
 import {createSelector} from 'reselect';
 import {authActions, getAuth} from '../../core/auth';
-import {paths} from '../routes';
+import {paths} from '../root';
 import Header from '../components/header';
+import {Switch} from "react-router-dom";
+import {AuthRoute, UnAuthRoute} from '../components/authRoute'
 
+import Books from "../pages/books/index";
+import SignIn from "../pages/sign-in/index";
 
-export class App extends Component {
-    static contextTypes = {
-        router: PropTypes.object.isRequired
-    };
+import './app.css';
 
-    static propTypes = {
-        auth: PropTypes.object.isRequired,
-        children: PropTypes.object.isRequired,
-        signOut: PropTypes.func.isRequired
-    };
-
-    componentWillReceiveProps(nextProps) {
-        const {router} = this.context;
-        const {auth} = this.props;
-
-        if (auth.authenticated && !nextProps.auth.authenticated) {
-            router.replace(paths.SIGN_IN);
-        }
-        else if (!auth.authenticated && nextProps.auth.authenticated) {
-            router.replace(paths.TASKS);
-        }
-    }
+class App extends Component {
 
     render() {
         return (
@@ -37,14 +22,27 @@ export class App extends Component {
                     authenticated={this.props.auth.authenticated}
                     name={this.props.auth.email}
                     signOut={this.props.signOut}
-                    goHome={() => this.context.router.push('/')}
                 />
 
-                <main className="main">{this.props.children}</main>
+                <main className="main">
+                    <Switch>
+                        <UnAuthRoute path={paths.SIGN_IN} component={SignIn}/>
+                        <AuthRoute path="" component={Books}/>
+                    </Switch>
+                </main>
             </div>
         );
     }
 }
+
+App.propTypes = {
+    auth: PropTypes.object.isRequired,
+    signOut: PropTypes.func.isRequired
+};
+
+App.contextTypes = {
+    router: PropTypes.object.isRequired
+};
 
 
 //=====================================
