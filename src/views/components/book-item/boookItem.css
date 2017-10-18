@@ -5,10 +5,15 @@
   max-width: 150px;
   height: auto;
   width: auto;
-  -webkit-box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 10px 10px 60px 0px rgba(0, 0, 0, 0.75);
-  overflow: hidden; }
+  box-shadow: 5px 5px 25px 0 rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  transition: .3s ease-out; }
+
+.book.toggled .book__cover {
+  margin-left: 0;
+  margin-top: 10px;
+  max-height: 85px;
+  max-width: 50px; }
 
 .book__informations {
   display: flex;
@@ -30,9 +35,36 @@
   color: #4B4B4B; }
 
 .book__location {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
   font-family: 'Oswald', sans-serif;
   font-size: 1.2em;
   margin-top: 5px; }
+
+.book__authors, .book__artists {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 5px 0;
+  margin-top: 10px;
+  position: relative; }
+
+.book__authors:before {
+  content: 'Auteur(s)';
+  color: #4B4B4B;
+  font-size: .6em;
+  position: absolute;
+  top: -10px;
+  left: -5px; }
+
+.book__artists:before {
+  content: 'Artiste(s)';
+  color: #4B4B4B;
+  font-size: .6em;
+  position: absolute;
+  top: -10px;
+  left: -5px; }
 
 .book__actions {
   list-style-type: none;
@@ -40,10 +72,36 @@
   flex-direction: row;
   justify-content: space-around;
   flex-grow: 1;
-  align-items: flex-end; }
+  align-items: flex-end;
+  margin-top: 0; }
   .book__actions a {
     color: #4B4B4B;
     cursor: pointer;
     transition: .3s ease-out; }
     .book__actions a:hover {
       color: #656565; }
+
+.badge {
+  padding: 2px 5px;
+  cursor: pointer;
+  transition: .3s ease-out; }
+  .badge + .badge {
+    margin-left: 5px; }
+  .badge:hover {
+    color: #4B4B4B; }
+
+.book__style {
+  flex-grow: 1;
+  align-content: flex-end;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  color: #7e7e7e;
+  font-weight: 600;
+  letter-spacing: .1em;
+  font-size: 1.3em; }
+  .book__style p {
+    margin: 10px 0 0; }
+  .book__style p::first-letter {
+    margin: 0;
+    font-size: 1.6em; }

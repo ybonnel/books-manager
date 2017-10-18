@@ -5,15 +5,18 @@
   width: 25%;
   margin : 50px auto;
   background-color : #FFF;
-  -webkit-box-shadow: 10px 10px 93px 0 rgba(0,0,0,0.75);
-  -moz-box-shadow: 10px 10px 93px 0 rgba(0,0,0,0.75);
-  box-shadow: 10px 10px 93px 0 rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0 1px 35px 0 rgba(0,0,0,0.3);
+  -moz-box-shadow: 0 1px 35px 0 rgba(0,0,0,0.3);
+  box-shadow: 0 1px 35px 0 rgba(0,0,0,0.3);
 }
 
 .card__left {
   margin-right: 20px;
   margin-left: 20px;
   margin-bottom: 5px;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .card__right {
@@ -27,9 +30,7 @@
 
 .card__right__content {
   display: flex;
-  margin-top: 15px;
-}
+  flex-direction: column;
 
-.card__right__part {
   flex-grow: 1;
 }

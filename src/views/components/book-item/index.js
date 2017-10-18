@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {PropTypes} from 'prop-types';
-import { Eye, Edit2, Trash2, Share } from 'react-feather';
+import {Eye, Edit2, Trash2, Compass} from 'react-feather';
 
 
 import {Book} from "../../../core/books";
@@ -91,40 +91,42 @@ class BookItem extends Component {
         const {book} = this.props;
 
         return (
-            <div className="books__list__item book card" key={book.key}>
+            <div className="books__list__item book card" key={book.key} ref={ref => this.bookNode = ref}>
                 <div className="card__left">
-                    <img className="book__cover" src={`${book.cover ? book.cover : 'https://lorempixel.com/100/190/cats'}`}
+                    <img className="book__cover"
+                         src={`${book.cover ? book.cover : 'https://lorempixel.com/100/190/cats'}`}
                          alt="couverture"/>
-                    <div className="book__location">{book.location.name}</div>
+                    <div className="book__style"><p>{book.style.label}</p></div>
 
                 </div>
                 <div className="card__right book__informations">
                     {this.buildTitle()}
                     <div className="separator"/>
                     <div className="card__right__content">
-                        <div className="card__right__part">
-                            <div className="book__authors">{book.authors.reduce((acc, author, index) => acc.concat(author.name), []).join(', ')}</div>
-                            <div className="book__style">{book.style.label}</div>
-                        </div>
-                        <div className="card__right__part">
-                            <div className="book__artists">{book.artists.reduce((acc, author, index) => acc.concat(author.name), []).join(', ')}</div>
-                            <div className="book__editor">{book.editor.name}</div>
-                            <div className="book__collection">{book.collection.label}</div>
-                        </div>
+                            <div className="book__authors">
+                                {book.authors.map((author, index) => <div className="badge" key={author.name}>{author.name}</div>)}
+                            </div>
+                            <div className="book__artists">
+                                {book.artists.map((artist, index) => <div className="badge" key={artist.name}>{artist.name}</div>)}
+                            </div>
+                        {/*<div className="card__right__part">*/}
+                        {/*<div className="book__editor">{book.editor.name}</div>*/}
+                        {/*<div className="book__collection">{book.collection.label}</div>*/}
+                        {/*</div>*/}
                     </div>
                     <ul className="book__actions">
-                        <li><a><Eye/></a></li>
+                        <li><a onClick={() => this.bookNode.classList.toggle('toggled')}><Eye/></a></li>
                         <li><a><Trash2/></a></li>
                         <li><a><Edit2/></a></li>
-                        <li><a><Share/></a></li>
+                        <li><a><Compass/></a></li>
                     </ul>
                 </div>
 
                 {/*<div className="book__actions">*/}
-                    {/*<a onClick={() => this.showItem()}>Voir</a>*/}
-                    {/*<a onClick={() => this.props.updateBook(this.props.book)}>Modifier</a>*/}
-                    {/*<a onClick={() => this.props.deleteBook(this.props.book)}>Supprimer</a>*/}
-                    {/*<a onClick={() => console.debug(`pret: ${this.props.book}`)}>Preter</a>*/}
+                {/*<a onClick={() => this.showItem()}>Voir</a>*/}
+                {/*<a onClick={() => this.props.updateBook(this.props.book)}>Modifier</a>*/}
+                {/*<a onClick={() => this.props.deleteBook(this.props.book)}>Supprimer</a>*/}
+                {/*<a onClick={() => console.debug(`pret: ${this.props.book}`)}>Preter</a>*/}
                 {/*</div>*/}
             </div>
         );

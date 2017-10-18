@@ -7,11 +7,25 @@
   max-width: 150px;
   height: auto;
   width: auto;
-  -webkit-box-shadow: 10px 10px 60px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 10px 10px 60px 0px rgba(0,0,0,0.75);
-  box-shadow: 10px 10px 60px 0px rgba(0,0,0,0.75);
+  box-shadow: 5px 5px 25px 0 rgba(0, 0, 0, 0.6);
   overflow: hidden;
+
+  transition: .3s ease-out;
 }
+
+//----------------
+// TEST
+//----------------
+
+.book.toggled {
+  .book__cover {
+    margin-left: 0;
+    margin-top: 10px;
+    max-height: 85px;
+    max-width: 50px;
+  }
+}
+
 
 .book__informations {
   display: flex;
@@ -24,9 +38,9 @@
 }
 
 .book__title {
-  padding-top : 15px;
-  font-size : 1.3em;
-  color : $color-gray;
+  padding-top: 15px;
+  font-size: 1.3em;
+  color: $color-gray;
   margin-bottom: 0;
 }
 
@@ -37,9 +51,41 @@
 }
 
 .book__location {
+  flex-grow: 1;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+
   font-family: 'Oswald', sans-serif;
   font-size: 1.2em;
   margin-top: 5px;
+}
+
+.book__authors, .book__artists {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 5px 0;
+  margin-top: 10px;
+  position: relative;
+}
+
+.book__authors:before {
+  content: 'Auteur(s)';
+  color: $color-gray;
+  font-size: .6em;
+  position: absolute;
+  top: -10px;
+  left: -5px;
+}
+
+.book__artists:before {
+  content: 'Artiste(s)';
+  color: $color-gray;
+  font-size: .6em;
+  position: absolute;
+  top: -10px;
+  left: -5px;
 }
 
 .book__actions {
@@ -49,6 +95,7 @@
   justify-content: space-around;
   flex-grow: 1;
   align-items: flex-end;
+  margin-top: 0;
 
   a {
     color: $color-gray;
@@ -59,4 +106,42 @@
       color: lighten($color-gray, 10%);
     }
   }
+}
+
+.badge {
+  padding: 2px 5px;
+  cursor: pointer;
+  transition: .3s ease-out;
+
+  & + .badge {
+    margin-left: 5px;
+  }
+
+  &:hover {
+    color: $color-gray;
+  }
+}
+
+.book__style {
+  flex-grow: 1;
+  align-content: flex-end;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+
+  color: $color-light-gray;
+  font-weight: 600;
+  letter-spacing: .1em;
+  font-size: 1.3em;
+
+  p {
+    margin: 10px 0 0;
+  }
+
+  p::first-letter {
+    margin: 0;
+    font-size: 1.6em;
+  }
+
 }
