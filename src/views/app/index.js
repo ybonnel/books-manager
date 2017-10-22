@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import {PropTypes} from 'prop-types';
 import {connect} from 'react-redux';
 import {createSelector} from 'reselect';
-import {authActions, getAuth} from '../../core/auth';
-import {paths} from '../root';
-import Header from '../components/header';
 import {Switch, withRouter} from "react-router-dom";
+
+import {authActions, getAuth} from '../../core/auth';
+
+import Header from '../components/header';
 import {AuthRoute, UnAuthRoute} from '../components/authRoute'
+import {paths} from '../components/authRoute/paths';
 
 import Books from "../pages/books/index";
 import SignIn from "../pages/sign-in/index";
