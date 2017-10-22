@@ -1,7 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Route, Redirect, withRouter} from 'react-router-dom';
+import {Redirect, Route, withRouter} from 'react-router-dom';
+
+import {paths} from './paths';
 
 
 class Auth extends React.Component {
@@ -11,7 +12,7 @@ class Auth extends React.Component {
             <Route
                 {...rest}
                 render={props => (isAuthenticated === true ?
-                    <Component {...props} /> : <Redirect to={{pathname: '/sign-in'}}/>)}
+                    <Component {...props} /> : <Redirect to={paths.SIGN_IN}/>)}
             />
         )
     }
@@ -23,7 +24,7 @@ class UnAuth extends React.Component {
             <Route
                 {...rest}
                 render={props => (isAuthenticated !== true ?
-                    <Component {...props} /> : <Redirect to={{pathname: '/'}}/>)}
+                    <Component {...props} /> : <Redirect to={paths.BOOKS}/>)}
             />
         )
     }

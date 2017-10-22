@@ -9,12 +9,6 @@
   overflow: hidden;
   transition: .3s ease-out; }
 
-.book.toggled .book__cover {
-  margin-left: 0;
-  margin-top: 10px;
-  max-height: 85px;
-  max-width: 50px; }
-
 .book__informations {
   display: flex;
   flex-direction: column; }
@@ -27,7 +21,7 @@
   padding-top: 15px;
   font-size: 1.3em;
   color: #4B4B4B;
-  margin-bottom: 0; }
+  margin: 0; }
 
 .book__subtitle {
   font-style: italic;
@@ -90,7 +84,7 @@
   .badge:hover {
     color: #4B4B4B; }
 
-.book__style {
+.book__style, .book__location {
   flex-grow: 1;
   align-content: flex-end;
   display: flex;
@@ -100,8 +94,14 @@
   font-weight: 600;
   letter-spacing: .1em;
   font-size: 1.3em; }
-  .book__style p {
+  .book__style p, .book__location p {
     margin: 10px 0 0; }
-  .book__style p::first-letter {
+  .book__style p::first-letter, .book__location p::first-letter {
     margin: 0;
     font-size: 1.6em; }
+
+.book.toggled .book__cover {
+  margin-left: 0;
+  margin-top: 10px;
+  max-height: 85px;
+  max-width: 50px; }

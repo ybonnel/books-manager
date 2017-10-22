@@ -12,8 +12,7 @@
 
 .card__left {
   margin-right: 20px;
-  margin-left: 20px;
-  margin-bottom: 5px;
+  margin-left: 5px;
 
   display: flex;
   flex-direction: column;
@@ -33,4 +32,6 @@
   flex-direction: column;
 
   flex-grow: 1;
+  position: relative;
+
 }

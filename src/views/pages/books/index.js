@@ -16,10 +16,9 @@ import {styleActions} from "../../../core/style/index";
 import {collectionActions} from "../../../core/collection/index";
 import {editorActions} from "../../../core/editor/index";
 import {getModal, modalActions} from "../../../core/modal/index";
-import BookFilters from "../../components/book-filters/index";
-import {LetterSelector} from "../../components/letter-selector"
-import BookButtons from "../../components/book-buttons";
+
 import BookList from "../../components/book-list";
+import Modal from "../../components/creation-modal";
 
 import {isAuthenticated} from "../../../core/auth/selectors";
 import "./books.css";
@@ -49,9 +48,14 @@ export class Books extends Component {
         selectBook: PropTypes.func.isRequired,
         loadBook: PropTypes.func.isRequired,
         unselectBook: PropTypes.func.isRequired,
-        openDetailModal: PropTypes.func.isRequired,
         isAuthenticated: PropTypes.bool.isRequired
     };
+
+    constructor(props) {
+        super(props);
+
+        this.selectForUpdate = this.selectForUpdate.bind(this);
+    }
 
     componentWillMount() {
         this.props.loadBooks();
@@ -62,23 +66,13 @@ export class Books extends Component {
         this.props.loadLocations();
         this.props.loadStyles();
         this.props.loadEditors();
-        // this.props.filterBooks(this.props.location.query.filter);
     }
 
     componentWillUnmount() {
         this.props.unloadBooks();
     }
 
-    openModal() {
-        this.props.openModal()
-    }
-
-    selectAndSeeBook(book) {
-        this.props.selectBook(book);
-        this.props.openDetailModal();
-    }
-
-    selectAndUpdate(book) {
+    selectForUpdate(book) {
         this.props.loadBook(book);
         this.props.openModal();
     }
@@ -93,23 +87,15 @@ export class Books extends Component {
                             <PlusSquare/>
                             Ajouter un Livre
                         </a>
-                        <BookFilters filter={this.props.filterType}/>
                     </div>
+                    <Modal/>
                     <BookList
                         deleteBook={this.props.deleteBook}
                         books={this.props.books}
-                        updateBook={book => this.selectAndUpdate(book)}
-                        showItem={(book) => this.selectAndSeeBook(book)}
+                        updateBook={book => this.selectForUpdate(book)}
                         unselectItem={this.props.unselectBook}
                     />
                 </div>
-
-                <div className="g-col">
-
-                    {/*<LetterSelector filter={this.props.filterBooks}/>*/}
-
-                </div>
-
             </section>
         );
     }

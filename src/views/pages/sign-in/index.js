@@ -12,25 +12,22 @@ export class SignIn extends React.Component{
     render() {
         const {signInWithGithub, signInWithGoogle, signInWithTwitter} = this.props;
 
-        if (this.props.isAuthenticated) {
-            return <Redirect to={this.props.from || '/'}/>
-        }
         return (
             <section className="sign-in">
                 <div className="wrapper">
                     <h1 className="sign-in__header">Sign in</h1>
                     <ul className="sign-in__links">
-                        <li className="sign-in__links__link">
+                        <li className="sign-in__links__link" onClick={signInWithGithub}>
                             <Github className="sign-in__links__link__icon"/>
-                            <a className="sign-in__links__link__label" onClick={signInWithGithub}>Github</a>
+                            <a className="sign-in__links__link__label">Github</a>
                         </li>
-                        <li className="sign-in__links__link">
+                        <li className="sign-in__links__link" onClick={signInWithGoogle}>
                             <Chrome className="sign-in__links__link__icon"/>
-                            <a className="sign-in__links__link__label" onClick={signInWithGoogle}>Google</a>
+                            <a className="sign-in__links__link__label">Google</a>
                         </li>
                         <li className="sign-in__links__link">
-                            <Twitter className="sign-in__links__link__icon"/>
-                            <a className="sign-in__links__link__label" onClick={signInWithTwitter}>Twitter</a>
+                            <Twitter className="sign-in__links__link__icon" onClick={signInWithTwitter}/>
+                            <a className="sign-in__links__link__label" >Twitter</a>
                         </li>
                     </ul>
                 </div>

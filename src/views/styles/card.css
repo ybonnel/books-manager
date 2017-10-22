@@ -9,8 +9,7 @@
 
 .card__left {
   margin-right: 20px;
-  margin-left: 20px;
-  margin-bottom: 5px;
+  margin-left: 5px;
   display: flex;
   flex-direction: column; }
 
@@ -24,4 +23,5 @@
 .card__right__content {
   display: flex;
   flex-direction: column;
-  flex-grow: 1; }
+  flex-grow: 1;
+  position: relative; }

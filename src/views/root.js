@@ -1,22 +1,18 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
 import {Provider} from 'react-redux';
-import {Route, Router} from 'react-router-dom';
+import {BrowserRouter, Route} from 'react-router-dom';
 
 import App from './app';
-
-export const paths = {
-    SIGN_IN: '/sign-in',
-    BOOKS: '/'
-};
+import {paths} from './components/authRoute/paths';
 
 
 export default function Root({history, store}) {
     return (
         <Provider store={store}>
-            <Router history={history}>
+            <BrowserRouter>
                 <Route path={paths.BOOKS} component={App}/>
-            </Router>
+            </BrowserRouter>
         </Provider>
     );
 }

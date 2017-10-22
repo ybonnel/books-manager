@@ -5,7 +5,7 @@ import {createSelector} from 'reselect';
 import {authActions, getAuth} from '../../core/auth';
 import {paths} from '../root';
 import Header from '../components/header';
-import {Switch} from "react-router-dom";
+import {Switch, withRouter} from "react-router-dom";
 import {AuthRoute, UnAuthRoute} from '../components/authRoute'
 
 import Books from "../pages/books/index";
@@ -54,7 +54,7 @@ const mapStateToProps = createSelector(
     auth => ({auth})
 );
 
-export default connect(
+export default withRouter(connect(
     mapStateToProps,
     authActions
-)(App);
+)(App));

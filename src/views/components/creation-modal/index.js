@@ -1,8 +1,9 @@
 import React from "react";
 import {PropTypes} from 'prop-types';
 import {connect} from "react-redux";
-// import {Field, FieldArray, reduxForm} from "redux-form";
 import {createSelector} from "reselect";
+import Modal from 'react-modal';
+
 import {getModal, modalActions} from "../../../core/modal/index";
 import {booksActions} from "../../../core/books/index";
 import {authorActions, getAuthorsList} from "../../../core/authors/index";
@@ -22,31 +23,6 @@ class CreationModal extends React.Component {
         this.handleCloseButton = this.handleCloseButton.bind(this);
     }
 
-    componentDidMount() {
-        window.$(this.modalNode).modal({
-            dismissible: true, // Modal can be dismissed by clicking outside of the modal
-            complete: () => this.props.closeModal() // Callback for Modal close
-        });
-
-        if (this.props.modal.isOpen) {
-            window.$(this.modalNode).modal('open');
-        }
-    }
-
-    componentWillUnmount() {
-        window.$(this.modalNode).modal();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.modal.isOpen !== this.props.modal.isOpen) {
-            if (nextProps.modal.isOpen) {
-                window.$(this.modalNode).modal('open');
-            } else {
-                window.$(this.modalNode).modal('close');
-            }
-        }
-    }
-
     handleCloseButton(e) {
         e.preventDefault();
         this.props.unselectBook();
@@ -55,16 +31,18 @@ class CreationModal extends React.Component {
 
     render() {
         return (
-            <div className="modal modal-fixed-footer" ref={ref => this.modalNode = ref}>
-                <div className="modal-content">
-                    <h4>Give us new book to add</h4>
-                    <div>Hello</div>
+            <Modal
+                isOpen={this.props.modal.isOpen}>
+                <div className="modal modal-fixed-footer" ref={ref => this.modalNode = ref}>
+                    <div className="modal-content">
+                        <h4>Give us new book to add</h4>
+                        <div>Hello</div>
+                    </div>
+                    <div className="modal-footer">
+                        <a className="modal-action waves-effect waves-green btn-flat" onClick={this.handleCloseButton}>Cancel</a>
+                    </div>
                 </div>
-                <div className="modal-footer">
-
-                    <a className="modal-action waves-effect waves-green btn-flat" onClick={this.handleCloseButton}>Cancel</a>
-                </div>
-            </div>
+            </Modal>
         )
     }
 }
@@ -119,12 +97,6 @@ const mapDispatchToProps = Object.assign(
     styleActions,
     locationActions
 );
-
-//todo: a voir ==> http://redux-form.com/6.0.2/examples/initializeFromState/
-// const modal = reduxForm({
-//     form: 'creation',
-//     validate
-// })(creationModal);
 
 export default connect(
     mapStateToProps,
