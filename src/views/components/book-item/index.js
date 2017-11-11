@@ -60,11 +60,11 @@ class BookItem extends Component {
                     <div className="card__right__content">
                         <div className="book__authors">
                             {book.authors.map((author, index) =>
-                                <div className="badge" key={author.name}>{author.name}</div>)}
+                                <div className="badge" key={index}>{author.name}</div>)}
                         </div>
                         <div className="book__artists">
                             {book.artists.map((artist, index) =>
-                                <div className="badge" key={artist.name}>{artist.name}</div>)}
+                                <div className="badge" key={index}>{artist.name}</div>)}
                         </div>
 
                     </div>
@@ -73,7 +73,12 @@ class BookItem extends Component {
                             <a>{this.state.toggle ? <EyeOff/> : <Eye/>}</a>
                         </li>
                         <li><a><Trash2/></a></li>
-                        <li><a><Edit2/></a></li>
+                        <li onClick={() => {
+                            this.props.selectBook(book);
+                            this.props.openModal();
+                        }}>
+                            <a><Edit2/></a>
+                        </li>
                         <li><a><Compass/></a></li>
                     </ul>
                 </div>

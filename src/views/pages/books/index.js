@@ -18,7 +18,7 @@ import {editorActions} from "../../../core/editor/index";
 import {getModal, modalActions} from "../../../core/modal/index";
 
 import BookList from "../../components/book-list";
-import Modal from "../../components/creation-modal";
+import CreationModal from "../../components/creation-modal";
 
 import {isAuthenticated} from "../../../core/auth/selectors";
 import "./books.css";
@@ -88,12 +88,13 @@ export class Books extends Component {
                             Ajouter un Livre
                         </a>
                     </div>
-                    <Modal/>
+                    <CreationModal/>
                     <BookList
                         deleteBook={this.props.deleteBook}
                         books={this.props.books}
                         updateBook={book => this.selectForUpdate(book)}
-                        unselectItem={this.props.unselectBook}
+                        selectBook={this.props.selectBook}
+                        openModal={this.props.openModal}
                     />
                 </div>
             </section>

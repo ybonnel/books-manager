@@ -4,7 +4,7 @@ import {List} from 'immutable';
 import BookItem from "../book-item/index";
 
 
-function BookList({deleteBook, books, updateBook, showItem}) {
+function BookList({deleteBook, books, updateBook, showItem, selectBook}) {
     let bookItems = books.map((book, index) => {
         return (
             <BookItem
@@ -13,6 +13,7 @@ function BookList({deleteBook, books, updateBook, showItem}) {
                 book={book}
                 updateBook={updateBook}
                 showItem={showItem}
+                selectBook={selectBook}
             />
         );
     });
@@ -27,7 +28,8 @@ function BookList({deleteBook, books, updateBook, showItem}) {
 BookList.propTypes = {
     deleteBook: PropTypes.func.isRequired,
     books: PropTypes.instanceOf(List).isRequired,
-    updateBook: PropTypes.func.isRequired
+    updateBook: PropTypes.func.isRequired,
+    selectBook: PropTypes.func.isRequired
 };
 
 export default BookList;

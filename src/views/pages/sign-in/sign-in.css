@@ -20,12 +20,12 @@
   display: flex;
   cursor: pointer;
   padding: 10px 20px;
-  border: 1px solid #000;
+  border: 1px solid rgba(0, 0, 0, 0.87);
   border-radius: 4px;
-  color: #000;
+  color: rgba(0, 0, 0, 0.87);
   justify-content: center; }
   .sign-in__links__link:hover {
-    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.87);
     color: #fff; }
   .sign-in__links__link + .sign-in__links__link {
     margin-top: 10px; }

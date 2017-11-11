@@ -1,8 +1,8 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
 import {connect} from 'react-redux';
-import {withRouter, Redirect} from "react-router-dom";
-import {Github, Twitter, Chrome} from 'react-feather';
+import {withRouter} from "react-router-dom";
+import {Chrome, Github, Twitter} from 'react-feather';
 
 import {authActions} from '../../../core/auth';
 
