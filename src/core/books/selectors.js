@@ -21,10 +21,6 @@ export function getSelectedBook(state) {
     return state.books.selected
 }
 
-export function getBookToUpdate(state) {
-    return state.books.bookToUpdate;
-}
-
 
 //=====================================
 //  MEMORIZED SELECTORS

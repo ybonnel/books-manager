@@ -4,7 +4,7 @@ import {List} from 'immutable';
 import BookItem from "../book-item/index";
 
 
-function BookList({deleteBook, books, updateBook, showItem, selectBook}) {
+function BookList({deleteBook, books, updateBook, showItem, selectBook, openModal}) {
     let bookItems = books.map((book, index) => {
         return (
             <BookItem
@@ -14,6 +14,7 @@ function BookList({deleteBook, books, updateBook, showItem, selectBook}) {
                 updateBook={updateBook}
                 showItem={showItem}
                 selectBook={selectBook}
+                openModal={openModal}
             />
         );
     });

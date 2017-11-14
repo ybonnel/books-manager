@@ -7,6 +7,7 @@ import Modal from 'react-modal';
 import moment from 'moment';
 import {SingleDatePicker} from 'react-dates';
 import Select from 'react-select';
+import update from 'immutability-helper';
 
 import {getModal, modalActions} from "../../../core/modal/index";
 import {booksActions} from "../../../core/books/index";
@@ -17,7 +18,9 @@ import {editorActions, getEditorsList} from "../../../core/editor/index";
 import {collectionActions, getCollectionsList} from "../../../core/collection/index";
 import {getStylesList, styleActions} from "../../../core/style/index";
 import {getLocationsList, locationActions} from "../../../core/location/index";
-import {getBookToUpdate} from "../../../core/books/selectors";
+import {getSelectedBook} from "../../../core/books/selectors";
+
+import {mapToObj} from "../../../utils/utils"
 
 import 'react-dates/lib/css/_datepicker.css';
 import 'react-select/dist/react-select.css';
@@ -95,6 +98,14 @@ class CreationModal extends React.Component {
         replace(attr.value, attr.label)
     }
 
+    createAttributeIfNeeded(attr, labelKey, create) {
+        if (!!attr.className) {
+            return create({[labelKey]: attr.value})
+                .then(key => ({key, [labelKey]: attr.value}));
+        }
+        return Promise.resolve({key: attr.value, [labelKey]: attr.label});
+    }
+
     replaceUndefinedOrNull(key, value) {
         if (value === undefined) {
             return null;
@@ -108,20 +119,25 @@ class CreationModal extends React.Component {
 
     handleSubmit() {
         Promise.all([
-            !!this.state.artists && this.state.artists.map((artist, i) => this.createAndReplaceAttributeIfNeeded(artist, 'name', this.props.createArtist,
-                (key, name) => this.setState({artists: [...this.state.artists.splice(i, 1), {key, name}]}))),
-            this.state.authors.map((author, i) => this.createAndReplaceAttributeIfNeeded(author, 'name', this.props.createAuthor,
-                (key, name) => this.setState({authors: [...this.state.authors.splice(i, 1), {key, name}]}))),
-            !!this.state.style && this.createAndReplaceAttributeIfNeeded(this.state.style, 'label', this.props.createStyle,
-                (key, label) => this.setState({style: {key, label}})),
-            !!this.state.serie && this.createAndReplaceAttributeIfNeeded(this.state.serie, 'label', this.props.createSerie,
-                (key, label) => this.setState({serie: {key, label}})),
-            !!this.state.editor && this.createAndReplaceAttributeIfNeeded(this.state.editor, 'name', this.props.createEditor,
-                (key, name) => this.setState({editor: {key, name}})),
-            !!this.state.collection && this.createAndReplaceAttributeIfNeeded(this.state.collection, 'label', this.props.createCollection,
-                (key, label) => this.setState({collection: {key, label}})),
-            !!this.state.location && this.createAndReplaceAttributeIfNeeded(this.state.location, 'name', this.props.createLocation,
-                (key, name) => this.setState({location: {key, name}}))
+            !!this.state.artists && this.state.artists.map((artist, i) => this.createAttributeIfNeeded(artist, 'name', this.props.createArtist)
+                .then(artist => {
+                    this.setState({artists: [...this.state.artists.filter((item, idx) => i === idx), artist]})
+                })),
+            this.state.authors.map((author, i) => this.createAttributeIfNeeded(author, 'name', this.props.createAuthor)
+                .then(author => {
+                    this.setState({authors: [...this.state.authors.filter((item, idx) => i === idx), author]})
+                })),
+
+            !!this.state.style && this.createAttributeIfNeeded(this.state.style, 'label', this.props.createStyle)
+                .then(style => this.setState({style})),
+            !!this.state.serie && this.createAttributeIfNeeded(this.state.serie, 'label', this.props.createSerie)
+                .then(serie => this.setState({serie})),
+            !!this.state.editor && this.createAttributeIfNeeded(this.state.editor, 'name', this.props.createEditor)
+                .then(editor => this.setState({editor})),
+            !!this.state.collection && this.createAttributeIfNeeded(this.state.collection, 'label', this.props.createCollection)
+                .then(collection => this.setState({collection})),
+            !!this.state.location && this.createAttributeIfNeeded(this.state.location, 'name', this.props.createLocation)
+                .then(location => this.setState({location}))
         ])
             .then(() => {
                 this.props.createBook(this.cleanJson(this.state))
@@ -131,6 +147,13 @@ class CreationModal extends React.Component {
                 this.setState(this.initializeState());
                 this.props.closeModal();
             });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.selectedBook) {
+            const selectedBook = mapToObj(nextProps.selectedBook);
+            this.setState({...selectedBook, date: moment(selectedBook.date)});
+        }
     }
 
     getAutocompleteData(recordList, attribute = 'name') {
@@ -155,7 +178,7 @@ class CreationModal extends React.Component {
                                         type="text"
                                         id="title"
                                         className={`form__input ${!!this.state.title ? 'form__input--has-content' : ''}`}
-                                        value={this.state.title || ''}
+                                        value={this.state.title}
                                         onChange={(event) => this.setState({title: event.target.value})}/>
                                     <label htmlFor="title">Titre</label>
                                     <span className="form__input__border--focus"/>
@@ -178,7 +201,9 @@ class CreationModal extends React.Component {
                                         type="number" min="0" step="1"
                                         id="tome"
                                         className={`form__input ${!!this.state.tome ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({tome: event.target.value})}/>
+                                        onChange={(event) => this.setState({tome: event.target.value})}
+                                        value={this.state.tome}
+                                    />
                                     <label htmlFor="tome">Tome</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
@@ -222,7 +247,7 @@ class CreationModal extends React.Component {
                                         className={`form__input ${this.state.editor ? 'form__input--has-content' : ''}`}
                                         options={this.getAutocompleteData(this.props.editors)}
                                         onChange={editor => this.setState({editor})}
-                                        value={this.state.editor}
+                                        value={this.state.editor ? this.state.editor.key || this.state.editor : undefined}
                                     />
                                     <label htmlFor="editor">Éditeur</label>
                                     <span className="form__input__border--focus"/>
@@ -232,7 +257,7 @@ class CreationModal extends React.Component {
                                         multi={false}
                                         name="collection"
                                         menuContainerStyle={{'zIndex': 999}}
-                                        className={`form__input ${this.state.collection ? 'form__input--has-content' : ''}`}
+                                        className={`form__input ${this.state.collection ? 'form__input--has-contelocationnt' : ''}`}
                                         options={this.getAutocompleteData(this.props.collections, 'label')}
                                         onChange={collection => this.setState({collection})}
                                         value={this.state.collection}
@@ -245,7 +270,9 @@ class CreationModal extends React.Component {
                                         type="number" step="1"
                                         name="isbn"
                                         className={`form__input ${!!this.state.isbn ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({isbn: event.target.value})}/>
+                                        onChange={(event) => this.setState({isbn: event.target.value})}
+                                        value={this.state.isbn}
+                                    />
                                     <label htmlFor="isbn">ISBN</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
@@ -273,7 +300,7 @@ class CreationModal extends React.Component {
                                         className={`form__input ${this.state.location ? 'form__input--has-content' : ''}`}
                                         options={this.getAutocompleteData(this.props.locations)}
                                         onChange={location => this.setState({location})}
-                                        value={this.state.location}
+                                        value={this.state.location ? this.state.location.key || this.state.location : undefined}
                                     />
                                     <label htmlFor="location">Localisation</label>
                                     <span className="form__input__border--focus"/>
@@ -283,7 +310,9 @@ class CreationModal extends React.Component {
                                         type="number" min="0" step="0.01"
                                         name="price"
                                         className={`form__input ${!!this.state.price ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({price: event.target.value})}/>
+                                        onChange={(event) => this.setState({price: event.target.value})}
+                                        value={this.state.price}
+                                    />
                                     <label htmlFor="price">Prix</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
@@ -315,7 +344,9 @@ class CreationModal extends React.Component {
                                         type="url"
                                         name="cover"
                                         className={`form__input ${!!this.state.cover ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({cover: event.target.value})}/>
+                                        onChange={(event) => this.setState({cover: event.target.value})}
+                                        value={this.state.cover}
+                                    />
                                     <label htmlFor="cover">Url de couverture</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
@@ -351,7 +382,7 @@ CreationModal.propTypes = {
 
 const mapStateToProps = createSelector(
     getModal,
-    getBookToUpdate,
+    getSelectedBook,
     getSeriesList,
     getAuthorsList,
     getArtistsList,
@@ -359,7 +390,7 @@ const mapStateToProps = createSelector(
     getCollectionsList,
     getStylesList,
     getLocationsList,
-    (modal, book, series, authors, artists, editors, collections, styles, locations, books) => ({
+    (modal, selectedBook, series, authors, artists, editors, collections, styles, locations) => ({
         modal,
         series,
         authors,
@@ -368,8 +399,7 @@ const mapStateToProps = createSelector(
         collections,
         styles,
         locations,
-        initialValues: book,
-        enableReinitialize: true
+        selectedBook
     })
 );
 

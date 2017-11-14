@@ -8,6 +8,7 @@
   "dependencies": {
     "firebase": "^4.5.0",
     "history": "^4.7.2",
+    "immutability-helper": "^2.5.0",
     "immutable": "^3.8.2",
     "moment": "^2.19.1",
     "node-sass-chokidar": "^0.0.3",
