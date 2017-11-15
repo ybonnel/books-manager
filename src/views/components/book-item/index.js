@@ -72,7 +72,8 @@ class BookItem extends Component {
                         <li onClick={() => this.setState({toggle: !this.state.toggle})}>
                             <a>{this.state.toggle ? <EyeOff/> : <Eye/>}</a>
                         </li>
-                        <li><a><Trash2/></a></li>
+                        <li onClick={() => this.props.deleteBook(book.key)}>
+                            <a><Trash2/></a></li>
                         <li onClick={() => {
                             this.props.selectBook(book);
                             this.props.openModal();

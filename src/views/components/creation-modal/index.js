@@ -7,7 +7,6 @@ import Modal from 'react-modal';
 import moment from 'moment';
 import {SingleDatePicker} from 'react-dates';
 import Select from 'react-select';
-import update from 'immutability-helper';
 
 import {getModal, modalActions} from "../../../core/modal/index";
 import {booksActions} from "../../../core/books/index";
@@ -44,20 +43,20 @@ class CreationModal extends React.Component {
 
     initializeState() {
         return {
-            title: undefined,
-            serie: undefined,
-            tome: undefined,
+            title: '',
+            serie: '',
+            tome: '',
             date: moment(),
             artists: [],
             authors: [],
-            editor: undefined,
-            collection: undefined,
-            isbn: undefined,
-            style: undefined,
-            location: undefined,
-            price: undefined,
-            comment: undefined,
-            cover: undefined
+            editor: '',
+            collection: '',
+            isbn: '',
+            style: '',
+            location: '',
+            price: '',
+            comment: '',
+            cover: ''
         }
     }
 
@@ -90,24 +89,16 @@ class CreationModal extends React.Component {
         return errors;
     }
 
-    createAndReplaceAttributeIfNeeded(attr, labelKey, create, replace) {
-        if (!!attr.className) {
-            return create({[labelKey]: attr.value})
-                .then(key => replace(key, attr.value));
-        }
-        replace(attr.value, attr.label)
-    }
-
     createAttributeIfNeeded(attr, labelKey, create) {
         if (!!attr.className) {
-            return create({[labelKey]: attr.value})
-                .then(key => ({key, [labelKey]: attr.value}));
+            return create({[labelKey]: attr[labelKey]})
+                .then(key => ({key, [labelKey]: attr[labelKey]}));
         }
-        return Promise.resolve({key: attr.value, [labelKey]: attr.label});
+        return Promise.resolve(attr);
     }
 
     replaceUndefinedOrNull(key, value) {
-        if (value === undefined) {
+        if (value === undefined || value === '') {
             return null;
         }
         return value;
@@ -118,29 +109,27 @@ class CreationModal extends React.Component {
     }
 
     handleSubmit() {
-        Promise.all([
-            !!this.state.artists && this.state.artists.map((artist, i) => this.createAttributeIfNeeded(artist, 'name', this.props.createArtist)
-                .then(artist => {
-                    this.setState({artists: [...this.state.artists.filter((item, idx) => i === idx), artist]})
-                })),
-            this.state.authors.map((author, i) => this.createAttributeIfNeeded(author, 'name', this.props.createAuthor)
-                .then(author => {
-                    this.setState({authors: [...this.state.authors.filter((item, idx) => i === idx), author]})
-                })),
-
-            !!this.state.style && this.createAttributeIfNeeded(this.state.style, 'label', this.props.createStyle)
-                .then(style => this.setState({style})),
-            !!this.state.serie && this.createAttributeIfNeeded(this.state.serie, 'label', this.props.createSerie)
-                .then(serie => this.setState({serie})),
-            !!this.state.editor && this.createAttributeIfNeeded(this.state.editor, 'name', this.props.createEditor)
-                .then(editor => this.setState({editor})),
-            !!this.state.collection && this.createAttributeIfNeeded(this.state.collection, 'label', this.props.createCollection)
-                .then(collection => this.setState({collection})),
-            !!this.state.location && this.createAttributeIfNeeded(this.state.location, 'name', this.props.createLocation)
-                .then(location => this.setState({location}))
-        ])
+        Promise.all(this.state.authors.map(author => this.createAttributeIfNeeded(author, 'name', this.props.createAuthor)))
+            .then(authors => this.setState({authors}))
+            .then(() => Promise.all(this.state.artists.map(artist => this.createAttributeIfNeeded(artist, 'name', this.props.createArtist))))
+            .then(artists => this.setState({artists}))
+            .then(() => this.createAttributeIfNeeded(this.state.serie, 'label', this.props.createSerie))
+            .then(serie => this.setState({serie}))
+            .then(() => this.createAttributeIfNeeded(this.state.style, 'label', this.props.createStyle))
+            .then(style => this.setState({style}))
+            .then(() => this.createAttributeIfNeeded(this.state.editor, 'name', this.props.createEditor))
+            .then(editor => this.setState({editor}))
+            .then(() => this.createAttributeIfNeeded(this.state.collection, 'label', this.props.createCollection))
+            .then(collection => this.setState({collection}))
+            .then(() => this.createAttributeIfNeeded(this.state.location, 'name', this.props.createLocation))
+            .then(location => this.setState({location}))
             .then(() => {
-                this.props.createBook(this.cleanJson(this.state))
+                //todo: faire la différence entre upate et create
+                if (!!this.state.key) {
+                    this.props.updateBook(this.state.key, this.cleanJson(this.state))
+                } else {
+                    this.props.createBook(this.cleanJson(this.state))
+                }
             })
             .then(() => this.props.unselectBook())
             .then(() => {
@@ -156,11 +145,11 @@ class CreationModal extends React.Component {
         }
     }
 
-    getAutocompleteData(recordList, attribute = 'name') {
+    getAutocompleteData(recordList) {
         if (!recordList) {
             return [];
         }
-        return recordList.reduce((acc, item, index) => acc.concat({label: item[attribute], value: item.key}), [])
+        return recordList.reduce((acc, item, index) => acc.concat(item), [])
     }
 
     render() {
@@ -189,9 +178,10 @@ class CreationModal extends React.Component {
                                         name="serie"
                                         menuContainerStyle={{'zIndex': 999}}
                                         className={`form__input ${this.state.serie ? 'form__input--has-content' : ''}`}
-                                        options={this.getAutocompleteData(this.props.series, 'label')}
+                                        options={this.getAutocompleteData(this.props.series)}
                                         onChange={serie => this.setState({serie})}
                                         value={this.state.serie}
+                                        labelKey="label" valueKey="key"
                                     />
                                     <label htmlFor="serie">Série</label>
                                     <span className="form__input__border--focus"/>
@@ -219,6 +209,7 @@ class CreationModal extends React.Component {
                                         options={this.getAutocompleteData(this.props.authors)}
                                         onChange={authors => this.setState({authors})}
                                         value={this.state.authors}
+                                        labelKey="name" valueKey="key"
                                     />
                                     <label htmlFor="authors">Auteur(s)</label>
                                     <span className="form__input__border--focus"/>
@@ -232,6 +223,7 @@ class CreationModal extends React.Component {
                                         options={this.getAutocompleteData(this.props.artists)}
                                         onChange={artists => this.setState({artists})}
                                         value={this.state.artists}
+                                        labelKey="name" valueKey="key"
                                     />
                                     <label htmlFor="artists">Artiste</label>
                                     <span className="form__input__border--focus"/>
@@ -247,7 +239,8 @@ class CreationModal extends React.Component {
                                         className={`form__input ${this.state.editor ? 'form__input--has-content' : ''}`}
                                         options={this.getAutocompleteData(this.props.editors)}
                                         onChange={editor => this.setState({editor})}
-                                        value={this.state.editor ? this.state.editor.key || this.state.editor : undefined}
+                                        value={this.state.editor}
+                                        labelKey="name" valueKey="key"
                                     />
                                     <label htmlFor="editor">Éditeur</label>
                                     <span className="form__input__border--focus"/>
@@ -257,10 +250,11 @@ class CreationModal extends React.Component {
                                         multi={false}
                                         name="collection"
                                         menuContainerStyle={{'zIndex': 999}}
-                                        className={`form__input ${this.state.collection ? 'form__input--has-contelocationnt' : ''}`}
-                                        options={this.getAutocompleteData(this.props.collections, 'label')}
+                                        className={`form__input ${this.state.collection ? 'form__input--has-content' : ''}`}
+                                        options={this.getAutocompleteData(this.props.collections)}
                                         onChange={collection => this.setState({collection})}
                                         value={this.state.collection}
+                                        labelKey="label" valueKey="key"
                                     />
                                     <label htmlFor="collection">Collection</label>
                                     <span className="form__input__border--focus"/>
@@ -282,9 +276,10 @@ class CreationModal extends React.Component {
                                         name="style"
                                         menuContainerStyle={{'zIndex': 999}}
                                         className={`form__input ${this.state.style ? 'form__input--has-content' : ''}`}
-                                        options={this.getAutocompleteData(this.props.styles, 'label')}
+                                        options={this.getAutocompleteData(this.props.styles)}
                                         onChange={style => this.setState({style})}
                                         value={this.state.style}
+                                        labelKey="label" valueKey="key"
                                     />
                                     <label htmlFor="collection">Style</label>
                                     <span className="form__input__border--focus"/>
@@ -300,7 +295,8 @@ class CreationModal extends React.Component {
                                         className={`form__input ${this.state.location ? 'form__input--has-content' : ''}`}
                                         options={this.getAutocompleteData(this.props.locations)}
                                         onChange={location => this.setState({location})}
-                                        value={this.state.location ? this.state.location.key || this.state.location : undefined}
+                                        value={this.state.location}
+                                        labelKey="name" valueKey="key"
                                     />
                                     <label htmlFor="location">Localisation</label>
                                     <span className="form__input__border--focus"/>
@@ -345,7 +341,7 @@ class CreationModal extends React.Component {
                                         name="cover"
                                         className={`form__input ${!!this.state.cover ? 'form__input--has-content' : ''}`}
                                         onChange={(event) => this.setState({cover: event.target.value})}
-                                        value={this.state.cover}
+                                        value={this.state.cover || ''}
                                     />
                                     <label htmlFor="cover">Url de couverture</label>
                                     <span className="form__input__border--focus"/>
@@ -369,6 +365,7 @@ CreationModal.propTypes = {
     modal: PropTypes.shape({isOpen: PropTypes.bool.isRequired}).isRequired,
     closeModal: PropTypes.func.isRequired,
     createBook: PropTypes.func.isRequired,
+    updateBook: PropTypes.func.isRequired,
     createAuthor: PropTypes.func.isRequired,
     createArtist: PropTypes.func.isRequired,
     createSerie: PropTypes.func.isRequired,
