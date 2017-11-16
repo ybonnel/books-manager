@@ -124,9 +124,8 @@ class CreationModal extends React.Component {
             .then(() => this.createAttributeIfNeeded(this.state.location, 'name', this.props.createLocation))
             .then(location => this.setState({location}))
             .then(() => {
-                //todo: faire la différence entre upate et create
                 if (!!this.state.key) {
-                    this.props.updateBook(this.state.key, this.cleanJson(this.state))
+                    this.props.updateBook(this.props.selectedBook, this.cleanJson(this.state))
                 } else {
                     this.props.createBook(this.cleanJson(this.state))
                 }
@@ -315,13 +314,12 @@ class CreationModal extends React.Component {
                                 <div className="input__group">
                                     <SingleDatePicker
                                         placeholder="test" monthFormat="MMMM YYYY"
-                                        date={this.state.date} // momentPropTypes.momentObj or null
-                                        onDateChange={date => this.setState({date})} // PropTypes.func.isRequired
-                                        focused={this.state.focused} // PropTypes.bool
-                                        onFocusChange={({focused}) => this.setState({focused})} // PropTypes.func.isRequired
+                                        date={this.state.date}
+                                        onDateChange={date => this.setState({date})}
+                                        focused={this.state.focused}
+                                        onFocusChange={({focused}) => this.setState({focused})}
                                         displayFormat="DD/MM/YYYY"
                                     />
-                                    {/*<label htmlFor="date">Date d'achat</label>*/}
                                     <span className="form__input__border--focus"/>
                                 </div>
                             </div>
@@ -331,7 +329,9 @@ class CreationModal extends React.Component {
                                     <textarea
                                         name="comment"
                                         className={`form__input ${!!this.state.comment ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({comment: event.target.value})}/>
+                                        onChange={(event) => this.setState({comment: event.target.value})}
+                                        value={this.state.comment || ''}
+                                    />
                                     <label htmlFor="cover">Commentaire</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
