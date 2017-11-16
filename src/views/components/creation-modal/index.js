@@ -7,6 +7,7 @@ import Modal from 'react-modal';
 import moment from 'moment';
 import {SingleDatePicker} from 'react-dates';
 import Select from 'react-select';
+import classNames from "classnames";
 
 import {getModal, modalActions} from "../../../core/modal/index";
 import {booksActions} from "../../../core/books/index";
@@ -37,8 +38,10 @@ class CreationModal extends React.Component {
         this.replaceUndefinedOrNull = this.replaceUndefinedOrNull.bind(this);
         this.getAutocompleteData = this.getAutocompleteData.bind(this);
         this.initializeState = this.initializeState.bind(this);
+        this.validate = this.validate.bind(this);
 
-        this.state = this.props.selectedBook || this.initializeState()
+        const book = this.props.selectedBook || this.initializeState();
+        this.state = {...book, errors: {}}
     }
 
     initializeState() {
@@ -63,30 +66,36 @@ class CreationModal extends React.Component {
     handleCloseButton(e) {
         e.preventDefault();
         this.setState(this.initializeState());
+        this.setState({errors: {}});
         this.props.unselectBook();
         this.props.closeModal();
     }
 
     validate() {
-        const errors = {};
+        return new Promise((resolve, reject) => {
+            const errors = {};
+            if (!this.state.title && (!this.state.serie)) {
+                errors.title = "Le titre est obligatoire si l'entrée n'est pas une série.";
+            }
 
-        if (!this.state.title && (!this.state.serie)) {
-            errors.title = "Le titre est obligatoire si l'entrée n'est pas une série.";
-        }
+            if (!this.state.authors.length) {
+                errors.authors = "L'entrée doit comporter au moins un auteur.";
+            }
 
-        if (!this.state.authors) {
-            errors.authors = "L'entrée doit comporter au moins un auteur.";
-        }
+            if (!!this.state.serie && !this.state.tome) {
+                errors.serie = "Veuillez renseigner le numéro de série correspondant."
+            }
 
-        if (!!this.state.serie && !this.state.tome) {
-            errors.serie = "Veuillez renseigner le numéro de série correspondant."
-        }
+            if (!this.state.serie && !!this.state.tome) {
+                errors.tome = "Veuillez renseigner la série correspondante."
+            }
 
-        if (!this.state.serie && !!this.state.tome) {
-            errors.tome = "Veuillez renseigner la série correspondante."
-        }
-
-        return errors;
+            if (!!Object.keys(errors).length) {
+                reject(errors);
+            } else {
+                resolve();
+            }
+        })
     }
 
     createAttributeIfNeeded(attr, labelKey, create) {
@@ -109,7 +118,9 @@ class CreationModal extends React.Component {
     }
 
     handleSubmit() {
-        Promise.all(this.state.authors.map(author => this.createAttributeIfNeeded(author, 'name', this.props.createAuthor)))
+        this.validate()
+            .then(() => this.setState({errors: {}}))
+            .then(() => Promise.all(this.state.authors.map(author => this.createAttributeIfNeeded(author, 'name', this.props.createAuthor))))
             .then(authors => this.setState({authors}))
             .then(() => Promise.all(this.state.artists.map(artist => this.createAttributeIfNeeded(artist, 'name', this.props.createArtist))))
             .then(artists => this.setState({artists}))
@@ -134,7 +145,8 @@ class CreationModal extends React.Component {
             .then(() => {
                 this.setState(this.initializeState());
                 this.props.closeModal();
-            });
+            })
+            .catch(errors => this.setState({errors}))
     }
 
     componentWillReceiveProps(nextProps) {
@@ -165,18 +177,27 @@ class CreationModal extends React.Component {
                                     <input
                                         type="text"
                                         id="title"
-                                        className={`form__input ${!!this.state.title ? 'form__input--has-content' : ''}`}
+                                        className={classNames({
+                                            'form__input': true,
+                                            'form__input--has-content': !!this.state.title,
+                                            'form__input--has-error': !!this.state.errors.title
+                                        })}
                                         value={this.state.title}
                                         onChange={(event) => this.setState({title: event.target.value})}/>
                                     <label htmlFor="title">Titre</label>
                                     <span className="form__input__border--focus"/>
+                                    {this.state.errors.title && <span className="form__input__error">{this.state.errors.title}</span>}
                                 </div>
                                 <div className="input__group">
                                     <Select.Creatable
                                         multi={false}
                                         name="serie"
                                         menuContainerStyle={{'zIndex': 999}}
-                                        className={`form__input ${this.state.serie ? 'form__input--has-content' : ''}`}
+                                        className={classNames({
+                                            'form__input': true,
+                                            'form__input--has-content': !!this.state.serie,
+                                            'form__input--has-error': !!this.state.errors.serie
+                                        })}
                                         options={this.getAutocompleteData(this.props.series)}
                                         onChange={serie => this.setState({serie})}
                                         value={this.state.serie}
@@ -184,17 +205,23 @@ class CreationModal extends React.Component {
                                     />
                                     <label htmlFor="serie">Série</label>
                                     <span className="form__input__border--focus"/>
+                                    {this.state.errors.serie && <span className="form__input__error">{this.state.errors.serie}</span>}
                                 </div>
                                 <div className="input__group input__group--small">
                                     <input
                                         type="number" min="0" step="1"
                                         id="tome"
-                                        className={`form__input ${!!this.state.tome ? 'form__input--has-content' : ''}`}
+                                        className={classNames({
+                                            'form__input': true,
+                                            'form__input--has-content': !!this.state.tome,
+                                            'form__input--has-error': !!this.state.errors.tome
+                                        })}
                                         onChange={(event) => this.setState({tome: event.target.value})}
                                         value={this.state.tome}
                                     />
                                     <label htmlFor="tome">Tome</label>
                                     <span className="form__input__border--focus"/>
+                                    {this.state.errors.tome && <span className="form__input__error">{this.state.errors.tome}</span>}
                                 </div>
                             </div>
 
@@ -204,7 +231,11 @@ class CreationModal extends React.Component {
                                         multi={true}
                                         name="authors"
                                         menuContainerStyle={{'zIndex': 999}}
-                                        className={`form__input ${this.state.authors.length > 0 ? 'form__input--has-content' : ''}`}
+                                        className={classNames({
+                                            'form__input': true,
+                                            'form__input--has-content': this.state.authors.length > 0,
+                                            'form__input--has-error': !!this.state.errors.authors
+                                        })}
                                         options={this.getAutocompleteData(this.props.authors)}
                                         onChange={authors => this.setState({authors})}
                                         value={this.state.authors}
@@ -212,6 +243,7 @@ class CreationModal extends React.Component {
                                     />
                                     <label htmlFor="authors">Auteur(s)</label>
                                     <span className="form__input__border--focus"/>
+                                    {this.state.errors.authors && <span className="form__input__error">{this.state.errors.authors}</span>}
                                 </div>
                                 <div className="input__group">
                                     <Select.Creatable
@@ -330,7 +362,7 @@ class CreationModal extends React.Component {
                                         name="comment"
                                         className={`form__input ${!!this.state.comment ? 'form__input--has-content' : ''}`}
                                         onChange={(event) => this.setState({comment: event.target.value})}
-                                        value={this.state.comment || ''}
+                                        value={this.state.comment}
                                     />
                                     <label htmlFor="cover">Commentaire</label>
                                     <span className="form__input__border--focus"/>

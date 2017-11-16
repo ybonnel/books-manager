@@ -105,6 +105,19 @@
   background-color: #3399FF;
   transition: 0.4s; }
 
+.form__input--has-error ~ .form__input__border--focus {
+  width: 100%;
+  background-color: tomato; }
+
+.form__input__error {
+  position: absolute;
+  width: 100%;
+  color: tomato;
+  font-size: 9px;
+  left: 0;
+  bottom: -15px;
+  text-align: right; }
+
 .Select-arrow-zone, .Select-placeholder {
   display: none; }
 

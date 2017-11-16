@@ -91,6 +91,24 @@
   transition: 0.4s;
 }
 
+.form__input--has-error ~ .form__input__border--focus
+{
+  width: 100%;
+  background-color: $color-error;
+}
+
+.form__input__error {
+  position: absolute;
+  width: 100%;
+
+  color: $color-error;
+  font-size: 9px;
+
+  left: 0;
+  bottom: -15px;
+  text-align: right;
+}
+
 //erase css react-select
 .Select-arrow-zone, .Select-placeholder {
   display: none;

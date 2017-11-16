@@ -50,8 +50,8 @@ class BookItem extends Component {
                     <img className="book__cover"
                          src={`${book.cover ? book.cover : 'https://lorempixel.com/100/190/cats'}`}
                          alt="couverture"/>
-                    {this.state.toggle ? <div className="book__location"><p>{book.location.name}</p></div> :
-                        <div className="book__style"><p>{book.style.label}</p></div>}
+                    {this.state.toggle ? book.location && <div className="book__location"><p>{book.location.name}</p></div> :
+                        book.style && <div className="book__style"><p>{book.style.label}</p></div>}
 
                 </div>
                 <div className="card__right book__informations">
@@ -63,7 +63,7 @@ class BookItem extends Component {
                                 <div className="badge" key={index}>{author.name}</div>)}
                         </div>
                         <div className="book__artists">
-                            {book.artists.map((artist, index) =>
+                            {book.artists && book.artists.map((artist, index) =>
                                 <div className="badge" key={index}>{artist.name}</div>)}
                         </div>
 
