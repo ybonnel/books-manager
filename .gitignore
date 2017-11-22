@@ -16,3 +16,4 @@ yarn.lock
 npm-debug.log
 .idea
 *.log
+/src/core/firebase/config.js

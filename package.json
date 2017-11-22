@@ -18,7 +18,7 @@
     "react": "^16.0.0",
     "react-addons-css-transition-group": "^15.6.2",
     "react-addons-shallow-compare": "^15.6.2",
-    "react-dates": "^15.0.0",
+    "react-datepicker": "^0.61.0",
     "react-dom": "^16.0.0",
     "react-dom-factories": "^1.0.2",
     "react-error-overlay": "^2.0.2",

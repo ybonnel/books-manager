@@ -46,21 +46,43 @@
   border: 1px solid black;
   padding: 5px 50px; }
 
-.form__group {
+.creation-form {
   display: flex;
   flex-direction: row;
-  margin-bottom: 15px; }
+  flex-wrap: wrap; }
+
+.form__group {
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: space-between;
+  padding: 20px;
+  box-sizing: border-box; }
 
 .input__group {
-  flex-grow: 1;
   position: relative;
-  max-width: 50%;
-  margin-bottom: 10px; }
-  .input__group + .input__group {
-    margin-left: 10px; }
+  margin-bottom: 15px; }
 
-.input__group--small {
-  flex-grow: 0; }
+.input__group__subgroup {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; }
+
+.input__group--full {
+  width: 100%; }
+
+.input__group--two-third {
+  width: calc(66% - 5px); }
+
+.input__group--third {
+  width: calc(33% - 5px); }
+
+.input__group--half {
+  width: calc(50% - 5px); }
+
+.input__group--quarter {
+  width: calc(25% - 5px); }
 
 .form__input {
   font: 15px/24px Arial, sans-serif;
@@ -68,10 +90,23 @@
   box-sizing: border-box;
   letter-spacing: 1px;
   border: 0;
-  padding: 4px 0;
   border-bottom: 1px solid #ccc;
   width: 100%;
   height: 45px; }
+
+textarea.form__input {
+  height: 100%; }
+
+.cover__thumbnail {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .cover__thumbnail img {
+    height: auto;
+    width: auto;
+    max-width: 100%;
+    max-height: 90px; }
 
 .form__input ~ label {
   position: absolute;
@@ -85,10 +120,13 @@
   z-index: 0; }
 
 .form__input:focus ~ label, .form__input--has-content ~ label, .form__input.is-focused ~ label {
-  top: -16px;
+  top: -5px;
   font-size: 12px;
-  color: #3399FF;
+  color: rgba(0, 0, 0, 0.87);
   transition: 0.3s; }
+
+.form__input:focus ~ label, .form__input.is-focused ~ label {
+  color: rgba(0, 0, 0, 0.87); }
 
 .form__input:focus ~ .form__input__border--focus,
 .form__input--has-content ~ .form__input__border--focus,
@@ -102,7 +140,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background-color: #3399FF;
+  background-color: rgba(0, 0, 0, 0.87);
   transition: 0.4s; }
 
 .form__input--has-error ~ .form__input__border--focus {
@@ -117,6 +155,9 @@
   left: 0;
   bottom: -15px;
   text-align: right; }
+
+.Select {
+  padding: 4px 0; }
 
 .Select-arrow-zone, .Select-placeholder {
   display: none; }
@@ -135,3 +176,16 @@
 
 .Select-menu-outer {
   background-color: #fff; }
+
+.Select-value {
+  border: none;
+  background-color: transparent;
+  position: relative; }
+
+.Select-value-icon {
+  display: none !important; }
+
+.Select-value-label {
+  font: 15px/24px Arial, sans-serif;
+  color: #4B4B4B;
+  letter-spacing: 1px; }

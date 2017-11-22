@@ -5,9 +5,10 @@ import {connect} from "react-redux";
 import {createSelector} from "reselect";
 import Modal from 'react-modal';
 import moment from 'moment';
-import {SingleDatePicker} from 'react-dates';
+import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import classNames from "classnames";
+
 
 import {getModal, modalActions} from "../../../core/modal/index";
 import {booksActions} from "../../../core/books/index";
@@ -21,9 +22,8 @@ import {getLocationsList, locationActions} from "../../../core/location/index";
 import {getSelectedBook} from "../../../core/books/selectors";
 
 import {mapToObj} from "../../../utils/utils"
-
-import 'react-dates/lib/css/_datepicker.css';
 import 'react-select/dist/react-select.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
 
 moment.locale('fr');
@@ -166,6 +166,10 @@ class CreationModal extends React.Component {
     render() {
         return (
             <Modal
+                onRequestClose={() => {
+                    this.setState(this.initializeState());
+                    this.props.closeModal();
+                }}
                 className="modal creation-modal"
                 isOpen={this.props.modal.isOpen}>
                 <div className="wrapper modal__wrapper">
@@ -173,7 +177,7 @@ class CreationModal extends React.Component {
                     <div className="modal__content">
                         <form className="form creation-form">
                             <div className="form__group">
-                                <div className="input__group">
+                                <div className="input__group input__group--full">
                                     <input
                                         type="text"
                                         id="title"
@@ -186,9 +190,10 @@ class CreationModal extends React.Component {
                                         onChange={(event) => this.setState({title: event.target.value})}/>
                                     <label htmlFor="title">Titre</label>
                                     <span className="form__input__border--focus"/>
-                                    {this.state.errors.title && <span className="form__input__error">{this.state.errors.title}</span>}
+                                    {this.state.errors.title &&
+                                    <span className="form__input__error">{this.state.errors.title}</span>}
                                 </div>
-                                <div className="input__group">
+                                <div className="input__group input__group--two-third">
                                     <Select.Creatable
                                         multi={false}
                                         name="serie"
@@ -205,9 +210,10 @@ class CreationModal extends React.Component {
                                     />
                                     <label htmlFor="serie">Série</label>
                                     <span className="form__input__border--focus"/>
-                                    {this.state.errors.serie && <span className="form__input__error">{this.state.errors.serie}</span>}
+                                    {this.state.errors.serie &&
+                                    <span className="form__input__error">{this.state.errors.serie}</span>}
                                 </div>
-                                <div className="input__group input__group--small">
+                                <div className="input__group input__group--third">
                                     <input
                                         type="number" min="0" step="1"
                                         id="tome"
@@ -221,12 +227,13 @@ class CreationModal extends React.Component {
                                     />
                                     <label htmlFor="tome">Tome</label>
                                     <span className="form__input__border--focus"/>
-                                    {this.state.errors.tome && <span className="form__input__error">{this.state.errors.tome}</span>}
+                                    {this.state.errors.tome &&
+                                    <span className="form__input__error">{this.state.errors.tome}</span>}
                                 </div>
                             </div>
 
                             <div className="form__group">
-                                <div className="input__group">
+                                <div className="input__group input__group--full">
                                     <Select.Creatable
                                         multi={true}
                                         name="authors"
@@ -243,9 +250,10 @@ class CreationModal extends React.Component {
                                     />
                                     <label htmlFor="authors">Auteur(s)</label>
                                     <span className="form__input__border--focus"/>
-                                    {this.state.errors.authors && <span className="form__input__error">{this.state.errors.authors}</span>}
+                                    {this.state.errors.authors &&
+                                    <span className="form__input__error">{this.state.errors.authors}</span>}
                                 </div>
-                                <div className="input__group">
+                                <div className="input__group  input__group--full">
                                     <Select.Creatable
                                         multi={true}
                                         name="artists"
@@ -262,7 +270,7 @@ class CreationModal extends React.Component {
                             </div>
 
                             <div className="form__group">
-                                <div className="input__group">
+                                <div className="input__group input__group--half">
                                     <Select.Creatable
                                         multi={false}
                                         name="editor"
@@ -276,7 +284,7 @@ class CreationModal extends React.Component {
                                     <label htmlFor="editor">Éditeur</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
-                                <div className="input__group">
+                                <div className="input__group input__group--half">
                                     <Select.Creatable
                                         multi={false}
                                         name="collection"
@@ -290,92 +298,104 @@ class CreationModal extends React.Component {
                                     <label htmlFor="collection">Collection</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
-                                <div className="input__group">
-                                    <input
-                                        type="number" step="1"
-                                        name="isbn"
-                                        className={`form__input ${!!this.state.isbn ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({isbn: event.target.value})}
-                                        value={this.state.isbn}
-                                    />
-                                    <label htmlFor="isbn">ISBN</label>
-                                    <span className="form__input__border--focus"/>
-                                </div>
-                                <div className="input__group">
-                                    <Select.Creatable
-                                        multi={false}
-                                        name="style"
-                                        menuContainerStyle={{'zIndex': 999}}
-                                        className={`form__input ${this.state.style ? 'form__input--has-content' : ''}`}
-                                        options={this.getAutocompleteData(this.props.styles)}
-                                        onChange={style => this.setState({style})}
-                                        value={this.state.style}
-                                        labelKey="label" valueKey="key"
-                                    />
-                                    <label htmlFor="collection">Style</label>
-                                    <span className="form__input__border--focus"/>
-                                </div>
-                            </div>
-
-                            <div className="form__group">
-                                <div className="input__group">
-                                    <Select.Creatable
-                                        multi={false}
-                                        name="location"
-                                        menuContainerStyle={{'zIndex': 999}}
-                                        className={`form__input ${this.state.location ? 'form__input--has-content' : ''}`}
-                                        options={this.getAutocompleteData(this.props.locations)}
-                                        onChange={location => this.setState({location})}
-                                        value={this.state.location}
-                                        labelKey="name" valueKey="key"
-                                    />
-                                    <label htmlFor="location">Localisation</label>
-                                    <span className="form__input__border--focus"/>
-                                </div>
-                                <div className="input__group input__group--small">
-                                    <input
-                                        type="number" min="0" step="0.01"
-                                        name="price"
-                                        className={`form__input ${!!this.state.price ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({price: event.target.value})}
-                                        value={this.state.price}
-                                    />
-                                    <label htmlFor="price">Prix</label>
-                                    <span className="form__input__border--focus"/>
-                                </div>
-                                <div className="input__group">
-                                    <SingleDatePicker
-                                        placeholder="test" monthFormat="MMMM YYYY"
-                                        date={this.state.date}
-                                        onDateChange={date => this.setState({date})}
-                                        focused={this.state.focused}
-                                        onFocusChange={({focused}) => this.setState({focused})}
-                                        displayFormat="DD/MM/YYYY"
-                                    />
-                                    <span className="form__input__border--focus"/>
-                                </div>
-                            </div>
-
-                            <div className="form__group">
-                                <div className="input__group">
-                                    <textarea
-                                        name="comment"
-                                        className={`form__input ${!!this.state.comment ? 'form__input--has-content' : ''}`}
-                                        onChange={(event) => this.setState({comment: event.target.value})}
-                                        value={this.state.comment}
-                                    />
-                                    <label htmlFor="cover">Commentaire</label>
-                                    <span className="form__input__border--focus"/>
-                                </div>
-                                <div className="input__group">
+                                <div className="input__group input__group--full">
                                     <input
                                         type="url"
-                                        name="cover"
+                                        name="cover" id="cover"
                                         className={`form__input ${!!this.state.cover ? 'form__input--has-content' : ''}`}
                                         onChange={(event) => this.setState({cover: event.target.value})}
                                         value={this.state.cover || ''}
                                     />
                                     <label htmlFor="cover">Url de couverture</label>
+                                    <span className="form__input__border--focus"/>
+                                </div>
+                                <div className="input__group__subgroup input__group--two-third">
+                                    <div className="input__group input__group--half">
+                                        <Select.Creatable
+                                            multi={false}
+                                            name="style"
+                                            menuContainerStyle={{'zIndex': 999}}
+                                            className={`form__input ${this.state.style ? 'form__input--has-content' : ''}`}
+                                            options={this.getAutocompleteData(this.props.styles)}
+                                            onChange={style => this.setState({style})}
+                                            value={this.state.style}
+                                            labelKey="label" valueKey="key"
+                                        />
+                                        <label htmlFor="collection">Style</label>
+                                        <span className="form__input__border--focus"/>
+                                    </div>
+                                    <div className="input__group input__group--half">
+                                        <input
+                                            type="number" min="0" step="0.01"
+                                            name="price"
+                                            className={`form__input ${!!this.state.price ? 'form__input--has-content' : ''}`}
+                                            onChange={(event) => this.setState({price: event.target.value})}
+                                            value={this.state.price}
+                                        />
+                                        <label htmlFor="price">Prix</label>
+                                        <span className="form__input__border--focus"/>
+                                    </div>
+                                    <div className="input__group input__group--half">
+                                        <input
+                                            type="number" step="1"
+                                            name="isbn"
+                                            className={`form__input ${!!this.state.isbn ? 'form__input--has-content' : ''}`}
+                                            onChange={(event) => this.setState({isbn: event.target.value})}
+                                            value={this.state.isbn}
+                                        />
+                                        <label htmlFor="isbn">ISBN</label>
+                                        <span className="form__input__border--focus"/>
+                                    </div>
+                                    <div className="input__group input__group--half">
+                                        <div className={classNames({
+                                            'form__input': true,
+                                            'form__input--has-content': !!this.state.date,
+                                        })}>
+                                            <DatePicker
+                                                className={classNames({
+                                                    'form__input': true,
+                                                    'form__input--has-content': !!this.state.date,
+                                                })}
+                                                selected={this.state.date}
+                                                onChange={date => this.setState({date})}
+                                                locale="fr"
+                                                dateFormat="DD/MM/YYYY"
+                                                popperClassName="some-custom-class"
+                                                popperPlacement="top-end"
+                                                popperModifiers={{
+                                                    offset: {
+                                                        enabled: true,
+                                                        offset: '5px, 10px'
+                                                    },
+                                                    preventOverflow: {
+                                                        enabled: true,
+                                                        escapeWithReference: false, // force popper to stay in viewport (even when input is scrolled out of view)
+                                                        boundariesElement: 'viewport'
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+
+                                        <label htmlFor="isbn">Date d'achat</label>
+                                        <span className="form__input__border--focus"/>
+                                    </div>
+                                </div>
+                                <div className="input__group__subgroup input__group--third">
+                                    <div className="cover__thumbnail">
+                                        {this.state.cover ? <img src={this.state.cover} /> : 'no cover'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form__group">
+                                <div className="input__group input__group--full">
+                                    <textarea
+                                        name="comment" rows="5"
+                                        className={`form__input ${!!this.state.comment ? 'form__input--has-content' : ''}`}
+                                        onChange={(event) => this.setState({comment: event.target.value})}
+                                        value={this.state.comment || ''}
+                                    />
+                                    <label htmlFor="cover">Commentaire</label>
                                     <span className="form__input__border--focus"/>
                                 </div>
                             </div>
