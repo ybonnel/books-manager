@@ -1,5 +1,6 @@
 import React from "react";
 import {PropTypes} from 'prop-types';
+import {CREATION_MODAL} from "../../../core/modal/variables";
 
 export default class BookButton extends React.Component{
     constructor(props){
@@ -10,7 +11,7 @@ export default class BookButton extends React.Component{
 
     handleOpenModal(e) {
         e.preventDefault();
-        this.props.openModal();
+        this.props.openModal(CREATION_MODAL);
     }
 
     render() {

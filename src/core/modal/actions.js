@@ -1,8 +1,9 @@
 import {CLOSE_MODAL, OPEN_MODAL} from './action-types';
 
-export function openModal() {
+export function openModal(type) {
     return {
-        type: OPEN_MODAL
+        type: OPEN_MODAL,
+        payload: {type}
     };
 }
 

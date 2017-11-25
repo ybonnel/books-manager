@@ -1,4 +1,3 @@
-import 'react-dates/initialize';
 import React from "react";
 import {PropTypes} from 'prop-types';
 import {connect} from "react-redux";
@@ -10,18 +9,18 @@ import Select from 'react-select';
 import classNames from "classnames";
 
 
-import {getModal, modalActions} from "../../../core/modal/index";
-import {booksActions} from "../../../core/books/index";
-import {authorActions, getAuthorsList} from "../../../core/authors/index";
-import {artistActions, getArtistsList} from "../../../core/artists/index";
-import {getSeriesList, serieActions} from "../../../core/serie/index";
-import {editorActions, getEditorsList} from "../../../core/editor/index";
-import {collectionActions, getCollectionsList} from "../../../core/collection/index";
-import {getStylesList, styleActions} from "../../../core/style/index";
-import {getLocationsList, locationActions} from "../../../core/location/index";
-import {getSelectedBook} from "../../../core/books/selectors";
+import {getModal, modalActions} from "../../../../core/modal/index";
+import {booksActions} from "../../../../core/books/index";
+import {authorActions, getAuthorsList} from "../../../../core/authors/index";
+import {artistActions, getArtistsList} from "../../../../core/artists/index";
+import {getSeriesList, serieActions} from "../../../../core/serie/index";
+import {editorActions, getEditorsList} from "../../../../core/editor/index";
+import {collectionActions, getCollectionsList} from "../../../../core/collection/index";
+import {getStylesList, styleActions} from "../../../../core/style/index";
+import {getLocationsList, locationActions} from "../../../../core/location/index";
+import {getSelectedBook} from "../../../../core/books/selectors";
 
-import {mapToObj} from "../../../utils/utils"
+import {mapToObj} from "../../../../utils/utils"
 import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
@@ -40,7 +39,7 @@ class CreationModal extends React.Component {
         this.initializeState = this.initializeState.bind(this);
         this.validate = this.validate.bind(this);
 
-        const book = this.props.selectedBook || this.initializeState();
+        const book = this.props.selectedBook ? mapToObj(this.props.selectedBook) : this.initializeState();
         this.state = {...book, errors: {}}
     }
 
@@ -356,7 +355,7 @@ class CreationModal extends React.Component {
                                                     'form__input': true,
                                                     'form__input--has-content': !!this.state.date,
                                                 })}
-                                                selected={this.state.date}
+                                                selected={moment(this.state.date)}
                                                 onChange={date => this.setState({date})}
                                                 locale="fr"
                                                 dateFormat="DD/MM/YYYY"

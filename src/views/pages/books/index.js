@@ -18,11 +18,12 @@ import {editorActions} from "../../../core/editor/index";
 import {getModal, modalActions} from "../../../core/modal/index";
 
 import BookList from "../../components/book-list";
-import CreationModal from "../../components/creation-modal";
+import Modal from "../../components/modal";
 
 import {isAuthenticated} from "../../../core/auth/selectors";
 import "./books.css";
 import "../../styles/buttons.css"
+import {CREATION_MODAL} from "../../../core/modal/variables";
 
 export class Books extends Component {
     static propTypes = {
@@ -83,12 +84,12 @@ export class Books extends Component {
                 <div className="wrapper">
                     <h1 className="books__header">Books</h1>
                     <div className="books__actions">
-                        <a className="button button__icon" onClick={this.props.openModal}>
+                        <a className="button button__icon" onClick={() => this.props.openModal(CREATION_MODAL)}>
                             <PlusSquare/>
                             Ajouter un Livre
                         </a>
                     </div>
-                    <CreationModal/>
+                    <Modal/>
                     <BookList
                         deleteBook={this.props.deleteBook}
                         books={this.props.books}

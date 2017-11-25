@@ -7,6 +7,7 @@ import {Book} from "../../../core/books";
 
 import './boookItem.css';
 import '../../styles/card.css'
+import {CREATION_MODAL, LOAN_MODAL} from "../../../core/modal/variables";
 
 
 class BookItem extends Component {
@@ -76,11 +77,14 @@ class BookItem extends Component {
                             <a><Trash2/></a></li>
                         <li onClick={() => {
                             this.props.selectBook(book);
-                            this.props.openModal();
+                            this.props.openModal(CREATION_MODAL);
                         }}>
                             <a><Edit2/></a>
                         </li>
-                        <li><a><Compass/></a></li>
+                        <li onClick={() => {
+                            this.props.selectBook(book);
+                            this.props.openModal(LOAN_MODAL);
+                        }}><a><Compass/></a></li>
                     </ul>
                 </div>
             </div>

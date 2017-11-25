@@ -1,0 +1,3 @@
+export const CREATION_MODAL = 'CREATION_MODAL';
+export const LOAN_MODAL = 'LOAN_MODAL';
+export const CONFIRM_MODAL = 'CONFIRM_MODAL';
