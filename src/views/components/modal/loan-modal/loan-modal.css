@@ -38,7 +38,7 @@
 * {
   outline-width: 0; }
 
-.modal.loan-modal {
+.modal.creation-modal {
   width: 30%;
   margin: calc(5% + 40px) auto;
   background-color: #fff;
