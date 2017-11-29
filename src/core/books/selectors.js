@@ -1,4 +1,5 @@
 import {createSelector} from 'reselect';
+import * as filters from './variables';
 
 
 export function getBooks(state) {
@@ -26,20 +27,20 @@ export function getSelectedBook(state) {
 //  MEMORIZED SELECTORS
 //-------------------------------------
 
-//todo: ça sert un peu a rien vu qu'un livre pau pas etre completed...mais un peu faire des filtre au cas où
 export const getVisibleBooks = createSelector(
     getBookList,
     getBookFilter,
     (books, filter) => {
         switch (filter) {
-            case 'active':
-                return books.filter(book => !book.completed);
+        case filters.OUT:
+            return books.filter(book => !!book.location);
 
-            case 'completed':
-                return books.filter(book => book.completed);
+        case filters.IN:
+            return books.filter(book => !book.location);
 
-            default:
-                return books;
+        case filters.ALL:
+        default:
+            return books;
         }
     }
 );

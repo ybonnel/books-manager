@@ -1,21 +1,33 @@
-// import classNames from 'classnames';
 import React from 'react';
 import {PropTypes} from 'prop-types';
-// import { Link } from 'react-router';
+import {IN, OUT, ALL} from "../../../core/books";
 
 
-function BookFilters({filter}) {
-  return (
-    <ul className="task-filters">
-      {/*<li><Link className={classNames({active: !filter})} to="/">View All</Link></li>*/}
-      {/*<li><Link activeClassName="active" to={{pathname: '/', query: {filter: 'active'}}}>Active</Link></li>*/}
-      {/*<li><Link activeClassName="active" to={{pathname: '/', query: {filter: 'completed'}}}>Completed</Link></li>*/}
-    </ul>
-  );
+class BookFilters extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleFilter = this.handleFilter.bind(this);
+    }
+
+    handleFilter(event) {
+        event.target.classList.toggle("selected");
+        this.props.filter(event.target.getAttribute('data-filter'))
+    }
+
+    render() {
+        return (
+            <ul className="book-filters">
+                <li><a className="button" data-filter={ALL} onClick={this.handleFilter}>View All</a></li>
+                <li><a className="button" data-filter={IN} onClick={this.handleFilter}>Present</a></li>
+                <li><a className="button" data-filter={OUT} onClick={this.handleFilter}>Loaned</a></li>
+            </ul>
+        );
+    }
 }
 
 BookFilters.propTypes = {
-  filter: PropTypes.string
+    filter: PropTypes.func.isRequired
 };
 
 export default BookFilters;

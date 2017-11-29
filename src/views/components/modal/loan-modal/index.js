@@ -1,4 +1,3 @@
-import 'react-dates/initialize';
 import React from "react";
 import {PropTypes} from 'prop-types';
 import {connect} from "react-redux";
@@ -105,7 +104,7 @@ class LoanModal extends React.Component {
                     this.setState({key: null, location: null});
                     this.props.closeModal();
                 }}
-                className="modal creation-modal"
+                className="modal loan-modal"
                 isOpen={this.props.modal.isOpen}>
                 <div className="wrapper modal__wrapper">
                     <div className="modal__title">Prêter {this.getTitle()}</div>

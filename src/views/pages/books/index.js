@@ -18,6 +18,7 @@ import {editorActions} from "../../../core/editor/index";
 import {getModal, modalActions} from "../../../core/modal/index";
 
 import BookList from "../../components/book-list";
+import BookFilters from "../../components/book-filters";
 import Modal from "../../components/modal";
 
 import {isAuthenticated} from "../../../core/auth/selectors";
@@ -90,6 +91,7 @@ export class Books extends Component {
                         </a>
                     </div>
                     <Modal/>
+                    <BookFilters filter={this.props.filterBooks} />
                     <BookList
                         deleteBook={this.props.deleteBook}
                         books={this.props.books}
