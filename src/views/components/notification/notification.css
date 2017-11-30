@@ -1,0 +1,24 @@
+.notification {
+  position: fixed;
+  top: calc(40px + 10%);
+  left: 50%;
+  background-color: rgba(0, 0, 0, 0.87);
+  color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 50px;
+  box-sizing: border-box;
+  border-radius: 4px; }
+
+.notification__button {
+  margin-left: 20px;
+  cursor: pointer;
+  font-weight: bold; }
+
+.notification__button:hover {
+  color: #7e7e7e; }
+
+.notification__message {
+  margin: 0; }

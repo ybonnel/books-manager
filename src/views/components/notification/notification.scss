@@ -1,0 +1,33 @@
+@import "../../../views/styles/variables.scss";
+
+.notification {
+  position: fixed;
+  top: calc(40px + 10%);
+  left: 50%;
+
+  background-color: $color;
+  color: #ffffff;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  padding: 15px 50px;
+  box-sizing: border-box;
+  border-radius: $border-radius;
+}
+
+.notification__button {
+  margin-left: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.notification__button:hover {
+  color: $color-light-gray;
+}
+
+.notification__message {
+  margin: 0;
+}

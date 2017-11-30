@@ -11,6 +11,7 @@ import {collectionsReducer} from "./collection/index";
 import {editorsReducer} from "./editor/index";
 import {stylesReducer} from "./style/index";
 import {locationsReducer} from "./location/index";
+import {notificationReducer} from "./notification/index";
 
 
 export default combineReducers({
@@ -25,5 +26,5 @@ export default combineReducers({
     styles: stylesReducer,
     locations: locationsReducer,
     modal: modalReducer,
-    // form: FormReducer
+    notification: notificationReducer
 });

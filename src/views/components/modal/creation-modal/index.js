@@ -7,6 +7,7 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import classNames from "classnames";
+import {CameraOff} from 'react-feather';
 
 
 import {getModal, modalActions} from "../../../../core/modal/index";
@@ -98,7 +99,7 @@ class CreationModal extends React.Component {
     }
 
     createAttributeIfNeeded(attr, labelKey, create) {
-        if (!!attr.className) {
+        if (attr && !!attr.className) {
             return create({[labelKey]: attr[labelKey]})
                 .then(key => ({key, [labelKey]: attr[labelKey]}));
         }
@@ -121,7 +122,7 @@ class CreationModal extends React.Component {
             .then(() => this.setState({errors: {}}))
             .then(() => Promise.all(this.state.authors.map(author => this.createAttributeIfNeeded(author, 'name', this.props.createAuthor))))
             .then(authors => this.setState({authors}))
-            .then(() => Promise.all(this.state.artists.map(artist => this.createAttributeIfNeeded(artist, 'name', this.props.createArtist))))
+            .then(() => Promise.all((this.state.artists || []).map(artist => this.createAttributeIfNeeded(artist, 'name', this.props.createArtist))))
             .then(artists => this.setState({artists}))
             .then(() => this.createAttributeIfNeeded(this.state.serie, 'label', this.props.createSerie))
             .then(serie => this.setState({serie}))
@@ -222,7 +223,7 @@ class CreationModal extends React.Component {
                                             'form__input--has-error': !!this.state.errors.tome
                                         })}
                                         onChange={(event) => this.setState({tome: event.target.value})}
-                                        value={this.state.tome}
+                                        value={this.state.tome || undefined}
                                     />
                                     <label htmlFor="tome">Tome</label>
                                     <span className="form__input__border--focus"/>
@@ -257,7 +258,7 @@ class CreationModal extends React.Component {
                                         multi={true}
                                         name="artists"
                                         menuContainerStyle={{'zIndex': 999}}
-                                        className={`form__input ${this.state.artists.length > 0 ? 'form__input--has-content' : ''}`}
+                                        className={`form__input ${this.state.artists && this.state.artists.length > 0 ? 'form__input--has-content' : ''}`}
                                         options={this.getAutocompleteData(this.props.artists)}
                                         onChange={artists => this.setState({artists})}
                                         value={this.state.artists}
@@ -329,7 +330,7 @@ class CreationModal extends React.Component {
                                             name="price"
                                             className={`form__input ${!!this.state.price ? 'form__input--has-content' : ''}`}
                                             onChange={(event) => this.setState({price: event.target.value})}
-                                            value={this.state.price}
+                                            value={this.state.price || undefined}
                                         />
                                         <label htmlFor="price">Prix</label>
                                         <span className="form__input__border--focus"/>
@@ -340,7 +341,7 @@ class CreationModal extends React.Component {
                                             name="isbn"
                                             className={`form__input ${!!this.state.isbn ? 'form__input--has-content' : ''}`}
                                             onChange={(event) => this.setState({isbn: event.target.value})}
-                                            value={this.state.isbn}
+                                            value={this.state.isbn || undefined}
                                         />
                                         <label htmlFor="isbn">ISBN</label>
                                         <span className="form__input__border--focus"/>
@@ -381,7 +382,7 @@ class CreationModal extends React.Component {
                                 </div>
                                 <div className="input__group__subgroup input__group--third">
                                     <div className="cover__thumbnail">
-                                        {this.state.cover ? <img src={this.state.cover} /> : 'no cover'}
+                                        {this.state.cover ? <img src={this.state.cover} alt="thumbnail"/> : <CameraOff/>}
                                     </div>
                                 </div>
                             </div>

@@ -83,7 +83,23 @@ export function undeleteBook() {
     return (dispatch, getState) => {
         const book = getBookDeleted(getState());
         if (book) {
-            booklist.set(book.key, {title: book.title, tome: book.tome, authors: book.authors, artists: book.artists, serie: book.serie})
+            booklist.set(book.key,
+                {
+                    title: book.title,
+                    tome: book.tome || null,
+                    authors: book.authors,
+                    artists: book.artists || null,
+                    serie: book.serie || null,
+                    editor: book.editor || null,
+                    collection: book.collection || null,
+                    location: book.location || null,
+                    style: book.style || null,
+                    isbn: book.isbn || null,
+                    comment: book.comment || null,
+                    date: book.date || null,
+                    cover: book.cover || null,
+                    price: book.price || null
+                })
                 .catch(error => dispatch(undeleteBookError(error)));
         }
     };

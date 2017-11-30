@@ -9,14 +9,13 @@ export const NotificationState = new Record({
   message: ''
 });
 
-//todo: on peut catch les erreur afin de les afficher...
 export function notificationReducer(state = new NotificationState(), action) {
   switch (action.type) {
     case DELETE_BOOK_SUCCESS:
       return state.merge({
-        actionLabel: 'Undo',
+        actionLabel: 'Annuler',
         display: true,
-        message: 'Book deleted'
+        message: 'Livre supprimé'
       });
 
     case DISMISS_NOTIFICATION:

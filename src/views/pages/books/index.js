@@ -25,6 +25,7 @@ import {isAuthenticated} from "../../../core/auth/selectors";
 import "./books.css";
 import "../../styles/buttons.css"
 import {CREATION_MODAL} from "../../../core/modal/variables";
+import Notification from "../../components/notification/index";
 
 export class Books extends Component {
     static propTypes = {
@@ -57,6 +58,7 @@ export class Books extends Component {
         super(props);
 
         this.selectForUpdate = this.selectForUpdate.bind(this);
+        this.renderNotification = this.renderNotification.bind(this);
     }
 
     componentWillMount() {
@@ -77,6 +79,19 @@ export class Books extends Component {
     selectForUpdate(book) {
         this.props.loadBook(book);
         this.props.openModal();
+    }
+
+    renderNotification() {
+        const { notification } = this.props;
+        return (
+            <Notification
+                action={this.props.undeleteBook}
+                actionLabel={notification.actionLabel}
+                dismiss={this.props.dismissNotification}
+                display={notification.display}
+                message={notification.message}
+            />
+        );
     }
 
     render() {
@@ -100,6 +115,7 @@ export class Books extends Component {
                         openModal={this.props.openModal}
                     />
                 </div>
+                {this.props.notification.display ? this.renderNotification() : null}
             </section>
         );
     }
