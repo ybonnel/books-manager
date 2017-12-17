@@ -41,12 +41,12 @@ class LoanModal extends React.Component {
         // this.handleSubmit();
     }
 
-    createAttributeIfNeeded(attr, labelKey, create) {
+    createAttributeIfNeeded(attr, create) {
         if (!!attr && !!attr.className) {
-            return create({[labelKey]: attr[labelKey]})
-                .then(key => ({key, [labelKey]: attr[labelKey]}));
+            return create({label: attr.label})
+                .then(key => ({key, label: attr.label}));
         }
-        return Promise.resolve(attr);
+        return Promise.resolve(attr)
     }
 
     replaceUndefinedOrNull(key, value) {
@@ -61,7 +61,7 @@ class LoanModal extends React.Component {
     }
 
     handleSubmit() {
-        this.createAttributeIfNeeded(this.state.location, 'name', this.props.createLocation)
+        this.createAttributeIfNeeded(this.state.location, this.props.createLocation)
             .then(location => this.setState({location}))
             .then(() => this.props.updateBook(this.props.selectedBook, this.cleanJson(this.state)))
             .then(() => this.props.unselectBook())
@@ -118,7 +118,7 @@ class LoanModal extends React.Component {
                                     options={this.getAutocompleteData(this.props.locations)}
                                     onChange={location => this.setState({location, modified: true})}
                                     value={this.state.location}
-                                    labelKey="name" valueKey="key"
+                                    labelKey="label" valueKey="key"
                                 />
                                 <label htmlFor="location">Location</label>
                                 <span className="form__input__border--focus"/>

@@ -14,9 +14,9 @@ import {
 } from './action-types';
 
 
-export function createEditor({name}) {
+export function createEditor({label}) {
     return dispatch => {
-        return editorList.push({name})
+        return editorList.push({label})
             .catch(error => dispatch(createEditorError(error)));
     };
 }
@@ -60,7 +60,7 @@ export function undeleteEditor() {
     return (dispatch, getState) => {
         const editor = getEditorDeleted(getState());
         if (editor) {
-            editorList.set(editor.key, {label: editor.name})
+            editorList.set(editor.key, {label: editor.label})
                 .catch(error => dispatch(undeleteEditorError(error)));
         }
     };

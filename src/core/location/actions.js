@@ -14,9 +14,9 @@ import {
 } from './action-types';
 
 
-export function createLocation({name}) {
+export function createLocation({label}) {
     return dispatch => {
-        return locationList.push({name})
+        return locationList.push({label})
             .catch(error => dispatch(createLocationError(error)));
     };
 }
@@ -60,7 +60,7 @@ export function undeleteLocation() {
     return (dispatch, getState) => {
         const location = getLocationDeleted(getState());
         if (location) {
-            locationList.set(location.key, {name: location.name})
+            locationList.set(location.key, {label: location.label})
                 .catch(error => dispatch(undeleteLocationError(error)));
         }
     };

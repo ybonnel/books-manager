@@ -161,3 +161,13 @@ export function unloadBooks() {
         type: UNLOAD_BOOKS_SUCCESS
     };
 }
+
+export function updateBooksAttribute(label, key, changes) {
+    return dispatch => {
+        booklist.map(book => {
+            if (book[label] && book[label].key === key) {
+               return dispatch(updateBook(book, {[label]: {key: key, ...changes}}))
+            }
+        })
+    }
+}

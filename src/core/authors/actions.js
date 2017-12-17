@@ -14,9 +14,9 @@ import {
 } from './action-types';
 
 
-export function createAuthor({name}) {
+export function createAuthor({label}) {
     return dispatch => {
-        return authorList.push({name})
+        return authorList.push({label})
             .catch(error => dispatch(createAuthorError(error)));
     };
 }
@@ -61,7 +61,7 @@ export function undeleteAuthor() {
     return (dispatch, getState) => {
         const author = getAuthorDeleted(getState());
         if (author) {
-            authorList.set(author.key, {name: author.name})
+            authorList.set(author.key, {label: author.label})
                 .catch(error => dispatch(undeleteAuthorError(error)));
         }
     };
@@ -84,7 +84,7 @@ export function updateAuthorError(error) {
 //fixme: impacter la liste des livres...
 export function updateAuthor(author, changes) {
     return dispatch => {
-        authorList.update(author.key, changes)
+        return authorList.update(author.key, changes)
             .catch(error => dispatch(updateAuthorError(error)));
     };
 }

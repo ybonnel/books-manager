@@ -14,9 +14,9 @@ import {
 } from './action-types';
 
 
-export function createArtist({name}) {
+export function createArtist({label}) {
     return dispatch => {
-        return artistList.push({name})
+        return artistList.push({label})
             .catch(error => dispatch(createArtistError(error)));
     };
 }
@@ -60,7 +60,7 @@ export function undeleteArtist() {
     return (dispatch, getState) => {
         const artist = getArtistsDeleted(getState());
         if (artist) {
-            artistList.set(artist.key, {name: artist.name})
+            artistList.set(artist.key, {label: artist.label})
                 .catch(error => dispatch(undeleteArtistError(error)));
         }
     };

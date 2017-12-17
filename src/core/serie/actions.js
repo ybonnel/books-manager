@@ -80,10 +80,9 @@ export function updateSerieError(error) {
     };
 }
 
-//fixme: impacter la liste des livres...
 export function updateSerie(serie, changes) {
     return dispatch => {
-        serieList.update(serie.key, changes)
+        return serieList.update(serie.key, changes)
             .catch(error => dispatch(updateSerieError(error)));
     };
 }

@@ -12,6 +12,7 @@ import {paths} from '../components/authRoute/paths';
 
 import Books from "../pages/books/index";
 import SignIn from "../pages/sign-in/index";
+import Editions from "../pages/editions/index";
 
 import './app.css';
 
@@ -29,6 +30,7 @@ class App extends Component {
                 <main className="main">
                     <Switch>
                         <UnAuthRoute path={paths.SIGN_IN} component={SignIn}/>
+                        <AuthRoute path={paths.EDITION} component={Editions}/>
                         <AuthRoute path="" component={Books}/>
                     </Switch>
                 </main>

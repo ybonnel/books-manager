@@ -1,0 +1,21 @@
+.edition-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 40%;
+  margin: auto auto 5px;
+  padding: 10px;
+  box-sizing: border-box; }
+
+.edition-item__cell__label {
+  flex-grow: 1;
+  color: rgba(0, 0, 0, 0.87); }
+
+.edition-item__label {
+  color: #4B4B4B;
+  font: 15px/24px Arial, sans-serif;
+  letter-spacing: 1px;
+  height: 45px; }
+
+.edition-item__button.hide {
+  display: none; }

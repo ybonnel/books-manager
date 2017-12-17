@@ -1,0 +1,90 @@
+@import "../../styles/variables.scss";
+
+$width: 40%;
+
+//search
+.search {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+
+  width: $width;
+  margin: auto auto 20px;
+}
+
+.search__icon {
+  height: 2em;
+  width: 2em;
+  background-color: $color;
+  color: #fff;
+  border-radius: 0 2em 2em 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.search__input {
+  height: 2em;
+
+  border-radius: 2em 0 0 2em;
+  border: 1px solid $color;
+  color: $color;
+
+  padding-left: 1em;
+}
+
+//pagination
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  list-style-type: none;
+  margin: auto;
+  width: $width;
+  justify-content: flex-end;
+  align-items: center;
+
+  padding: 10px;
+}
+
+.pagination li {
+  width: 2em;
+  height: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .35s ease-in-out;
+
+  & + li {
+    margin-left: 10px;
+  }
+}
+
+.page-selector.active {
+  border: 1px solid $color;
+  border-radius: 50%;
+}
+
+.page-selector:hover {
+  color: $color-gray;
+  cursor: pointer;
+}
+
+.next, .previous {
+  padding: .5em 2em;
+  border: 1px solid $color;
+  border-radius: $border-radius;
+  cursor: pointer;
+
+  &.disabled {
+    color: $color-light-gray;
+    border-color: $color-light-gray;
+    cursor: not-allowed;
+  }
+}

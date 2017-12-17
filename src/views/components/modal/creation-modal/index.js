@@ -98,10 +98,10 @@ class CreationModal extends React.Component {
         })
     }
 
-    createAttributeIfNeeded(attr, labelKey, create) {
+    createAttributeIfNeeded(attr, create) {
         if (attr && !!attr.className) {
-            return create({[labelKey]: attr[labelKey]})
-                .then(key => ({key, [labelKey]: attr[labelKey]}));
+            return create({label: attr.label})
+                .then(key => ({key, label: attr.label}));
         }
         return Promise.resolve(attr);
     }
@@ -120,19 +120,19 @@ class CreationModal extends React.Component {
     handleSubmit() {
         this.validate()
             .then(() => this.setState({errors: {}}))
-            .then(() => Promise.all(this.state.authors.map(author => this.createAttributeIfNeeded(author, 'name', this.props.createAuthor))))
+            .then(() => Promise.all(this.state.authors.map(author => this.createAttributeIfNeeded(author, this.props.createAuthor))))
             .then(authors => this.setState({authors}))
-            .then(() => Promise.all((this.state.artists || []).map(artist => this.createAttributeIfNeeded(artist, 'name', this.props.createArtist))))
+            .then(() => Promise.all((this.state.artists || []).map(artist => this.createAttributeIfNeeded(artist, this.props.createArtist))))
             .then(artists => this.setState({artists}))
-            .then(() => this.createAttributeIfNeeded(this.state.serie, 'label', this.props.createSerie))
+            .then(() => this.createAttributeIfNeeded(this.state.serie, this.props.createSerie))
             .then(serie => this.setState({serie}))
-            .then(() => this.createAttributeIfNeeded(this.state.style, 'label', this.props.createStyle))
+            .then(() => this.createAttributeIfNeeded(this.state.style, this.props.createStyle))
             .then(style => this.setState({style}))
-            .then(() => this.createAttributeIfNeeded(this.state.editor, 'name', this.props.createEditor))
+            .then(() => this.createAttributeIfNeeded(this.state.editor, this.props.createEditor))
             .then(editor => this.setState({editor}))
-            .then(() => this.createAttributeIfNeeded(this.state.collection, 'label', this.props.createCollection))
+            .then(() => this.createAttributeIfNeeded(this.state.collection, this.props.createCollection))
             .then(collection => this.setState({collection}))
-            .then(() => this.createAttributeIfNeeded(this.state.location, 'name', this.props.createLocation))
+            .then(() => this.createAttributeIfNeeded(this.state.location, this.props.createLocation))
             .then(location => this.setState({location}))
             .then(() => {
                 if (!!this.state.key) {
@@ -246,7 +246,7 @@ class CreationModal extends React.Component {
                                         options={this.getAutocompleteData(this.props.authors)}
                                         onChange={authors => this.setState({authors})}
                                         value={this.state.authors}
-                                        labelKey="name" valueKey="key"
+                                        labelKey="label" valueKey="key"
                                     />
                                     <label htmlFor="authors">Auteur(s)</label>
                                     <span className="form__input__border--focus"/>
@@ -262,7 +262,7 @@ class CreationModal extends React.Component {
                                         options={this.getAutocompleteData(this.props.artists)}
                                         onChange={artists => this.setState({artists})}
                                         value={this.state.artists}
-                                        labelKey="name" valueKey="key"
+                                        labelKey="label" valueKey="key"
                                     />
                                     <label htmlFor="artists">Artiste</label>
                                     <span className="form__input__border--focus"/>
@@ -279,7 +279,7 @@ class CreationModal extends React.Component {
                                         options={this.getAutocompleteData(this.props.editors)}
                                         onChange={editor => this.setState({editor})}
                                         value={this.state.editor}
-                                        labelKey="name" valueKey="key"
+                                        labelKey="label" valueKey="key"
                                     />
                                     <label htmlFor="editor">Éditeur</label>
                                     <span className="form__input__border--focus"/>

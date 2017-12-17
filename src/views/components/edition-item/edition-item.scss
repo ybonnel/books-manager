@@ -1,0 +1,30 @@
+@import "../../styles/variables.scss";
+
+$width: 40%;
+
+.edition-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  width: $width;
+  margin: auto auto 5px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.edition-item__cell__label {
+  flex-grow: 1;
+  color: $color;
+}
+
+.edition-item__label {
+  color: $color-gray;
+  font: 15px/24px Arial, sans-serif;
+  letter-spacing: 1px;
+  height: 45px;
+}
+
+.edition-item__button.hide {
+  display: none;
+}
