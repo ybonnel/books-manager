@@ -12,3 +12,48 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+.book__actions__mobile {
+  display: none;
+}
+
+@media screen and (max-width: $navigation_mobile_breakpoint) {
+  .books__header {
+    margin-left: 1em;
+  }
+
+  .books__list {
+    flex-direction: column;
+  }
+
+  .books {
+    padding: 0;
+  }
+
+  .book__actions__mobile {
+    list-style-type: none;
+    padding: 0 10px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .book__actions__mobile li {
+    .enabled {
+      color: $color;
+    }
+
+    &.disabled {
+      a svg{
+        cursor: not-allowed;
+        color: $color-light-gray;
+      }
+    }
+  }
+}

@@ -100,7 +100,7 @@ export class Books extends Component {
                 <div className="wrapper">
                     <h1 className="books__header">Books</h1>
                     <div className="books__actions">
-                        <a className="button button__icon" onClick={() => this.props.openModal(CREATION_MODAL)}>
+                        <a className="button button__icon button--add" onClick={() => this.props.openModal(CREATION_MODAL)}>
                             <PlusSquare/>
                             Ajouter un Livre
                         </a>

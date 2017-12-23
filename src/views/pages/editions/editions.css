@@ -1,3 +1,7 @@
+.edition__header {
+  font-size: 3em;
+  margin-top: 0; }
+
 .search {
   display: flex;
   flex-direction: row;
@@ -55,11 +59,34 @@
   cursor: pointer; }
 
 .next, .previous {
-  padding: .5em 2em;
+  padding: .2em 1em;
   border: 1px solid rgba(0, 0, 0, 0.87);
   border-radius: 4px;
   cursor: pointer; }
+  .next a, .previous a {
+    height: 24px; }
   .next.disabled, .previous.disabled {
     color: #7e7e7e;
     border-color: #7e7e7e;
     cursor: not-allowed; }
+
+@media screen and (max-width: 768px) {
+  .edition__header {
+    font-size: 2em;
+    margin-bottom: .5em; }
+  .search {
+    width: 100%; }
+  .search__input {
+    flex-grow: 1; }
+  .pagination {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    justify-content: space-between; }
+    .pagination li {
+      width: 24px;
+      height: 24px; }
+  .previous, .next {
+    padding: .5em; } }

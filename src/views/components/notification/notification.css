@@ -22,3 +22,12 @@
 
 .notification__message {
   margin: 0; }
+
+@media screen and (max-width: 768px) {
+  .notification {
+    width: calc(100% - 40px);
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 5%; } }

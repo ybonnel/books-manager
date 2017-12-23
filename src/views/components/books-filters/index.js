@@ -30,18 +30,21 @@ class BookFilters extends React.Component {
                 <li className="filter">
                     <a className={classNames({
                         button: true,
+                        'button--filter': true,
                         selected: this.state.filter === ALL
                     })} data-filter={ALL} onClick={this.handleFilter}>View All</a>
                 </li>
                 <li className="filter">
                     <a className={classNames({
                         button: true,
+                        'button--filter': true,
                         selected: this.state.filter === IN
                     })} data-filter={IN} onClick={this.handleFilter}>Present</a>
                 </li>
                 <li className="filter">
                     <a className={classNames({
                         button: true,
+                        'button--filter': true,
                         selected: this.state.filter === OUT
                     })} data-filter={OUT} onClick={this.handleFilter}>Loaned</a>
                 </li>

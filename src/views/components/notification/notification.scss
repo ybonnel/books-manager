@@ -31,3 +31,16 @@
 .notification__message {
   margin: 0;
 }
+
+
+@media screen and (max-width: $navigation_mobile_breakpoint) {
+  .notification {
+    width: calc(100% - 40px);
+    margin: auto;
+    left: 0;
+    right: 0;
+
+    top: auto;
+    bottom: 5%;
+  }
+}

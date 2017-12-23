@@ -1,7 +1,4 @@
 @import "../../../views/styles/variables.scss";
-@import "../../../views/styles/buttons.scss";
-@import "../../../views/styles/modal.scss";
-
 
 .books__actions {
   display: flex;
@@ -36,5 +33,23 @@
   border: 1px solid $color;
   color: $color;
   background-color: transparent;
+}
+
+@media (max-width: $navigation_mobile_breakpoint) {
+  .books__actions {
+    flex-wrap: wrap;
+    padding: 0;
+  }
+
+  .button--add {
+    width: 100%;
+  }
+
+  .books__filters {
+    width: 100%;
+    padding: 0;
+  }
+
+
 }
 

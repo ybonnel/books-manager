@@ -24,7 +24,7 @@ import EditionItem from "../../components/edition-item/index";
 
 import "./editions.css";
 
-const PAGE_NUMBER = 25;
+const PAGE_NUMBER = 10;
 
 export class Editions extends Component {
     static propTypes = {
@@ -122,14 +122,19 @@ export class Editions extends Component {
                             }
                         }
                     }
+                    return null;
                 })
             )
     }
 
     getCount(key) {
         return this.props.books.reduce((count, book) => {
-            if (book[this.property] && (this.isArray && book[this.property].some(item => item.key === key) || book[this.property].key === key)) {
-                return count + 1
+            if (book[this.property]) {
+                if (this.isArray && book[this.property].some(item => item.key === key)) {
+                    return count + 1
+                } else if (book[this.property].key === key) {
+                    return count + 1;
+                }
             }
             return count
         }, 0)
@@ -216,9 +221,9 @@ export class Editions extends Component {
         }
 
         return (
-            <section className="books">
+            <section className="edition">
                 <div className="wrapper">
-                    <h1 className="books__header">{this.label}</h1>
+                    <h1 className="edition__header">{this.label}</h1>
 
                     <div className="search">
                         <input type="text" className="search__input"
@@ -240,7 +245,7 @@ export class Editions extends Component {
                                 nextLabel={<ArrowRight/>}
                                 breakLabel='...'
                                 breakClassName={"break"}
-                                pageCount={Math.ceil(50)}
+                                pageCount={Math.ceil(this.list.size / PAGE_NUMBER)}
                                 marginPagesDisplayed={1}
                                 pageRangeDisplayed={5}
                                 onPageChange={this.handlePageClick}

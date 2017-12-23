@@ -12,7 +12,8 @@ import {CREATION_MODAL, LOAN_MODAL} from "../../../core/modal/variables";
 
 class BookItem extends Component {
     static propTypes = {
-        book: PropTypes.instanceOf(Book).isRequired
+        book: PropTypes.instanceOf(Book).isRequired,
+        selectBookForMobile: PropTypes.func.isRequired
     };
 
     constructor(props, context) {
@@ -31,7 +32,7 @@ class BookItem extends Component {
             return (
                 <div className="card__right__header">
                     <h2 className="book__title">{book.serie.label} Tome {book.tome}</h2>
-                    {book.title && <div className="book__subtitle">{book.title}</div>}
+                    {book.title && <div className="book__subtitle"><p>{book.title}</p></div>}
                 </div>
             );
         }
@@ -42,11 +43,17 @@ class BookItem extends Component {
         )
     }
 
+    handleSelect(book) {
+        this.bookItemNode.classList.toggle('selected');
+        this.props.selectBookForMobile(book)
+    }
+
     render() {
         const {book} = this.props;
 
         return (
-            <div className={`books__list__item book card ${this.state.toggle ? 'toggled' : ''}`} key={book.key}>
+            <div className={`books__list__item book card ${this.state.toggle ? 'toggled' : ''}`} key={book.key} ref={ref => this.bookItemNode = ref}>
+                <div className="book-selector" onClick={() => this.handleSelect(book)}/>
                 <div className="card__left">
                     <img className="book__cover"
                          src={`${book.cover ? book.cover : 'https://lorempixel.com/100/190/cats'}`}

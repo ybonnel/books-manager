@@ -46,3 +46,9 @@
 
   font-weight: 600;
 }
+
+@media (max-width: $navigation_mobile_breakpoint) {
+  .sign-in__links {
+    width: 60%;
+  }
+}

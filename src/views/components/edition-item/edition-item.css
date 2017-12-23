@@ -15,7 +15,23 @@
   color: #4B4B4B;
   font: 15px/24px Arial, sans-serif;
   letter-spacing: 1px;
-  height: 45px; }
+  height: 45px;
+  display: flex;
+  align-items: center; }
 
 .edition-item__button.hide {
   display: none; }
+
+@media screen and (max-width: 768px) {
+  .edition-item {
+    width: 100%;
+    padding: 10px 0; }
+  .edition-item__button {
+    display: inline-flex;
+    align-items: center;
+    padding: .5em;
+    width: 32px;
+    height: 32px; }
+  .edition-item__button__icon {
+    width: 15px;
+    height: 15px; } }

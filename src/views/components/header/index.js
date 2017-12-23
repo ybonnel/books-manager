@@ -3,7 +3,7 @@ import {PropTypes} from 'prop-types';
 import {Link} from "react-router-dom";
 
 import './header.css';
-import { Book, LogOut } from 'react-feather';
+import { Book, LogOut, Menu } from 'react-feather';
 
 
 class Header extends React.Component {
@@ -31,14 +31,17 @@ class Header extends React.Component {
         return (
             <nav className="navigation">
                 <div className="wrapper">
-                    <ul className="navigation-menu">
-                        <li><Link className="navigation-menu__brand navigation-menu__link" to="/"><Book/> Book Manager</Link></li>
+                    <span className="navigation-menu__responsive">
+                        <Link className="navigation-menu__brand navigation-menu__link" to="/"><Book/> <span className="navigation-menu__brand__label">Book Manager</span></Link>
+                        <span className="navigation-menu__trigger" onClick={() => this.navigationMenu.classList.toggle('navigation-menu--toggled')}><Menu /></span>
+                    </span>
+                    <ul className="navigation-menu" ref={ref => this.navigationMenu = ref}>
                         {authenticated ? <li><Link className="navigation-menu__link navigation-menu__link__entry" to="/">Books</Link></li> : null}
                         {authenticated ? <li className="navigation-menu__link navigation-menu__link__entry navigation-menu__link--with-submenu">
                             Editions
                             <ul className="navigation-menu__link__submenu">
                                 {editions.map((edition, idx) => <li className="" key={idx}>
-                                    <Link className="navigation-menu__link__submenu__link" to={{pathname: '/editions', hash: edition.key}}>{edition.label}</Link>
+                                    <Link className="navigation-menu__link__submenu__link" to={{pathname: '/editions', hash: edition.key}} onClick={() => this.navigationMenu.classList.toggle('navigation-menu--toggled')}>{edition.label}</Link>
                                 </li>)}
                             </ul>
                         </li> : null}

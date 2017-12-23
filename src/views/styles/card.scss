@@ -35,3 +35,10 @@
   position: relative;
 
 }
+
+
+@media screen and (max-width: $navigation_mobile_breakpoint) {
+  .card__right__content {
+    flex-direction: row;
+  }
+}

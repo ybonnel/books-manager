@@ -85,6 +85,11 @@ class EditionItem extends React.Component {
                 defaultValue={item.label || item.name}
                 onBlur={this.saveItem}
                 onKeyUp={this.onKeyUp}
+                onFocus={event => {
+                    const length = event.target.value.length;
+                    event.target.setSelectionRange(length, length);
+
+                }}
                 ref={c => this.titleInput = c}
                 type="text"
             />
@@ -106,10 +111,10 @@ class EditionItem extends React.Component {
                     <button
                         aria-hidden={!editing}
                         aria-label="Cancel editing"
-                        className={classNames('button button__icon button__icon--alone  edition-item__button', {'hide': !editing})}
+                        className={classNames('button button__icon button__icon--alone edition-item__button', {'hide': !editing})}
                         onClick={this.stopEditing}
                         type="button">
-                        <X/>
+                        <X className="edition-item__button__icon"/>
                     </button>
                     <button
                         aria-hidden={editing}
@@ -118,7 +123,7 @@ class EditionItem extends React.Component {
                         onClick={this.editItem}
                         ref={c => this.editButton = c}
                         type="button">
-                        <Edit2/>
+                        <Edit2 className="edition-item__button__icon"/>
                     </button>
                     <button
                         aria-hidden={editing}
@@ -128,7 +133,7 @@ class EditionItem extends React.Component {
                         onClick={this.delete}
                         ref={c => this.deleteButton = c}
                         type="button">
-                        <Trash2/>
+                        <Trash2 className="edition-item__button__icon"/>
                     </button>
                 </div>
             </div>

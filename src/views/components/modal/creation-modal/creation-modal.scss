@@ -1,5 +1,4 @@
 @import "../../../styles/variables.scss";
-@import "../../../styles/buttons.scss";
 @import "../../../styles/modal.scss";
 
 * {
@@ -197,4 +196,32 @@ textarea.form__input {
   font: 15px/24px Arial, sans-serif;
   color: $color-gray;
   letter-spacing: 1px;
+}
+
+@media screen and (max-width: $navigation_mobile_breakpoint) {
+  .ReactModal__Overlay {
+    overflow-y: auto;
+  }
+  .creation-modal {
+    width: calc(100% - 10px) !important;
+    box-sizing: border-box;
+    padding: 5px !important;
+  }
+
+  .creation-form {
+    flex-direction: column;
+  }
+
+  .form__group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .input__group, .input__group__subgroup {
+    width: 100%;
+  }
+
+  .cover__thumbnail {
+    display: none;
+  }
 }
