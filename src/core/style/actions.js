@@ -80,10 +80,9 @@ export function updateStyleError(error) {
     };
 }
 
-//fixme: impacter la liste des livres...
 export function updateStyle(style, changes) {
     return dispatch => {
-        styleList.update(style.key, changes)
+        return styleList.update(style.key, changes)
             .catch(error => dispatch(updateStyleError(error)));
     };
 }

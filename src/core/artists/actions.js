@@ -80,10 +80,9 @@ export function updateArtistError(error) {
     };
 }
 
-//fixme: impacter la liste des livres...
 export function updateArtist(artist, changes) {
     return dispatch => {
-        artistList.update(artist.key, changes)
+        return artistList.update(artist.key, changes)
             .catch(error => dispatch(updateArtistError(error)));
     };
 }

@@ -81,7 +81,6 @@ export function updateAuthorError(error) {
     };
 }
 
-//fixme: impacter la liste des livres...
 export function updateAuthor(author, changes) {
     return dispatch => {
         return authorList.update(author.key, changes)

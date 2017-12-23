@@ -80,10 +80,9 @@ export function updateEditorError(error) {
     };
 }
 
-//fixme: impacter la liste des livres...
 export function updateEditor(editor, changes) {
     return dispatch => {
-        editorList.update(editor.key, changes)
+        return editorList.update(editor.key, changes)
             .catch(error => dispatch(updateEditorError(error)));
     };
 }

@@ -80,10 +80,9 @@ export function updateLocationError(error) {
     };
 }
 
-//fixme: impacter la liste des livres...
 export function updateLocation(location, changes) {
     return dispatch => {
-        locationList.update(location.key, changes)
+        return locationList.update(location.key, changes)
             .catch(error => dispatch(updateLocationError(error)));
     };
 }

@@ -80,10 +80,9 @@ export function updateCollectionError(error) {
     };
 }
 
-//fixme: impacter la liste des livres...
 export function updateCollection(collection, changes) {
     return dispatch => {
-        collectionList.update(collection.key, changes)
+        return collectionList.update(collection.key, changes)
             .catch(error => dispatch(updateCollectionError(error)));
     };
 }
