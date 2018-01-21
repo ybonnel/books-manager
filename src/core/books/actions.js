@@ -13,7 +13,9 @@ import {
     UNDELETE_BOOK_ERROR,
     UNLOAD_BOOKS_SUCCESS,
     UPDATE_BOOK_ERROR,
-    UPDATE_BOOK_SUCCESS
+    UPDATE_BOOK_SUCCESS,
+    TOGGLE_MOBILE_SELECTION,
+    RESET_MOBILE_SELECTION
 } from './action-types';
 
 
@@ -27,6 +29,19 @@ export function selectBook(book) {
 export function unselectBook() {
     return {
         type: UNSELECT_BOOK
+    }
+}
+
+export function toggleMobileSelection(book) {
+    return {
+        type: TOGGLE_MOBILE_SELECTION,
+        payload: book
+    }
+}
+
+export function resetMobileSelection() {
+    return {
+        type: RESET_MOBILE_SELECTION
     }
 }
 

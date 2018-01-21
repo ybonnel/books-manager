@@ -8,14 +8,8 @@ import {Compass, Edit2, Trash2} from "react-feather";
 
 
 class BookList extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {selectedBooks: new Map()};
-    }
 
     bookItems() {
-        const selectedBooks = this.state.selectedBooks;
         return this.props.books.map((book, index) => {
             return (
                 <BookItem
@@ -25,14 +19,8 @@ class BookList extends React.Component {
                     updateBook={this.props.updateBook}
                     selectBook={this.props.selectBook}
                     openModal={this.props.openModal}
-                    selectBookForMobile={(book) => {
-                        if (selectedBooks.has(book.key)) {
-                            selectedBooks.delete(book.key)
-                        } else {
-                            selectedBooks.set(book.key, book)
-                        }
-                        this.forceUpdate();
-                    }}
+                    selectBookForMobile={this.props.toggleMobileSelection}
+                    mobileSelection={this.props.mobileSelection}
                 />
             );
         });
@@ -44,37 +32,37 @@ class BookList extends React.Component {
                 {this.bookItems()}
                 <ul className="book__actions__mobile">
                     <li onClick={() => {
-                        if (this.state.selectedBooks.size > 0) {
-                            const book = this.state.selectedBooks.values().next().value;
+                        if (this.props.mobileSelection.size > 0) {
+                            const book = this.props.mobileSelection.values().next().value;
                             this.props.deleteBook(book);
                             this.setState({selectedBooks: new Map()});
                         }
                     }} className={classNames({
-                        'enabled': this.state.selectedBooks.size === 1,
-                        'disabled': this.state.selectedBooks.size !== 1
+                        'enabled': this.props.mobileSelection.size === 1,
+                        'disabled': this.props.mobileSelection.size !== 1
                     })}>
                         <a><Trash2/></a></li>
                     <li onClick={() => {
-                        if (this.state.selectedBooks.size === 1) {
-                            const book = this.state.selectedBooks.values().next().value;
+                        if (this.props.mobileSelection.size === 1) {
+                            const book = this.props.mobileSelection.values().next().value;
                             this.props.selectBook(book);
                             this.props.openModal(CREATION_MODAL);
                         }
                     }} className={classNames({
-                        'enabled': this.state.selectedBooks.size === 1,
-                        'disabled': this.state.selectedBooks.size !== 1
+                        'enabled': this.props.mobileSelection.size === 1,
+                        'disabled': this.props.mobileSelection.size !== 1
                     })}>
                         <a><Edit2/></a>
                     </li>
                     <li onClick={() => {
-                        if (this.state.selectedBooks.size === 1) {
-                            const book = this.state.selectedBooks.values().next().value;
+                        if (this.props.mobileSelection.size === 1) {
+                            const book = this.props.mobileSelection.values().next().value;
                             this.props.selectBook(book);
                             this.props.openModal(LOAN_MODAL);
                         }
                     }} className={classNames({
-                        'enabled': this.state.selectedBooks.size === 1,
-                        'disabled': this.state.selectedBooks.size !== 1
+                        'enabled': this.props.mobileSelection.size === 1,
+                        'disabled': this.props.mobileSelection.size !== 1
                     })}><a><Compass/></a></li>
                 </ul>
             </div>
@@ -84,11 +72,14 @@ class BookList extends React.Component {
 
 BookList.propTypes = {
     deleteBook: PropTypes.func.isRequired,
-    deleteBooks: PropTypes.func.isRequired,
+    // deleteBooks: PropTypes.func.isRequired,
     books: PropTypes.instanceOf(List).isRequired,
     updateBook: PropTypes.func.isRequired,
     selectBook: PropTypes.func.isRequired,
-    openModal: PropTypes.func.isRequired
+    openModal: PropTypes.func.isRequired,
+    mobilSelection: PropTypes.instanceOf(Map).isRequired,
+    toggleMobileSelection: PropTypes.func.isRequired,
+    resetMobileSelection: PropTypes.func.isRequired,
 };
 
 export default BookList;

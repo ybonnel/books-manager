@@ -26,6 +26,7 @@ import "./books.css";
 import "../../styles/buttons.css"
 import {CREATION_MODAL} from "../../../core/modal/variables";
 import Notification from "../../components/notification/index";
+import {getMobileSelection} from "../../../core/books";
 
 export class Books extends Component {
     static propTypes = {
@@ -45,10 +46,13 @@ export class Books extends Component {
         location: PropTypes.object.isRequired,
         notification: PropTypes.object,
         books: PropTypes.instanceOf(List).isRequired,
+        mobileSelection: PropTypes.instanceOf(Map).isRequired,
         undeleteBook: PropTypes.func.isRequired,
         unloadBooks: PropTypes.func.isRequired,
         updateBook: PropTypes.func.isRequired,
         selectBook: PropTypes.func.isRequired,
+        toggleMobileSelection: PropTypes.func.isRequired,
+        resetMobileSelection: PropTypes.func.isRequired,
         loadBook: PropTypes.func.isRequired,
         unselectBook: PropTypes.func.isRequired,
         isAuthenticated: PropTypes.bool.isRequired
@@ -113,6 +117,9 @@ export class Books extends Component {
                         updateBook={book => this.selectForUpdate(book)}
                         selectBook={this.props.selectBook}
                         openModal={this.props.openModal}
+                        mobileSelection={this.props.mobileSelection}
+                        toggleMobileSelection={this.props.toggleMobileSelection}
+                        resetMobileSelection={this.props.resetMobileSelection}
                     />
                 </div>
                 {this.props.notification.display ? this.renderNotification() : null}
@@ -129,12 +136,14 @@ const mapStateToProps = createSelector(
     getNotification,
     getBookFilter,
     getVisibleBooks,
+    getMobileSelection,
     getModal,
     isAuthenticated,
-    (notification, filterType, books, modal, isAuthenticated) => ({
+    (notification, filterType, books, mobileSelection, modal, isAuthenticated) => ({
         notification,
         filterType,
         books,
+        mobileSelection,
         modal,
         isAuthenticated
     })

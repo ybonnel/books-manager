@@ -22,6 +22,10 @@ export function getSelectedBook(state) {
     return state.books.selected
 }
 
+export function getMobileSelection(state) {
+    return getBooks(state).mobileSelection
+}
+
 
 //=====================================
 //  MEMORIZED SELECTORS

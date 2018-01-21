@@ -131,6 +131,8 @@
   .card__right__header {
     display: flex;
     flex-direction: row; }
+  .card__right__content {
+    pointer-events: none; }
   .book__title {
     font-size: .8em;
     padding-top: 0; }

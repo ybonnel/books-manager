@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {PropTypes} from 'prop-types';
 import {Eye, EyeOff, Edit2, Trash2, Compass} from 'react-feather';
+import classNames from "classnames";
 
 
 import {Book} from "../../../core/books";
@@ -21,11 +22,6 @@ class BookItem extends Component {
         this.state = {toggle: false};
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return nextProps.book !== this.props.book ||
-            nextState.toggle !== this.state.toggle;
-    }
-
     buildTitle() {
         const {book} = this.props;
         if (book.serie && book.serie.label) {
@@ -44,21 +40,26 @@ class BookItem extends Component {
     }
 
     handleSelect(book) {
-        this.bookItemNode.classList.toggle('selected');
         this.props.selectBookForMobile(book)
     }
 
     render() {
         const {book} = this.props;
-
         return (
-            <div className={`books__list__item book card ${this.state.toggle ? 'toggled' : ''}`} key={book.key} ref={ref => this.bookItemNode = ref}>
+            <div key={book.key}
+                 className={classNames({
+                     'books__list__item book': true,
+                     'card': true,
+                     'toggled': this.state.toggle,
+                     'selected': this.props.mobileSelection.get(book.key)
+                 })}>
                 <div className="book-selector" onClick={() => this.handleSelect(book)}/>
                 <div className="card__left">
                     <img className="book__cover"
                          src={`${book.cover ? book.cover : 'https://lorempixel.com/100/190/cats'}`}
                          alt="couverture"/>
-                    {this.state.toggle ? book.location && <div className="book__location"><p>{book.location.label}</p></div> :
+                    {this.state.toggle ? book.location &&
+                        <div className="book__location"><p>{book.location.label}</p></div> :
                         book.style && <div className="book__style"><p>{book.style.label}</p></div>}
 
                 </div>

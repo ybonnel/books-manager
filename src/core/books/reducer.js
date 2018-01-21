@@ -11,7 +11,10 @@ import {
     DELETE_BOOK_SUCCESS,
     FILTER_BOOKS,
     LOAD_BOOKS_SUCCESS,
-    UPDATE_BOOK_SUCCESS, LOAD_BOOK
+    UPDATE_BOOK_SUCCESS,
+    LOAD_BOOK,
+    TOGGLE_MOBILE_SELECTION,
+    RESET_MOBILE_SELECTION
 } from './action-types';
 
 
@@ -21,7 +24,8 @@ export const BooksState = new Record({
     list: new List(),
     previous: null,
     selected: null,
-    bookToUpdate: null
+    bookToUpdate: null,
+    mobileSelection: new Map()
 });
 
 
@@ -75,6 +79,18 @@ export function booksReducer(state = new BooksState(), {payload, type}) {
 
         case SIGN_OUT_SUCCESS:
             return new BooksState();
+
+        case TOGGLE_MOBILE_SELECTION:
+            return state.merge({
+                mobileSelection: state.mobileSelection.has(payload.key) ?
+                    state.mobileSelection.delete(payload.key) && state.mobileSelection :
+                    state.mobileSelection.set(payload.key, payload)
+            });
+
+        case RESET_MOBILE_SELECTION:
+            return state.merge({
+                mobileSelection: new Map()
+            });
 
         default:
             return state;

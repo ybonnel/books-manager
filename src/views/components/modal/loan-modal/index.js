@@ -65,6 +65,7 @@ class LoanModal extends React.Component {
             .then(location => this.setState({location}))
             .then(() => this.props.updateBook(this.props.selectedBook, this.cleanJson(this.state)))
             .then(() => this.props.unselectBook())
+            .then(() => this.props.resetMobileSelection())
             .then(() => {
                 this.setState({key: null, location: null});
                 this.props.closeModal();
@@ -145,7 +146,8 @@ LoanModal.propTypes = {
     closeModal: PropTypes.func.isRequired,
     updateBook: PropTypes.func.isRequired,
     createLocation: PropTypes.func.isRequired,
-    unselectBook: PropTypes.func.isRequired
+    unselectBook: PropTypes.func.isRequired,
+    resetMobileSelection:  PropTypes.func.isRequired
 };
 
 const mapStateToProps = createSelector(
