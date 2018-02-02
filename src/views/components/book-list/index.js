@@ -4,26 +4,36 @@ import {PropTypes} from 'prop-types';
 import {List} from 'immutable';
 import BookItem from "../book-item/index";
 import {CREATION_MODAL, LOAN_MODAL} from "../../../core/modal/variables";
-import {Compass, Edit2, Trash2} from "react-feather";
+import {Compass, Edit2, Trash2, PlusSquare} from "react-feather";
+import {normalizeString} from '../../../utils/utils'
 
 
 class BookList extends React.Component {
 
     bookItems() {
-        return this.props.books.map((book, index) => {
-            return (
-                <BookItem
-                    deleteBook={this.props.deleteBook}
-                    key={index}
-                    book={book}
-                    updateBook={this.props.updateBook}
-                    selectBook={this.props.selectBook}
-                    openModal={this.props.openModal}
-                    selectBookForMobile={this.props.toggleMobileSelection}
-                    mobileSelection={this.props.mobileSelection}
-                />
-            );
-        });
+        return this.props.books
+            .filter(book => normalizeString(book.title).includes(this.props.search) ||
+                book.editor && normalizeString(book.editor.label).includes(this.props.search) ||
+                book.collection && normalizeString(book.collection.label).includes(this.props.search) ||
+                book.serie && normalizeString(book.serie.label).includes(this.props.search) ||
+                book.location && normalizeString(book.location.label).includes(this.props.search) ||
+                book.authors.some(author => normalizeString(author.label).includes(this.props.search)) ||
+                book.artists && book.artists.some(artist => normalizeString(artist.label).includes(this.props.search))
+            )
+            .map((book, index) => {
+                return (
+                    <BookItem
+                        deleteBook={this.props.deleteBook}
+                        key={index}
+                        book={book}
+                        updateBook={this.props.updateBook}
+                        selectBook={this.props.selectBook}
+                        openModal={this.props.openModal}
+                        selectBookForMobile={this.props.toggleMobileSelection}
+                        mobileSelection={this.props.mobileSelection}
+                    />
+                );
+            });
     }
 
     render() {
@@ -31,6 +41,9 @@ class BookList extends React.Component {
             <div className="books__list">
                 {this.bookItems()}
                 <ul className="book__actions__mobile">
+                    <li onClick={this.props.openCreationModal} className="enabled">
+                        <a><PlusSquare/></a>
+                    </li>
                     <li onClick={() => {
                         if (this.props.mobileSelection.size > 0) {
                             const book = this.props.mobileSelection.values().next().value;
@@ -72,14 +85,14 @@ class BookList extends React.Component {
 
 BookList.propTypes = {
     deleteBook: PropTypes.func.isRequired,
-    // deleteBooks: PropTypes.func.isRequired,
     books: PropTypes.instanceOf(List).isRequired,
     updateBook: PropTypes.func.isRequired,
     selectBook: PropTypes.func.isRequired,
     openModal: PropTypes.func.isRequired,
-    mobilSelection: PropTypes.instanceOf(Map).isRequired,
+    mobileSelection: PropTypes.instanceOf(Map).isRequired,
     toggleMobileSelection: PropTypes.func.isRequired,
     resetMobileSelection: PropTypes.func.isRequired,
+    openCreationModal: PropTypes.func.isRequired
 };
 
 export default BookList;

@@ -15,8 +15,10 @@ import {
     UPDATE_BOOK_ERROR,
     UPDATE_BOOK_SUCCESS,
     TOGGLE_MOBILE_SELECTION,
-    RESET_MOBILE_SELECTION
+    RESET_MOBILE_SELECTION,
+    SEARCH_BOOKS
 } from './action-types';
+import {bookTypes} from './book';
 
 
 export function selectBook(book) {
@@ -42,6 +44,13 @@ export function toggleMobileSelection(book) {
 export function resetMobileSelection() {
     return {
         type: RESET_MOBILE_SELECTION
+    }
+}
+
+export function searchBooks(search) {
+    return {
+        type: SEARCH_BOOKS,
+        payload: search
     }
 }
 
@@ -113,7 +122,8 @@ export function undeleteBook() {
                     comment: book.comment || null,
                     date: book.date || null,
                     cover: book.cover || null,
-                    price: book.price || null
+                    price: book.price || null,
+                    type: book.type || bookTypes.COMIC
                 })
                 .catch(error => dispatch(undeleteBookError(error)));
         }

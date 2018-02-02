@@ -10,6 +10,9 @@
   flex-direction: row;
   list-style-type: none; }
 
+.books__actions .search {
+  margin: unset; }
+
 .filter {
   align-items: center; }
   .filter + .filter {
@@ -17,19 +20,60 @@
 
 .filter .button {
   display: flex;
-  align-items: center; }
+  align-items: center;
+  justify-content: center; }
 
 .filter .button.selected {
   border: 1px solid rgba(0, 0, 0, 0.87);
   color: rgba(0, 0, 0, 0.87);
   background-color: transparent; }
 
+.search__wrapper {
+  position: relative;
+  padding: 0 10px 0 10px;
+  flex-grow: 1;
+  margin: 0 50px;
+  display: flex; }
+
+.search__box {
+  padding-left: 50px;
+  font-size: 24px !important; }
+
+.search__box__icon__wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  display: flex;
+  align-items: center; }
+
+.search__box__icon {
+  color: rgba(0, 0, 0, 0.87); }
+
+.clear__search {
+  display: block;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  color: rgba(0, 0, 0, 0.87);
+  cursor: pointer; }
+
+.search__box:not(:valid) ~ .clear__search {
+  display: none; }
+
 @media (max-width: 768px) {
   .books__actions {
     flex-wrap: wrap;
     padding: 0; }
-  .button--add {
-    width: 100%; }
   .books__filters {
     width: 100%;
-    padding: 0; } }
+    padding: 0 10px; }
+  .filter {
+    flex-grow: 1; }
+  .search__wrapper {
+    margin: 0 5px; } }

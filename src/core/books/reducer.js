@@ -1,4 +1,5 @@
 import {List, Record} from 'immutable';
+import {normalizeString} from '../../utils/utils';
 
 import {
     SIGN_OUT_SUCCESS
@@ -14,7 +15,8 @@ import {
     UPDATE_BOOK_SUCCESS,
     LOAD_BOOK,
     TOGGLE_MOBILE_SELECTION,
-    RESET_MOBILE_SELECTION
+    RESET_MOBILE_SELECTION,
+    SEARCH_BOOKS
 } from './action-types';
 
 
@@ -25,9 +27,9 @@ export const BooksState = new Record({
     previous: null,
     selected: null,
     bookToUpdate: null,
-    mobileSelection: new Map()
+    mobileSelection: new Map(),
+    search: ''
 });
-
 
 export function booksReducer(state = new BooksState(), {payload, type}) {
     switch (type) {
@@ -91,6 +93,10 @@ export function booksReducer(state = new BooksState(), {payload, type}) {
             return state.merge({
                 mobileSelection: new Map()
             });
+
+        case SEARCH_BOOKS:
+            const search = normalizeString(payload);
+            return state.merge({search});
 
         default:
             return state;

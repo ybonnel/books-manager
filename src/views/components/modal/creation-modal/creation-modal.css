@@ -63,7 +63,7 @@
   width: calc(25% - 5px); }
 
 .form__input {
-  font: 15px/24px Arial, sans-serif;
+  font: 15px/24px Roboto, sans-serif;
   color: #4B4B4B;
   box-sizing: border-box;
   letter-spacing: 1px;

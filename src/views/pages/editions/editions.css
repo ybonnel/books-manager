@@ -16,7 +16,7 @@
   width: 2em;
   background-color: rgba(0, 0, 0, 0.87);
   color: #fff;
-  border-radius: 0 2em 2em 0;
+  border-radius: 0 4px 4px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +24,7 @@
 
 .search__input {
   height: 2em;
-  border-radius: 2em 0 0 2em;
+  border-radius: 4px 0 0 4px;
   border: 1px solid rgba(0, 0, 0, 0.87);
   color: rgba(0, 0, 0, 0.87);
   padding-left: 1em; }

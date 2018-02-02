@@ -4,7 +4,8 @@ import {PropTypes} from 'prop-types';
 import {connect} from "react-redux";
 import {createSelector} from "reselect";
 import {withRouter} from 'react-router-dom';
-import {PlusSquare} from 'react-feather';
+import {PlusSquare, Search, X} from 'react-feather';
+import MediaQuery from 'react-responsive';
 
 import {getNotification, notificationActions} from "../../../core/notification";
 import {booksActions, getBookFilter, getVisibleBooks} from "../../../core/books/index";
@@ -16,17 +17,20 @@ import {styleActions} from "../../../core/style/index";
 import {collectionActions} from "../../../core/collection/index";
 import {editorActions} from "../../../core/editor/index";
 import {getModal, modalActions} from "../../../core/modal/index";
+import {isAuthenticated} from "../../../core/auth/selectors";
+import {CREATION_MODAL} from "../../../core/modal/variables";
+import {getMobileSelection} from "../../../core/books";
+import {getBookSearch} from "../../../core/books/selectors";
 
 import BookList from "../../components/book-list";
 import BookFilters from "../../components/books-filters";
 import Modal from "../../components/modal";
-
-import {isAuthenticated} from "../../../core/auth/selectors";
-import "./books.css";
-import "../../styles/buttons.css"
-import {CREATION_MODAL} from "../../../core/modal/variables";
 import Notification from "../../components/notification/index";
-import {getMobileSelection} from "../../../core/books";
+
+import * as constants from "../../../utils/constants";
+
+import "./books.css";
+import "../../styles/buttons.css";
 
 export class Books extends Component {
     static propTypes = {
@@ -55,6 +59,7 @@ export class Books extends Component {
         resetMobileSelection: PropTypes.func.isRequired,
         loadBook: PropTypes.func.isRequired,
         unselectBook: PropTypes.func.isRequired,
+        searchBooks: PropTypes.func.isRequired,
         isAuthenticated: PropTypes.bool.isRequired
     };
 
@@ -63,6 +68,7 @@ export class Books extends Component {
 
         this.selectForUpdate = this.selectForUpdate.bind(this);
         this.renderNotification = this.renderNotification.bind(this);
+        this.handleClearSearch = this.handleClearSearch.bind(this);
     }
 
     componentWillMount() {
@@ -86,7 +92,7 @@ export class Books extends Component {
     }
 
     renderNotification() {
-        const { notification } = this.props;
+        const {notification} = this.props;
         return (
             <Notification
                 action={this.props.undeleteBook}
@@ -98,17 +104,37 @@ export class Books extends Component {
         );
     }
 
+    handleClearSearch() {
+        this.searchInput.value = '';
+        this.props.searchBooks('');
+    }
+
     render() {
         return (
             <section className="books">
                 <div className="wrapper">
                     <h1 className="books__header">Books</h1>
                     <div className="books__actions">
-                        <a className="button button__icon button--add" onClick={() => this.props.openModal(CREATION_MODAL)}>
-                            <PlusSquare/>
-                            Ajouter un Livre
-                        </a>
-                        <BookFilters filter={this.props.filterBooks} />
+                        <MediaQuery query={constants.minNavigationMobileBreakpoint}>
+                            <a className="button button__icon button--add"
+                               onClick={() => this.props.openModal(CREATION_MODAL)}>
+                                <PlusSquare/>
+                                Ajouter un Livre
+                            </a>
+                        </MediaQuery>
+                        <div className="search__wrapper">
+                            <div className="search__box__icon__wrapper">
+                                <Search className="search__box__icon"/>
+                            </div>
+                            <input type="text" required className="search__box form__input"
+                                   placeholder="Rechercher un livre"
+                                   ref={ref => this.searchInput = ref}
+                                   onChange={event => this.props.searchBooks(event.target.value)}/>
+                            <span className="form__input__border--focus"/>
+                                <X className="clear__search" onClick={this.handleClearSearch}/>
+                        </div>
+                        <BookFilters filter={this.props.filterBooks}/>
+
                     </div>
                     <Modal/>
                     <BookList
@@ -120,6 +146,8 @@ export class Books extends Component {
                         mobileSelection={this.props.mobileSelection}
                         toggleMobileSelection={this.props.toggleMobileSelection}
                         resetMobileSelection={this.props.resetMobileSelection}
+                        search={this.props.search}
+                        openCreationModal={() => this.props.openModal(CREATION_MODAL)}
                     />
                 </div>
                 {this.props.notification.display ? this.renderNotification() : null}
@@ -139,13 +167,15 @@ const mapStateToProps = createSelector(
     getMobileSelection,
     getModal,
     isAuthenticated,
-    (notification, filterType, books, mobileSelection, modal, isAuthenticated) => ({
+    getBookSearch,
+    (notification, filterType, books, mobileSelection, modal, isAuthenticated, search) => ({
         notification,
         filterType,
         books,
         mobileSelection,
         modal,
-        isAuthenticated
+        isAuthenticated,
+        search
     })
 );
 

@@ -14,6 +14,10 @@ export function getBookFilter(state) {
     return getBooks(state).filter;
 }
 
+export function getBookSearch(state) {
+    return getBooks(state).search
+}
+
 export function getBookDeleted(state) {
     return getBooks(state).deleted;
 }
@@ -34,9 +38,10 @@ export function getMobileSelection(state) {
 export const getVisibleBooks = createSelector(
     getBookList,
     getBookFilter,
+    getBookSearch,
     (books, filter) => {
         switch (filter) {
-        case filters.OUT:
+            case filters.OUT:
             return books.filter(book => !!book.location);
 
         case filters.IN:

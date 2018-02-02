@@ -16,6 +16,10 @@
   list-style-type: none;
 }
 
+.books__actions .search {
+  margin: unset;
+}
+
 .filter {
   align-items: center;
 
@@ -27,6 +31,7 @@
 .filter .button {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .filter .button.selected {
@@ -35,19 +40,71 @@
   background-color: transparent;
 }
 
+//search books
+.search__wrapper {
+  position: relative;
+  padding: 0 10px 0 10px;
+  flex-grow: 1;
+
+  margin: 0 50px;
+
+  display: flex;
+}
+
+.search__box {
+  padding-left: 50px;
+  font-size: 24px !important;
+}
+
+.search__box__icon__wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.search__box__icon {
+  color: $color;
+}
+
+.clear__search {
+  display: block;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+
+  z-index:1;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  color: $color;
+  cursor: pointer;
+}
+
+.search__box:not(:valid) ~ .clear__search {
+  display: none;
+}
+
 @media (max-width: $navigation_mobile_breakpoint) {
   .books__actions {
     flex-wrap: wrap;
     padding: 0;
   }
 
-  .button--add {
-    width: 100%;
-  }
-
   .books__filters {
     width: 100%;
-    padding: 0;
+    padding: 0 10px;
+  }
+
+  .filter {
+    flex-grow: 1;
+  }
+
+  .search__wrapper {
+    margin: 0 5px;
   }
 
 

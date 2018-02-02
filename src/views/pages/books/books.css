@@ -11,21 +11,26 @@
 
 @media screen and (max-width: 768px) {
   .books__header {
-    margin-left: 1em; }
+    margin-left: 1em;
+    margin-bottom: 0; }
   .books__list {
-    flex-direction: column; }
+    flex-direction: column;
+    margin-bottom: 30px; }
   .books {
     padding: 0; }
   .book__actions__mobile {
     list-style-type: none;
-    padding: 0 10px;
+    padding: 5px 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%; }
+    width: 100%;
+    background-color: #F6F6F6;
+    box-sizing: border-box;
+    margin: 0; }
   .book__actions__mobile li .enabled {
     color: rgba(0, 0, 0, 0.87); }
   .book__actions__mobile li.disabled a svg {

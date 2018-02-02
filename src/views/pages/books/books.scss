@@ -20,10 +20,12 @@
 @media screen and (max-width: $navigation_mobile_breakpoint) {
   .books__header {
     margin-left: 1em;
+    margin-bottom: 0;
   }
 
   .books__list {
     flex-direction: column;
+    margin-bottom: 30px;
   }
 
   .books {
@@ -32,7 +34,7 @@
 
   .book__actions__mobile {
     list-style-type: none;
-    padding: 0 10px;
+    padding: 5px 10px;
 
     display: flex;
     flex-direction: row;
@@ -42,6 +44,11 @@
     bottom: 0;
     left: 0;
     width: 100%;
+
+    background-color: $color-background-gray;
+    box-sizing: border-box;
+    margin: 0;
+
   }
 
   .book__actions__mobile li {
