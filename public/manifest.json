@@ -1,9 +1,9 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Book Manager",
+  "name": "Book Manager",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "book.ico",
       "sizes": "192x192",
       "type": "image/png"
     }
