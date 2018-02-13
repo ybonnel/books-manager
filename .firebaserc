@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "bdteque",
-    "bdtheque": "bdteque"
+    "default": "alfred",
+    "alfred": "alfred-books-manager"
   }
 }

@@ -3,17 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "classnames": "^2.2.5",
+    "npm-run-all": "^4.1.1",
+    "node-sass-chokidar": "^0.0.3",
     "react-scripts": "1.0.14"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "firebase": "^4.8.1",
     "history": "^4.7.2",
     "immutability-helper": "^2.5.0",
     "immutable": "^3.8.2",
     "moment": "^2.19.1",
-    "node-sass-chokidar": "^0.0.3",
-    "npm-run-all": "^4.1.1",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-addons-css-transition-group": "^15.6.2",
