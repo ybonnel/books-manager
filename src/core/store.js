@@ -5,14 +5,19 @@ import {createLogger} from "redux-logger";
 
 
 export default () => {
-    const composeEnhancers =  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+    let composeEnhancers =  compose;
+    let middleware = [thunkMiddleware];
+
+    if(process.env.NODE_ENV !== 'production') {
+        composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+        middleware = [...middleware, createLogger()]
+    }
 
     return createStore(
         reducers,
         composeEnhancers(
             applyMiddleware(
-                createLogger(),
-                thunkMiddleware
+                ...middleware
             )
         )
     );
