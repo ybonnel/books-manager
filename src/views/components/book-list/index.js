@@ -12,13 +12,16 @@ class BookList extends React.Component {
 
     bookItems() {
         return this.props.books
-            .filter(book => normalizeString(book.title).includes(this.props.search) ||
-                book.editor && normalizeString(book.editor.label).includes(this.props.search) ||
-                book.collection && normalizeString(book.collection.label).includes(this.props.search) ||
-                book.serie && normalizeString(book.serie.label).includes(this.props.search) ||
-                book.location && normalizeString(book.location.label).includes(this.props.search) ||
-                book.authors.some(author => normalizeString(author.label).includes(this.props.search)) ||
-                book.artists && book.artists.some(artist => normalizeString(artist.label).includes(this.props.search))
+            .filter(book => !this.props.search || (
+                    book.title && normalizeString(book.title).includes(this.props.search) ||
+                    book.editor && normalizeString(book.editor.label).includes(this.props.search) ||
+                    book.collection && normalizeString(book.collection.label).includes(this.props.search) ||
+                    book.serie && normalizeString(book.serie.label).includes(this.props.search) ||
+                    book.location && normalizeString(book.location.label).includes(this.props.search) ||
+                    book.authors.some(author => normalizeString(author.label).includes(this.props.search)) ||
+                    book.artists && book.artists.some(artist => normalizeString(artist.label).includes(this.props.search)) ||
+                    book.style && normalizeString(book.style.label).includes(this.props.search)
+                )
             )
             .map((book, index) => {
                 return (
