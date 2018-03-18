@@ -7,7 +7,8 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import classNames from "classnames";
-import {CameraOff} from 'react-feather';
+import {CameraOff, Target} from 'react-feather';
+import {Loading} from '../../loading';
 
 
 import {getModal, modalActions} from "../../../../core/modal/index";
@@ -21,7 +22,8 @@ import {getStylesList, styleActions} from "../../../../core/style/index";
 import {getLocationsList, locationActions} from "../../../../core/location/index";
 import {getSelectedBook} from "../../../../core/books/selectors";
 
-import {mapToObj} from "../../../../utils/utils"
+import {mapToObj, fetchWithRetry} from "../../../../utils/utils"
+
 import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
@@ -39,6 +41,8 @@ class CreationModal extends React.Component {
         this.getAutocompleteData = this.getAutocompleteData.bind(this);
         this.initializeState = this.initializeState.bind(this);
         this.validate = this.validate.bind(this);
+        this.handleLookUp = this.handleLookUp.bind(this);
+        this.getBookInformations = this.getBookInformations.bind(this);
 
         const book = this.props.selectedBook ? mapToObj(this.props.selectedBook) : this.initializeState();
         this.state = {...book, errors: {}}
@@ -59,7 +63,8 @@ class CreationModal extends React.Component {
             location: '',
             price: '',
             comment: '',
-            cover: ''
+            cover: '',
+            loading: false
         }
     }
 
@@ -163,7 +168,106 @@ class CreationModal extends React.Component {
         return recordList.reduce((acc, item, index) => acc.concat(item), [])
     }
 
+    handleLookUp() {
+        this.setState({loading: true, error: undefined});
+        fetchWithRetry(process.env.REACT_APP_AWS_ITEM_LOOKUP_URL, 500, 3, {
+            method: 'POST',
+            headers: new Headers({'Content-Type': 'application/json'}),
+            body: JSON.stringify({"isbn": this.state.isbn})
+        })
+            .then(result => {
+                const bookAwsInfo = this.getBookInformations(result[0]);
+                this.setState({
+                    loading: false,
+                    choicesWindow: true,
+                    bookAwsInfo,
+                    choices: this.makeChoices(bookAwsInfo)
+                });
+            })
+            .catch((error) => {
+                this.setState({
+                    loading: false,
+                    error: {
+                        error,
+                        message: 'Désolé, une erreur est survenue lors de la recherche d\'information. Si le problème persiste, ouvrez la fenêtre et criez tres fort, qui sait ?'
+                    }
+                });
+            })
+    }
+
+    makeChoices(info) {
+        const [awsTitle, serie, _, tome, title] = info.title.match(/(.*)(Tome|T)\s?([0-9]*)(.*)/);
+        return {
+            serie,
+            tome,
+            title,
+            authors: info.authors,
+            artists: info.artists
+        };
+    }
+
+
+    getBookInformations(awsResult) {
+        const info = awsResult.ItemAttributes[0];
+        const title = Array.isArray(info.Title) ? info.Title[0] : info.Title;
+        const price = info.ListPrice[0].Amount / 100;
+        const editor = Array.isArray(info.Studio) ? info.Studio[0] : info.Studio;
+
+        let artists, authors;
+        if (info.Creator) {
+            authors = info.Creator.filter(item => !item.$.Role.toUpperCase().includes('ILLUSTRATION')).map(item => item._);
+            artists = info.Creator.filter(item => item.$.Role.toUpperCase().includes('ILLUSTRATION')).map(item => item._);
+        } else {
+            authors = info.Author;
+        }
+
+        return {title, price, editor, authors, artists};
+    }
+
     render() {
+        if (this.state.loading) {
+            return (
+                <Modal className="modal creation-modal"
+                       isOpen={this.props.modal.isOpen}>
+                    <Loading/>
+                </Modal>
+            )
+        }
+
+        if (this.state.choicesWindow && this.state.choices) {
+            return (
+                <Modal className="modal creation-modal"
+                       isOpen={this.props.modal.isOpen}>
+                    <div className="choices__results">
+                        {this.state.choices.title && [<label key='label-title'>title</label>, <input key='title' defaultValue={this.state.choices.title}/>]}
+                        {this.state.choices.tome && [<label  key='label-tome'>tome</label>,
+                            <input key='tome' type="number" defaultValue={this.state.choices.tome}/>]}
+                        {this.state.choices.serie && [<label  key='label-serie'>serie</label>, <input key='serie' defaultValue={this.state.choices.serie}/>]}
+                        {this.state.choices.authors && [
+                            <label  key='label-authors'>auteurs</label>, ...this.state.choices.authors.map((author, idx) =>
+                                <input key={`author${idx}`} type="text" defaultValue={author}/>)]}
+                        {this.state.choices.artists && [
+                            <label  key='label-artists'>artistes</label>, ...this.state.choices.artists.map((artist, idx) =>
+                                <input key={`artist${idx}`} type="text" defaultValue={artist}/>)]}
+                    </div>
+                    <div className="modal__footer">
+                        <a className="button" onClick={() => {
+                            this.setState({
+                                title: this.state.choices.title || '',
+                                serie: this.state.choices.serie ? {label: this.state.choices.serie} : '',
+                                tome: this.state.choices.tome || '',
+                                artists:  this.state.choices.artists ? this.state.choices.artists.map(item => ({label: item})) : [],
+                                authors: this.state.choices.authors ? this.state.choices.authors.map(item => ({label: item})) : [],
+                                editor: this.state.bookAwsInfo.editor ? {label: this.state.bookAwsInfo.editor} : '',
+                                price: this.state.bookAwsInfo.price || '',
+                                choicesWindow: false
+                            })
+                        }}>Enregister</a>
+                    </div>
+                </Modal>
+            )
+        }
+
         return (
             <Modal
                 onRequestClose={() => {
@@ -174,6 +278,7 @@ class CreationModal extends React.Component {
                 isOpen={this.props.modal.isOpen}>
                 <div className="wrapper modal__wrapper">
                     <div className="modal__title">Ajouter un livre</div>
+                    {this.state.error && <div>{this.state.error.message}</div>}
                     <div className="modal__content">
                         <form className="form creation-form">
                             <div className="form__group">
@@ -341,10 +446,11 @@ class CreationModal extends React.Component {
                                             name="isbn"
                                             className={`form__input ${!!this.state.isbn ? 'form__input--has-content' : ''}`}
                                             onChange={(event) => this.setState({isbn: event.target.value})}
-                                            value={this.state.isbn || undefined}
+                                            value={this.state.isbn}
                                         />
                                         <label htmlFor="isbn">ISBN</label>
                                         <span className="form__input__border--focus"/>
+                                        <a onClick={this.handleLookUp}><Target/></a>
                                     </div>
                                     <div className="input__group input__group--half">
                                         <div className={classNames({
@@ -382,7 +488,8 @@ class CreationModal extends React.Component {
                                 </div>
                                 <div className="input__group__subgroup input__group--third">
                                     <div className="cover__thumbnail">
-                                        {this.state.cover ? <img src={this.state.cover} alt="thumbnail"/> : <CameraOff/>}
+                                        {this.state.cover ? <img src={this.state.cover} alt="thumbnail"/> :
+                                            <CameraOff/>}
                                     </div>
                                 </div>
                             </div>

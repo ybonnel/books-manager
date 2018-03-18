@@ -1,6 +1,0 @@
-{
-  "projects": {
-    "default": "alfred",
-    "alfred": "alfred-books-manager"
-  }
-}
