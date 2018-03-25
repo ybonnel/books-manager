@@ -9,6 +9,8 @@ import Select from 'react-select';
 import classNames from "classnames";
 import {CameraOff, Target} from 'react-feather';
 import {Loading} from '../../loading';
+import {DragDropContext} from 'react-beautiful-dnd';
+import styled from 'styled-components'
 
 
 import {getModal, modalActions} from "../../../../core/modal/index";
@@ -22,13 +24,21 @@ import {getStylesList, styleActions} from "../../../../core/style/index";
 import {getLocationsList, locationActions} from "../../../../core/location/index";
 import {getSelectedBook} from "../../../../core/books/selectors";
 
-import {mapToObj, fetchWithRetry} from "../../../../utils/utils"
+import {Column} from '../../multi-drag/column';
+import {multiDragAwareReorder, multiSelectTo as multiSelect} from '../../multi-drag/dragUtils';
+
+import {mapToObj, fetchWithRetry, arrayToObj} from "../../../../utils/utils"
 
 import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
 
 moment.locale('fr');
+
+const Container = styled.div`
+  display: flex;
+  user-select: none;
+`;
 
 class CreationModal extends React.Component {
     constructor(props) {
@@ -43,6 +53,11 @@ class CreationModal extends React.Component {
         this.validate = this.validate.bind(this);
         this.handleLookUp = this.handleLookUp.bind(this);
         this.getBookInformations = this.getBookInformations.bind(this);
+        this.onDragStart = this.onDragStart.bind(this);
+        this.onDragEnd = this.onDragEnd.bind(this);
+        this.multiSelectTo = this.multiSelectTo.bind(this);
+        this.toggleSelection = this.toggleSelection.bind(this);
+        this.toggleSelectionInGroup = this.toggleSelectionInGroup.bind(this);
 
         const book = this.props.selectedBook ? mapToObj(this.props.selectedBook) : this.initializeState();
         this.state = {...book, errors: {}}
@@ -165,7 +180,7 @@ class CreationModal extends React.Component {
         if (!recordList) {
             return [];
         }
-        return recordList.reduce((acc, item, index) => acc.concat(item), [])
+        return recordList.reduce((acc, item) => acc.concat(item), [])
     }
 
     handleLookUp() {
@@ -177,14 +192,19 @@ class CreationModal extends React.Component {
         })
             .then(result => {
                 const bookAwsInfo = this.getBookInformations(result[0]);
+                const choices = this.makeChoices(bookAwsInfo);
                 this.setState({
                     loading: false,
                     choicesWindow: true,
                     bookAwsInfo,
-                    choices: this.makeChoices(bookAwsInfo)
+                    choices,
+                    entities: choices.creatorsChoice,
+                    draggingTaskId: null,
+                    selectedTaskIds: []
                 });
             })
             .catch((error) => {
+                console.error(error);
                 this.setState({
                     loading: false,
                     error: {
@@ -197,12 +217,29 @@ class CreationModal extends React.Component {
 
     makeChoices(info) {
         const [awsTitle, serie, _, tome, title] = info.title.match(/(.*)(Tome|T)\s?([0-9]*)(.*)/);
+        const authors = (info.authors || []).map((name, idx) => ({id: `author-${idx}`, label: name}));
+        const artists = (info.artists || []).map((name, idx) => ({id: `artist-${idx}`, label: name}));
+
         return {
             serie,
             tome,
             title,
-            authors: info.authors,
-            artists: info.artists
+            creatorsChoice: {
+                columnOrder: ['authors', 'artists'],
+                columns: {
+                    authors: {
+                        id: 'authors',
+                        title: 'Auteurs',
+                        taskIds: authors.map(auth => auth.id)
+                    },
+                    artists: {
+                        id: 'artists',
+                        title: 'Artistes',
+                        taskIds: artists.map(art => art.id)
+                    }
+                },
+                tasks: {...arrayToObj(authors, 'id'), ...arrayToObj(artists, 'id')}
+            }
         };
     }
 
@@ -224,6 +261,109 @@ class CreationModal extends React.Component {
         return {title, price, editor, authors, artists};
     }
 
+    onDragStart(start) {
+        const id: string = start.draggableId;
+        const selected = this.state.selectedTaskIds.find(taskId => taskId === id);
+
+        // if dragging an item that is not selected - unselect all items
+        if (!selected) {
+            this.setState({
+                selectedTaskIds: [],
+            });
+        }
+        this.setState({
+            draggingTaskId: start.draggableId,
+        });
+    }
+
+    onDragEnd(result) {
+        const destination = result.destination;
+        const source = result.source;
+
+        // nothing to do
+        if (!destination || result.reason === 'CANCEL') {
+            this.setState({
+                draggingTaskId: null,
+            });
+            return;
+        }
+
+        const processed = multiDragAwareReorder({
+            entities: this.state.entities,
+            selectedTaskIds: this.state.selectedTaskIds,
+            source,
+            destination,
+        });
+
+        this.setState({
+            ...processed,
+            draggingTaskId: null,
+        });
+    }
+
+    toggleSelection(taskId) {
+        const selectedTaskIds = this.state.selectedTaskIds;
+        const wasSelected = selectedTaskIds.includes(taskId);
+
+        const newTaskIds = (() => {
+            // Task was not previously selected
+            // now will be the only selected item
+            if (!wasSelected) {
+                return [taskId];
+            }
+
+            // Task was part of a selected group
+            // will now become the only selected item
+            if (selectedTaskIds.length > 1) {
+                return [taskId];
+            }
+
+            // task was previously selected but not in a group
+            // we will now clear the selection
+            return [];
+        })();
+
+        this.setState({
+            selectedTaskIds: newTaskIds,
+        });
+    }
+
+    toggleSelectionInGroup(taskId) {
+        const selectedTaskIds = this.state.selectedTaskIds;
+        const index = selectedTaskIds.indexOf(taskId);
+
+        // if not selected - add it to the selected items
+        if (index === -1) {
+            this.setState({
+                selectedTaskIds: [...selectedTaskIds, taskId],
+            });
+            return;
+        }
+
+        // it was previously selected and now needs to be removed from the group
+        const shallow = [...selectedTaskIds];
+        shallow.splice(index, 1);
+        this.setState({
+            selectedTaskIds: shallow,
+        });
+    }
+
+    multiSelectTo(newTaskId) {
+        const updated = multiSelect(
+            this.state.entities,
+            this.state.selectedTaskIds,
+            newTaskId
+        );
+
+        if (updated == null) {
+            return;
+        }
+
+        this.setState({
+            selectedTaskIds: updated,
+        });
+    }
+
     render() {
         if (this.state.loading) {
             return (
@@ -235,20 +375,103 @@ class CreationModal extends React.Component {
         }
 
         if (this.state.choicesWindow && this.state.choices) {
+            const entities = this.state.entities;
+            const selected = this.state.selectedTaskIds;
+
+            const getTasks = (entities, columnId) => entities.columns[columnId].taskIds
+                .map(taskId => entities.tasks[taskId]);
+
             return (
                 <Modal className="modal creation-modal"
                        isOpen={this.props.modal.isOpen}>
-                    <div className="choices__results">
-                        {this.state.choices.title && [<label key='label-title'>title</label>, <input key='title' defaultValue={this.state.choices.title}/>]}
-                        {this.state.choices.tome && [<label  key='label-tome'>tome</label>,
-                            <input key='tome' type="number" defaultValue={this.state.choices.tome}/>]}
-                        {this.state.choices.serie && [<label  key='label-serie'>serie</label>, <input key='serie' defaultValue={this.state.choices.serie}/>]}
+                    <div className="choices__results form__group form__group--full">
+                        {this.state.choices.title &&
+                        <div className="input__group input__group--third">
+                            <input
+                                type="text"
+                                id="choice-title"
+                                className={classNames({
+                                    'form__input': true,
+                                    'form__input--has-content': !!this.state.choices.title,
+                                })}
+                                value={this.state.choices.title}
+                                onChange={(event) => this.setState({
+                                    choices: {
+                                        ...this.state.choices,
+                                        title: event.target.value
+                                    }
+                                })}/>
+                            <label htmlFor="choice-title">Titre</label>
+                            <span className="form__input__border--focus"/>
+                        </div>}
+                        {this.state.choices.tome &&
+                        <div className="input__group input__group--third">
+                            <input
+                                type="number"
+                                step="1" min="0"
+                                id="choice-tome"
+                                className={classNames({
+                                    'form__input': true,
+                                    'form__input--has-content': !!this.state.choices.tome,
+                                })}
+                                value={this.state.choices.tome}
+                                onChange={(event) => this.setState({
+                                    choices: {
+                                        ...this.state.choices,
+                                        tome: event.target.value
+                                    }
+                                })}/>
+                            <label htmlFor="choice-tome">Tome</label>
+                            <span className="form__input__border--focus"/>
+                        </div>}
+                        {this.state.choices.serie &&
+                        <div className="input__group input__group--third">
+                            <input
+                                type="text"
+                                id="choice-serie"
+                                className={classNames({
+                                    'form__input': true,
+                                    'form__input--has-content': !!this.state.choices.serie,
+                                })}
+                                value={this.state.choices.serie}
+                                onChange={(event) => this.setState({
+                                    choices: {
+                                        ...this.state.choices,
+                                        serie: event.target.value
+                                    }
+                                })}/>
+                            <label htmlFor="choice-title">Serie</label>
+                            <span className="form__input__border--focus"/>
+                        </div>}
                         {this.state.choices.authors && [
-                            <label  key='label-authors'>auteurs</label>, ...this.state.choices.authors.map((author, idx) =>
+                            <label
+                                key='label-authors'>auteurs</label>, ...this.state.choices.authors.map((author, idx) =>
                                 <input key={`author${idx}`} type="text" defaultValue={author}/>)]}
                         {this.state.choices.artists && [
-                            <label  key='label-artists'>artistes</label>, ...this.state.choices.artists.map((artist, idx) =>
+                            <label
+                                key='label-artists'>artistes</label>, ...this.state.choices.artists.map((artist, idx) =>
                                 <input key={`artist${idx}`} type="text" defaultValue={artist}/>)]}
+                    </div>
+                    <div className="creator__choice">
+                        <DragDropContext
+                            onDragStart={this.onDragStart}
+                            onDragEnd={this.onDragEnd}
+                        >
+                            <Container className="creator__choice__container">
+                                {this.state.entities.columnOrder.map(columnId => (
+                                    <Column
+                                        column={entities.columns[columnId]}
+                                        tasks={getTasks(entities, columnId)}
+                                        selectedTaskIds={selected}
+                                        key={columnId}
+                                        draggingTaskId={this.state.draggingTaskId}
+                                        toggleSelection={this.toggleSelection}
+                                        toggleSelectionInGroup={this.toggleSelectionInGroup}
+                                        multiSelectTo={this.multiSelectTo}
+                                    />
+                                ))}
+                            </Container>
+                        </DragDropContext>
                     </div>
                     <div className="modal__footer">
                         <a className="button" onClick={() => {
@@ -256,13 +479,13 @@ class CreationModal extends React.Component {
                                 title: this.state.choices.title || '',
                                 serie: this.state.choices.serie ? {label: this.state.choices.serie} : '',
                                 tome: this.state.choices.tome || '',
-                                artists:  this.state.choices.artists ? this.state.choices.artists.map(item => ({label: item})) : [],
-                                authors: this.state.choices.authors ? this.state.choices.authors.map(item => ({label: item})) : [],
+                                artists: this.state.entities.columns.artists.taskIds.map(id => this.state.entities.tasks[id]),
+                                authors: this.state.entities.columns.authors.taskIds.map(id => this.state.entities.tasks[id]),
                                 editor: this.state.bookAwsInfo.editor ? {label: this.state.bookAwsInfo.editor} : '',
                                 price: this.state.bookAwsInfo.price || '',
                                 choicesWindow: false
                             })
-                        }}>Enregister</a>
+                        }}>Importer</a>
                     </div>
                 </Modal>
             )
@@ -450,7 +673,6 @@ class CreationModal extends React.Component {
                                         />
                                         <label htmlFor="isbn">ISBN</label>
                                         <span className="form__input__border--focus"/>
-                                        <a onClick={this.handleLookUp}><Target/></a>
                                     </div>
                                     <div className="input__group input__group--half">
                                         <div className={classNames({
@@ -509,6 +731,8 @@ class CreationModal extends React.Component {
                         </form>
                     </div>
                     <div className="modal__footer">
+                        {this.state.isbn && this.state.isbn.length === 13 &&
+                        <a className="button" onClick={this.handleLookUp}>Importer depuis amazon</a>}
                         <a className="button" onClick={this.handleSubmit}>Enregister</a>
                         <a className="button" onClick={this.handleCloseButton}>
                             Annuler

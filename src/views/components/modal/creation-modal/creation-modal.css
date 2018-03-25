@@ -38,6 +38,9 @@
   padding: 20px;
   box-sizing: border-box; }
 
+.form__group--full {
+  width: 100%; }
+
 .input__group {
   position: relative;
   margin-bottom: 15px; }

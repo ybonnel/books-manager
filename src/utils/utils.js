@@ -40,3 +40,11 @@ export function fetchWithRetry(url, delay, limit, fetchOptions = {}) {
         fetchUrl();
     });
 }
+
+export function arrayToObj(array, id = undefined, what = undefined) {
+    return array.reduce((acc, curr, idx) => {
+        const objId = id ? curr.id : idx;
+        acc[objId] = what ? curr[what] : curr;
+        return acc;
+    }, {});
+}
