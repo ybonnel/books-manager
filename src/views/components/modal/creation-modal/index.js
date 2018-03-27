@@ -7,11 +7,9 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import classNames from "classnames";
-import {CameraOff, Target} from 'react-feather';
+import {CameraOff} from 'react-feather';
 import {Loading} from '../../loading';
 import {DragDropContext} from 'react-beautiful-dnd';
-import styled from 'styled-components'
-
 
 import {getModal, modalActions} from "../../../../core/modal/index";
 import {booksActions} from "../../../../core/books/index";
@@ -27,18 +25,14 @@ import {getSelectedBook} from "../../../../core/books/selectors";
 import {Column} from '../../multi-drag/column';
 import {multiDragAwareReorder, multiSelectTo as multiSelect} from '../../multi-drag/dragUtils';
 
-import {mapToObj, fetchWithRetry, arrayToObj} from "../../../../utils/utils"
+import {mapToObj, fetchWithRetry, arrayToObj, trimWithoutPonctuation} from "../../../../utils/utils"
 
 import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
+import {MultiDragContainer} from "../../multi-drag/wrappers";
 
 moment.locale('fr');
-
-const Container = styled.div`
-  display: flex;
-  user-select: none;
-`;
 
 class CreationModal extends React.Component {
     constructor(props) {
@@ -199,8 +193,8 @@ class CreationModal extends React.Component {
                     bookAwsInfo,
                     choices,
                     entities: choices.creatorsChoice,
-                    draggingTaskId: null,
-                    selectedTaskIds: []
+                    draggingCreatorId: null,
+                    selectedCreatorIds: []
                 });
             })
             .catch((error) => {
@@ -221,24 +215,24 @@ class CreationModal extends React.Component {
         const artists = (info.artists || []).map((name, idx) => ({id: `artist-${idx}`, label: name}));
 
         return {
-            serie,
+            serie: trimWithoutPonctuation(serie),
             tome,
-            title,
+            title: trimWithoutPonctuation(title),
             creatorsChoice: {
                 columnOrder: ['authors', 'artists'],
                 columns: {
                     authors: {
                         id: 'authors',
                         title: 'Auteurs',
-                        taskIds: authors.map(auth => auth.id)
+                        creatorIds: authors.map(auth => auth.id)
                     },
                     artists: {
                         id: 'artists',
                         title: 'Artistes',
-                        taskIds: artists.map(art => art.id)
+                        creatorIds: artists.map(art => art.id)
                     }
                 },
-                tasks: {...arrayToObj(authors, 'id'), ...arrayToObj(artists, 'id')}
+                creators: {...arrayToObj(authors, 'id'), ...arrayToObj(artists, 'id')}
             }
         };
     }
@@ -262,17 +256,17 @@ class CreationModal extends React.Component {
     }
 
     onDragStart(start) {
-        const id: string = start.draggableId;
-        const selected = this.state.selectedTaskIds.find(taskId => taskId === id);
+        const id = start.draggableId;
+        const selected = this.state.selectedCreatorIds.find(creatorId => creatorId === id);
 
         // if dragging an item that is not selected - unselect all items
         if (!selected) {
             this.setState({
-                selectedTaskIds: [],
+                selectedCreatorIds: [],
             });
         }
         this.setState({
-            draggingTaskId: start.draggableId,
+            draggingCreatorId: start.draggableId,
         });
     }
 
@@ -283,76 +277,76 @@ class CreationModal extends React.Component {
         // nothing to do
         if (!destination || result.reason === 'CANCEL') {
             this.setState({
-                draggingTaskId: null,
+                draggingCreatorId: null,
             });
             return;
         }
 
         const processed = multiDragAwareReorder({
             entities: this.state.entities,
-            selectedTaskIds: this.state.selectedTaskIds,
+            selectedCreatorIds: this.state.selectedCreatorIds,
             source,
             destination,
         });
 
         this.setState({
             ...processed,
-            draggingTaskId: null,
+            draggingCreatorId: null,
         });
     }
 
-    toggleSelection(taskId) {
-        const selectedTaskIds = this.state.selectedTaskIds;
-        const wasSelected = selectedTaskIds.includes(taskId);
+    toggleSelection(creatorId) {
+        const selectedCreatorIds = this.state.selectedCreatorIds;
+        const wasSelected = selectedCreatorIds.includes(creatorId);
 
-        const newTaskIds = (() => {
-            // Task was not previously selected
+        const newCreatorIds = (() => {
+            // Creator was not previously selected
             // now will be the only selected item
             if (!wasSelected) {
-                return [taskId];
+                return [creatorId];
             }
 
-            // Task was part of a selected group
+            // Creator was part of a selected group
             // will now become the only selected item
-            if (selectedTaskIds.length > 1) {
-                return [taskId];
+            if (selectedCreatorIds.length > 1) {
+                return [creatorId];
             }
 
-            // task was previously selected but not in a group
+            // creator was previously selected but not in a group
             // we will now clear the selection
             return [];
         })();
 
         this.setState({
-            selectedTaskIds: newTaskIds,
+            selectedCreatorIds: newCreatorIds,
         });
     }
 
-    toggleSelectionInGroup(taskId) {
-        const selectedTaskIds = this.state.selectedTaskIds;
-        const index = selectedTaskIds.indexOf(taskId);
+    toggleSelectionInGroup(creatorId) {
+        const selectedCreatorIds = this.state.selectedCreatorIds;
+        const index = selectedCreatorIds.indexOf(creatorId);
 
         // if not selected - add it to the selected items
         if (index === -1) {
             this.setState({
-                selectedTaskIds: [...selectedTaskIds, taskId],
+                selectedCreatorIds: [...selectedCreatorIds, creatorId],
             });
             return;
         }
 
         // it was previously selected and now needs to be removed from the group
-        const shallow = [...selectedTaskIds];
+        const shallow = [...selectedCreatorIds];
         shallow.splice(index, 1);
         this.setState({
-            selectedTaskIds: shallow,
+            selectedCreatorIds: shallow,
         });
     }
 
-    multiSelectTo(newTaskId) {
+    multiSelectTo(newCreatorId) {
         const updated = multiSelect(
             this.state.entities,
-            this.state.selectedTaskIds,
-            newTaskId
+            this.state.selectedCreatorIds,
+            newCreatorId
         );
 
         if (updated == null) {
@@ -360,7 +354,7 @@ class CreationModal extends React.Component {
         }
 
         this.setState({
-            selectedTaskIds: updated,
+            selectedCreatorIds: updated,
         });
     }
 
@@ -376,10 +370,10 @@ class CreationModal extends React.Component {
 
         if (this.state.choicesWindow && this.state.choices) {
             const entities = this.state.entities;
-            const selected = this.state.selectedTaskIds;
+            const selected = this.state.selectedCreatorIds;
 
-            const getTasks = (entities, columnId) => entities.columns[columnId].taskIds
-                .map(taskId => entities.tasks[taskId]);
+            const getCreators = (entities, columnId) => entities.columns[columnId].creatorIds
+                .map(creatorId => entities.creators[creatorId]);
 
             return (
                 <Modal className="modal creation-modal"
@@ -457,20 +451,20 @@ class CreationModal extends React.Component {
                             onDragStart={this.onDragStart}
                             onDragEnd={this.onDragEnd}
                         >
-                            <Container className="creator__choice__container">
+                            <MultiDragContainer className="creator__choice__container">
                                 {this.state.entities.columnOrder.map(columnId => (
                                     <Column
                                         column={entities.columns[columnId]}
-                                        tasks={getTasks(entities, columnId)}
-                                        selectedTaskIds={selected}
+                                        creators={getCreators(entities, columnId)}
+                                        selectedCreatorIds={selected}
                                         key={columnId}
-                                        draggingTaskId={this.state.draggingTaskId}
+                                        draggingCreatorId={this.state.draggingCreatorId}
                                         toggleSelection={this.toggleSelection}
                                         toggleSelectionInGroup={this.toggleSelectionInGroup}
                                         multiSelectTo={this.multiSelectTo}
                                     />
                                 ))}
-                            </Container>
+                            </MultiDragContainer>
                         </DragDropContext>
                     </div>
                     <div className="modal__footer">
@@ -479,8 +473,8 @@ class CreationModal extends React.Component {
                                 title: this.state.choices.title || '',
                                 serie: this.state.choices.serie ? {label: this.state.choices.serie} : '',
                                 tome: this.state.choices.tome || '',
-                                artists: this.state.entities.columns.artists.taskIds.map(id => this.state.entities.tasks[id]),
-                                authors: this.state.entities.columns.authors.taskIds.map(id => this.state.entities.tasks[id]),
+                                artists: this.state.entities.columns.artists.creatorIds.map(id => this.state.entities.creators[id]),
+                                authors: this.state.entities.columns.authors.creatorIds.map(id => this.state.entities.creators[id]),
                                 editor: this.state.bookAwsInfo.editor ? {label: this.state.bookAwsInfo.editor} : '',
                                 price: this.state.bookAwsInfo.price || '',
                                 choicesWindow: false

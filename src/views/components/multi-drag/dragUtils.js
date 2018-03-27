@@ -1,5 +1,5 @@
 export function multiDragAwareReorder(args) {
-    if (args.selectedTaskIds.length > 1) {
+    if (args.selectedCreatorIds.length > 1) {
         return reorderMultiDrag(args);
     }
     return reorderSingleDrag(args);
@@ -13,17 +13,12 @@ function reorder(list, startIndex, endIndex) {
     return result;
 }
 
-function reorderSingleDrag({
-                               entities,
-                               selectedTaskIds,
-                               source,
-                               destination,
-                           }) {
+function reorderSingleDrag({entities, selectedCreatorIds, source, destination}) {
     // moving in the same list
     if (source.droppableId === destination.droppableId) {
         const column = entities.columns[source.droppableId];
         const reordered = reorder(
-            column.taskIds,
+            column.creatorIds,
             source.index,
             destination.index,
         );
@@ -33,13 +28,13 @@ function reorderSingleDrag({
             ...entities,
             columns: {
                 ...entities.columns,
-                [column.id]: withNewTaskIds(column, reordered),
+                [column.id]: withNewCreatorIds(column, reordered),
             },
         };
 
         return {
             entities: updated,
-            selectedTaskIds,
+            selectedCreatorIds,
         };
     }
 
@@ -47,44 +42,39 @@ function reorderSingleDrag({
     const home = entities.columns[source.droppableId];
     const foreign = entities.columns[destination.droppableId];
 
-    // the id of the task to be moved
-    const taskId = home.taskIds[source.index];
+    // the id of the creator to be moved
+    const creatorId = home.creatorIds[source.index];
 
     // remove from home column
-    const newHomeTaskIds = [...home.taskIds];
-    newHomeTaskIds.splice(source.index, 1);
+    const newHomeCreatorIds = [...home.creatorIds];
+    newHomeCreatorIds.splice(source.index, 1);
 
     // add to foreign column
-    const newForeignTaskIds = [...foreign.taskIds];
-    newForeignTaskIds.splice(destination.index, 0, taskId);
+    const newForeignCreatorIds = [...foreign.creatorIds];
+    newForeignCreatorIds.splice(destination.index, 0, creatorId);
 
     // $ExpectError - using spread
     const updated = {
         ...entities,
         columns: {
             ...entities.columns,
-            [home.id]: withNewTaskIds(home, newHomeTaskIds),
-            [foreign.id]: withNewTaskIds(foreign, newForeignTaskIds),
+            [home.id]: withNewCreatorIds(home, newHomeCreatorIds),
+            [foreign.id]: withNewCreatorIds(foreign, newForeignCreatorIds),
         },
     };
 
     return {
         entities: updated,
-        selectedTaskIds,
+        selectedCreatorIds
     };
 }
 
-function reorderMultiDrag({
-                              entities,
-                              selectedTaskIds,
-                              source,
-                              destination,
-                          }) {
+function reorderMultiDrag({entities, selectedCreatorIds, source, destination}) {
     const start = entities.columns[source.droppableId];
-    const dragged = start.taskIds[source.index];
+    const dragged = start.creatorIds[source.index];
 
     const insertAtIndex = (() => {
-        const destinationIndexOffset = selectedTaskIds.reduce(
+        const destinationIndexOffset = selectedCreatorIds.reduce(
             (previous, current) => {
                 if (current === dragged) {
                     return previous;
@@ -97,7 +87,7 @@ function reorderMultiDrag({
                     return previous;
                 }
 
-                const index = column.taskIds.indexOf(current);
+                const index = column.creatorIds.indexOf(current);
 
                 if (index >= destination.index) {
                     return previous;
@@ -113,8 +103,8 @@ function reorderMultiDrag({
 
     // doing the ordering now as we are required to look up columns
     // and know original ordering
-    const orderedSelectedTaskIds = [...selectedTaskIds];
-    orderedSelectedTaskIds.sort((a, b): number => {
+    const orderedSelectedCreatorIds = [...selectedCreatorIds];
+    orderedSelectedCreatorIds.sort((a, b): number => {
         // moving the dragged item to the top of the list
         if (a === dragged) {
             return -1;
@@ -125,96 +115,96 @@ function reorderMultiDrag({
 
         // sorting by their natural indexes
         const columnForA = getHomeColumn(entities, a);
-        const indexOfA = columnForA.taskIds.indexOf(a);
+        const indexOfA = columnForA.creatorIds.indexOf(a);
         const columnForB = getHomeColumn(entities, b);
-        const indexOfB = columnForB.taskIds.indexOf(b);
+        const indexOfB = columnForB.creatorIds.indexOf(b);
 
         if (indexOfA !== indexOfB) {
             return indexOfA - indexOfB;
         }
 
-        // sorting by their order in the selectedTaskIds list
+        // sorting by their order in the selectedCreatorIds list
         return -1;
     });
 
-    // we need to remove all of the selected tasks from their columns
-    const withRemovedTasks = entities.columnOrder.reduce(
+    // we need to remove all of the selected creators from their columns
+    const withRemovedCreators = entities.columnOrder.reduce(
         (previous, columnId) => {
             const column = entities.columns[columnId];
 
             // remove the id's of the items that are selected
-            const remainingTaskIds = column.taskIds.filter(
-                (id) => !selectedTaskIds.includes(id)
+            const remainingCreatorIds = column.creatorIds.filter(
+                (id) => !selectedCreatorIds.includes(id)
             );
 
-            previous[column.id] = withNewTaskIds(column, remainingTaskIds);
+            previous[column.id] = withNewCreatorIds(column, remainingCreatorIds);
             return previous;
         }, entities.columns);
 
-    const final = withRemovedTasks[destination.droppableId];
+    const final = withRemovedCreators[destination.droppableId];
     const withInserted = (() => {
-        const base = [...final.taskIds];
-        base.splice(insertAtIndex, 0, ...orderedSelectedTaskIds);
+        const base = [...final.creatorIds];
+        base.splice(insertAtIndex, 0, ...orderedSelectedCreatorIds);
         return base;
     })();
 
-    // insert all selected tasks into final column
-    const withAddedTasks = {
-        ...withRemovedTasks,
-        [final.id]: withNewTaskIds(final, withInserted),
+    // insert all selected creators into final column
+    const withAddedCreators = {
+        ...withRemovedCreators,
+        [final.id]: withNewCreatorIds(final, withInserted),
     };
 
     // $ExpectError - using spread
     const updated = {
         ...entities,
-        columns: withAddedTasks,
+        columns: withAddedCreators,
     };
 
     return {
         entities: updated,
-        selectedTaskIds: orderedSelectedTaskIds,
+        selectedCreatorIds: orderedSelectedCreatorIds,
     };
 }
 
-function getHomeColumn(entities, taskId) {
+function getHomeColumn(entities, creatorId) {
     const columnId = entities.columnOrder.find((id) => {
         const column = entities.columns[id];
-        return column.taskIds.includes(taskId);
+        return column.creatorIds.includes(creatorId);
     });
 
     if (!columnId) {
-        console.error('Count not find column for task', taskId, entities);
+        console.error('Count not find column for creator', creatorId, entities);
         throw new Error('boom');
     }
 
     return entities.columns[columnId];
 }
 
-function withNewTaskIds(column, taskIds) {
+function withNewCreatorIds(column, creatorIds) {
     return {
         id: column.id,
         title: column.title,
-        taskIds,
+        creatorIds
     };
 }
 
-export function multiSelectTo(entities, selectedTaskIds, newTaskId,) {
+export function multiSelectTo(entities, selectedCreatorIds, newCreatorId,) {
     // Nothing already selected
-    if (!selectedTaskIds.length) {
-        return [newTaskId];
+    if (!selectedCreatorIds.length) {
+        return [newCreatorId];
     }
 
-    const columnOfNew = getHomeColumn(entities, newTaskId);
-    const indexOfNew = columnOfNew.taskIds.indexOf(newTaskId);
+    const columnOfNew = getHomeColumn(entities, newCreatorId);
+    const indexOfNew = columnOfNew.creatorIds.indexOf(newCreatorId);
 
-    const lastSelected = selectedTaskIds[selectedTaskIds.length - 1];
+    const lastSelected = selectedCreatorIds[selectedCreatorIds.length - 1];
     const columnOfLast = getHomeColumn(entities, lastSelected);
-    const indexOfLast = columnOfLast.taskIds.indexOf(lastSelected);
+    const indexOfLast = columnOfLast.creatorIds.indexOf(lastSelected);
 
     // multi selecting to another column
     // select everything up to the index of the current item
     if (columnOfNew !== columnOfLast) {
-        return columnOfNew.taskIds.slice(0, indexOfNew + 1);
+        return columnOfNew.creatorIds.slice(0, indexOfNew + 1);
     }
 
     // multi selecting in the same column
@@ -229,18 +219,18 @@ export function multiSelectTo(entities, selectedTaskIds, newTaskId,) {
     const start = isSelectingForwards ? indexOfLast : indexOfNew;
     const end = isSelectingForwards ? indexOfNew : indexOfLast;
 
-    const inBetween = columnOfNew.taskIds.slice(start, end + 1);
+    const inBetween = columnOfNew.creatorIds.slice(start, end + 1);
 
     // everything inbetween needs to have it's selection toggled.
     // with the exception of the start and end values which will always be selected
 
     const toAdd = inBetween
-        .filter((taskId) => {
+        .filter((creatorId) => {
             // if already selected: then no need to select it again
-            return !selectedTaskIds.includes(taskId);
+            return !selectedCreatorIds.includes(creatorId);
 
         });
 
     const sorted = isSelectingForwards ? toAdd : [...toAdd].reverse();
-    return [...selectedTaskIds, ...sorted];
-};
+    return [...selectedCreatorIds, ...sorted];
+}

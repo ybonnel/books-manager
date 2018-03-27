@@ -48,3 +48,14 @@ export function arrayToObj(array, id = undefined, what = undefined) {
         return acc;
     }, {});
 }
+
+export function trimWithoutPonctuation(string) {
+    let isBegin = false;
+    return Array.from(string.trim()).reverse().reduce((acc, char) => {
+        if (!isBegin && ['-', ',', ' ', ':'].includes(char)) {
+            return acc;
+        }
+        isBegin = true;
+        return char + acc;
+    }, '')
+}
