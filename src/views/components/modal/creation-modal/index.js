@@ -24,13 +24,13 @@ import {getSelectedBook} from "../../../../core/books/selectors";
 
 import {Column} from '../../multi-drag/column';
 import {multiDragAwareReorder, multiSelectTo as multiSelect} from '../../multi-drag/dragUtils';
+import {MultiDragContainer} from "../../multi-drag/wrappers";
 
 import {mapToObj, fetchWithRetry, arrayToObj, trimWithoutPonctuation} from "../../../../utils/utils"
 
 import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
-import {MultiDragContainer} from "../../multi-drag/wrappers";
 
 moment.locale('fr');
 
@@ -52,6 +52,7 @@ class CreationModal extends React.Component {
         this.multiSelectTo = this.multiSelectTo.bind(this);
         this.toggleSelection = this.toggleSelection.bind(this);
         this.toggleSelectionInGroup = this.toggleSelectionInGroup.bind(this);
+        this.findEntry = this.findEntry.bind(this);
 
         const book = this.props.selectedBook ? mapToObj(this.props.selectedBook) : this.initializeState();
         this.state = {...book, errors: {}}
@@ -210,14 +211,18 @@ class CreationModal extends React.Component {
     }
 
     makeChoices(info) {
-        const [awsTitle, serie, _, tome, title] = info.title.match(/(.*)(Tome|T)\s?([0-9]*)(.*)/);
+        let serie, tome, title;
+        const awsTitle = info.title.match(/(.*)(Tome|T)\s?([0-9]*)(.*)/);
+        serie = awsTitle ? awsTitle[1] : undefined;
+        tome = awsTitle ? awsTitle[3] : undefined;
+        title = awsTitle ? awsTitle[4] : info.title;
         const authors = (info.authors || []).map((name, idx) => ({id: `author-${idx}`, label: name}));
         const artists = (info.artists || []).map((name, idx) => ({id: `artist-${idx}`, label: name}));
 
         return {
-            serie: trimWithoutPonctuation(serie),
+            serie: serie && trimWithoutPonctuation(serie),
             tome,
-            title: trimWithoutPonctuation(title),
+            title: title && trimWithoutPonctuation(title),
             creatorsChoice: {
                 columnOrder: ['authors', 'artists'],
                 columns: {
@@ -246,7 +251,9 @@ class CreationModal extends React.Component {
 
         let artists, authors;
         if (info.Creator) {
-            authors = info.Creator.filter(item => !item.$.Role.toUpperCase().includes('ILLUSTRATION')).map(item => item._);
+            const creator = info.Creator.filter(item => !item.$.Role.toUpperCase().includes('ILLUSTRATION')).map(item => item._);
+            const author = info.Author || [];
+            authors = [...creator, ...author];
             artists = info.Creator.filter(item => item.$.Role.toUpperCase().includes('ILLUSTRATION')).map(item => item._);
         } else {
             authors = info.Author;
@@ -356,6 +363,16 @@ class CreationModal extends React.Component {
         this.setState({
             selectedCreatorIds: updated,
         });
+    }
+
+    findEntry(entry, list) {
+        const item = this.getAutocompleteData(list)
+            .find(item => item.label.toUpperCase() === entry.toUpperCase());
+
+        if (!item) {
+            return {label: entry, className: 'need to create'};
+        }
+        return item;
     }
 
     render() {
@@ -471,15 +488,16 @@ class CreationModal extends React.Component {
                         <a className="button" onClick={() => {
                             this.setState({
                                 title: this.state.choices.title || '',
-                                serie: this.state.choices.serie ? {label: this.state.choices.serie} : '',
+                                serie: this.findEntry(this.state.choices.serie, this.props.series),
                                 tome: this.state.choices.tome || '',
-                                artists: this.state.entities.columns.artists.creatorIds.map(id => this.state.entities.creators[id]),
-                                authors: this.state.entities.columns.authors.creatorIds.map(id => this.state.entities.creators[id]),
-                                editor: this.state.bookAwsInfo.editor ? {label: this.state.bookAwsInfo.editor} : '',
+                                artists: this.state.entities.columns.artists.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.artists)),
+                                authors: this.state.entities.columns.authors.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.authors)),
+                                editor: this.findEntry(this.state.bookAwsInfo.editor, this.props.editors),
                                 price: this.state.bookAwsInfo.price || '',
                                 choicesWindow: false
                             })
                         }}>Importer</a>
+                        <a className="button" onClick={() => this.setState({choicesWindow: false})}>Annuler</a>
                     </div>
                 </Modal>
             )

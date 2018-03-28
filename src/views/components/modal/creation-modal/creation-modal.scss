@@ -193,7 +193,14 @@ textarea.form__input {
 }
 
 .Select-value-icon {
-  display: none !important;
+  //display: none !important;
+  border-color: $color-gray !important;
+  color: $color ;
+}
+.Select-value-icon:hover {
+  //display: none !important;
+  color: $color !important;
+  background-color: transparent !important;
 }
 
 .Select-value-label {

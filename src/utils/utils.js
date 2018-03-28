@@ -1,6 +1,6 @@
 export const mapToObj = map => {
     let obj = {};
-    map.forEach((value,key) => obj[key] = value);
+    map.forEach((value, key) => obj[key] = value);
     return obj;
 };
 
@@ -13,7 +13,7 @@ export function capitalize(string) {
 }
 
 export function fetchWithRetry(url, delay, limit, fetchOptions = {}) {
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve, reject) => {
         function success(responseAsJson) {
             if (!responseAsJson.errorMessage) {
                 resolve(responseAsJson);
@@ -21,10 +21,11 @@ export function fetchWithRetry(url, delay, limit, fetchOptions = {}) {
                 throw responseAsJson.errorMessage;
             }
         }
-        function failure(error){
+
+        function failure(error) {
             limit--;
-            if(limit){
-                setTimeout(fetchUrl,delay)
+            if (limit) {
+                setTimeout(fetchUrl, delay)
             }
             else {
                 reject(error);
@@ -32,11 +33,12 @@ export function fetchWithRetry(url, delay, limit, fetchOptions = {}) {
         }
 
         function fetchUrl() {
-            return fetch(url,fetchOptions)
+            return fetch(url, fetchOptions)
                 .then(response => response.json())
                 .then(success)
                 .catch(failure);
         }
+
         fetchUrl();
     });
 }
@@ -50,12 +52,22 @@ export function arrayToObj(array, id = undefined, what = undefined) {
 }
 
 export function trimWithoutPonctuation(string) {
+    let isEnd = false;
     let isBegin = false;
-    return Array.from(string.trim()).reverse().reduce((acc, char) => {
-        if (!isBegin && ['-', ',', ' ', ':'].includes(char)) {
-            return acc;
-        }
-        isBegin = true;
-        return char + acc;
-    }, '')
+    return Array.from(string.trim())
+        .reverse()
+        .reduce((acc, char) => {
+            if (!isEnd && ['-', ',', ' ', ':'].includes(char)) {
+                return acc;
+            }
+            isEnd = true;
+            return [char, ...acc];
+        }, [])
+        .reduce((acc, char) => {
+            if (!isBegin && ['-', ',', ' ', ':'].includes(char)) {
+                return acc;
+            }
+            isBegin = true;
+            return acc + char;
+        }, '')
 }

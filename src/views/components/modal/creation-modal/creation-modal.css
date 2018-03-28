@@ -164,7 +164,12 @@ textarea.form__input {
   position: relative; }
 
 .Select-value-icon {
-  display: none !important; }
+  border-color: #4B4B4B !important;
+  color: rgba(0, 0, 0, 0.87); }
+
+.Select-value-icon:hover {
+  color: rgba(0, 0, 0, 0.87) !important;
+  background-color: transparent !important; }
 
 .Select-value-label {
   font: 15px/24px Arial, sans-serif;
