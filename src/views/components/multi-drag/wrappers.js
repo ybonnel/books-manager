@@ -6,9 +6,9 @@ function getBackgroundColor({isSelected, isGhosting}) {
         return colors.grey.light;
     }
 
-    if (isSelected) {
-        return colors.blue.light;
-    }
+    // if (isSelected) {
+    //     return colors.grey.alfred;
+    // }
 
     return colors.grey.light;
 }
@@ -18,7 +18,7 @@ function getColor({isSelected, isGhosting}) {
         return 'darkgrey';
     }
     if (isSelected) {
-        return colors.blue.deep;
+        return colors.grey.alfred;
     }
     return colors.black;
 }
@@ -47,7 +47,7 @@ export const SelectionCount = styled.div`
   right: -${grid}px;
   top: -${grid}px;
   color: ${colors.white};
-  background: ${colors.blue.deep};
+  background: ${colors.grey.alfred};
   border-radius: 50%;
   height: ${size}px;
   width: ${size}px;
@@ -64,7 +64,7 @@ export const DragItem = styled.div`
   margin-bottom: ${grid}px;
   border-radius: ${borderRadius}px;4
   font-size: 18px;
-  border: 1px solid ${colors.shadow};
+  border: 1px solid ${props => props.isSelected ? colors.black : colors.shadow};
 
   ${props => (props.isDragging ? `box-shadow: 2px 2px 1px ${colors.shadow};` : '')}
   ${props => (props.isGhosting ? 'opacity: 0.8;' : '')}
@@ -75,7 +75,7 @@ export const DragItem = styled.div`
   /* avoid default outline which looks lame with the position: absolute; */
   &:focus {
     outline: none;
-    border-color: ${colors.blue.deep};
+    border-color: ${colors.grey.alfred};
   }
 `;
 

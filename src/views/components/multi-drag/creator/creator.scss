@@ -1,0 +1,32 @@
+@import "../../../styles/variables.scss";
+@import "../../../styles/modal.scss";
+
+.drag__item {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drag__item:hover .creator__delete {
+  opacity: 1;
+  visibility: visible;
+  color : $color-gray
+}
+
+.creator__delete {
+  opacity: 0;
+  visibility: hidden;
+  margin-right: 5px;
+  transition: all .3s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    color: $color;
+  }
+}
+
+.creator__content {
+  flex-grow: 1;
+}

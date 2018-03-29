@@ -1,8 +1,11 @@
 import React from 'react';
 import {PropTypes} from "prop-types";
 import {Draggable} from "react-beautiful-dnd";
+import {Trash2} from 'react-feather';
 
 import {DragItem, SelectionCount} from "../wrappers";
+
+import './creator.css';
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
 const primaryButton = 0;
@@ -15,6 +18,15 @@ const keyCodes = {
 };
 
 export class Creator extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onClick = this.onClick.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onTouchEnd = this.onTouchEnd.bind(this);
+        this.performAction = this.performAction.bind(this);
+    }
+
     onKeyDown(event, provided, snapshot) {
         if (provided.dragHandleProps) {
             provided.dragHandleProps.onKeyDown(event);
@@ -108,6 +120,7 @@ export class Creator extends React.Component {
                     return (
                         <div>
                             <DragItem
+                                className="drag__item"
                                 innerRef={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
@@ -118,6 +131,7 @@ export class Creator extends React.Component {
                                 isSelected={isSelected}
                                 isGhosting={isGhosting}
                             >
+                                <div className="creator__delete" onClick={() => this.props.deleteCreator(creator.id)}><Trash2/></div>
                                 <div className="creator__content">{creator.label}</div>
                                 {shouldShowSelection ?
                                     <SelectionCount className="creator__selection_count">{selectionCount}</SelectionCount> : null}
@@ -141,4 +155,5 @@ Creator.propTypes = {
     toggleSelection: PropTypes.func,
     toggleSelectionInGroup: PropTypes.func,
     multiSelectTo: PropTypes.func,
+    deleteCreator: PropTypes.func,
 };

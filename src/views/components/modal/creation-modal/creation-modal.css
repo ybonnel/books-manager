@@ -13,11 +13,32 @@
   align-items: center;
   box-sizing: border-box; }
 
+.modal__footer__left {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box; }
+
+.modal__loading {
+  height: 100%;
+  display: flex;
+  align-items: center; }
+
 * {
   outline-width: 0; }
 
 .modal.creation-modal {
   width: 75%;
+  margin: calc(5% + 40px) auto;
+  background-color: #fff;
+  transition: all .35s ease-in-out;
+  border: 1px solid black;
+  padding: 5px 50px; }
+
+.modal.choices-modal {
+  width: 50%;
   margin: calc(5% + 40px) auto;
   background-color: #fff;
   transition: all .35s ease-in-out;
@@ -179,7 +200,7 @@ textarea.form__input {
 @media screen and (max-width: 768px) {
   .ReactModal__Overlay {
     overflow-y: auto; }
-  .creation-modal {
+  .creation-modal, .choices-modal {
     width: calc(100% - 10px) !important;
     box-sizing: border-box;
     padding: 5px !important; }

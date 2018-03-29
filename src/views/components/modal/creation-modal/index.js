@@ -23,7 +23,7 @@ import {getLocationsList, locationActions} from "../../../../core/location/index
 import {getSelectedBook} from "../../../../core/books/selectors";
 
 import {Column} from '../../multi-drag/column';
-import {multiDragAwareReorder, multiSelectTo as multiSelect} from '../../multi-drag/dragUtils';
+import {multiDragAwareReorder, multiSelectTo as multiSelect, withNewCreatorIds} from '../../multi-drag/dragUtils';
 import {MultiDragContainer} from "../../multi-drag/wrappers";
 
 import {mapToObj, fetchWithRetry, arrayToObj, trimWithoutPonctuation} from "../../../../utils/utils"
@@ -53,6 +53,7 @@ class CreationModal extends React.Component {
         this.toggleSelection = this.toggleSelection.bind(this);
         this.toggleSelectionInGroup = this.toggleSelectionInGroup.bind(this);
         this.findEntry = this.findEntry.bind(this);
+        this.deleteCreator = this.deleteCreator.bind(this);
 
         const book = this.props.selectedBook ? mapToObj(this.props.selectedBook) : this.initializeState();
         this.state = {...book, errors: {}}
@@ -365,6 +366,21 @@ class CreationModal extends React.Component {
         });
     }
 
+    deleteCreator(creatorId, columnId) {
+        const column = this.state.entities.columns[columnId];
+        const creatorIds = column.creatorIds.filter(id => id !== creatorId);
+
+        const entities = {
+            ...this.state.entities,
+            columns: {
+                ...this.state.entities.columns,
+                [columnId]: withNewCreatorIds(column, creatorIds),
+            },
+        };
+
+        this.setState({entities});
+    }
+
     findEntry(entry, list) {
         const item = this.getAutocompleteData(list)
             .find(item => item.label.toUpperCase() === entry.toUpperCase());
@@ -378,7 +394,7 @@ class CreationModal extends React.Component {
     render() {
         if (this.state.loading) {
             return (
-                <Modal className="modal creation-modal"
+                <Modal className="modal modal__loading"
                        isOpen={this.props.modal.isOpen}>
                     <Loading/>
                 </Modal>
@@ -393,75 +409,69 @@ class CreationModal extends React.Component {
                 .map(creatorId => entities.creators[creatorId]);
 
             return (
-                <Modal className="modal creation-modal"
+                <Modal className="modal choices-modal"
                        isOpen={this.props.modal.isOpen}>
-                    <div className="choices__results form__group form__group--full">
-                        {this.state.choices.title &&
-                        <div className="input__group input__group--third">
-                            <input
-                                type="text"
-                                id="choice-title"
-                                className={classNames({
-                                    'form__input': true,
-                                    'form__input--has-content': !!this.state.choices.title,
-                                })}
-                                value={this.state.choices.title}
-                                onChange={(event) => this.setState({
-                                    choices: {
-                                        ...this.state.choices,
-                                        title: event.target.value
-                                    }
-                                })}/>
-                            <label htmlFor="choice-title">Titre</label>
-                            <span className="form__input__border--focus"/>
-                        </div>}
-                        {this.state.choices.tome &&
-                        <div className="input__group input__group--third">
-                            <input
-                                type="number"
-                                step="1" min="0"
-                                id="choice-tome"
-                                className={classNames({
-                                    'form__input': true,
-                                    'form__input--has-content': !!this.state.choices.tome,
-                                })}
-                                value={this.state.choices.tome}
-                                onChange={(event) => this.setState({
-                                    choices: {
-                                        ...this.state.choices,
-                                        tome: event.target.value
-                                    }
-                                })}/>
-                            <label htmlFor="choice-tome">Tome</label>
-                            <span className="form__input__border--focus"/>
-                        </div>}
-                        {this.state.choices.serie &&
-                        <div className="input__group input__group--third">
-                            <input
-                                type="text"
-                                id="choice-serie"
-                                className={classNames({
-                                    'form__input': true,
-                                    'form__input--has-content': !!this.state.choices.serie,
-                                })}
-                                value={this.state.choices.serie}
-                                onChange={(event) => this.setState({
-                                    choices: {
-                                        ...this.state.choices,
-                                        serie: event.target.value
-                                    }
-                                })}/>
-                            <label htmlFor="choice-title">Serie</label>
-                            <span className="form__input__border--focus"/>
-                        </div>}
-                        {this.state.choices.authors && [
-                            <label
-                                key='label-authors'>auteurs</label>, ...this.state.choices.authors.map((author, idx) =>
-                                <input key={`author${idx}`} type="text" defaultValue={author}/>)]}
-                        {this.state.choices.artists && [
-                            <label
-                                key='label-artists'>artistes</label>, ...this.state.choices.artists.map((artist, idx) =>
-                                <input key={`artist${idx}`} type="text" defaultValue={artist}/>)]}
+                    <div className="form__group--full">
+                        <div className="choices__results form__group form__group--full">
+                            {this.state.choices.title &&
+                            <div className="input__group input__group--full">
+                                <input
+                                    type="text"
+                                    id="choice-title"
+                                    className={classNames({
+                                        'form__input': true,
+                                        'form__input--has-content': !!this.state.choices.title,
+                                    })}
+                                    value={this.state.choices.title}
+                                    onChange={(event) => this.setState({
+                                        choices: {
+                                            ...this.state.choices,
+                                            title: event.target.value
+                                        }
+                                    })}/>
+                                <label htmlFor="choice-title">Titre</label>
+                                <span className="form__input__border--focus"/>
+                            </div>}
+                            {this.state.choices.serie &&
+                            <div className="input__group input__group--two-third">
+                                <input
+                                    type="text"
+                                    id="choice-serie"
+                                    className={classNames({
+                                        'form__input': true,
+                                        'form__input--has-content': !!this.state.choices.serie,
+                                    })}
+                                    value={this.state.choices.serie}
+                                    onChange={(event) => this.setState({
+                                        choices: {
+                                            ...this.state.choices,
+                                            serie: event.target.value
+                                        }
+                                    })}/>
+                                <label htmlFor="choice-title">Serie</label>
+                                <span className="form__input__border--focus"/>
+                            </div>}
+                            {this.state.choices.tome &&
+                            <div className="input__group input__group--third">
+                                <input
+                                    type="number"
+                                    step="1" min="0"
+                                    id="choice-tome"
+                                    className={classNames({
+                                        'form__input': true,
+                                        'form__input--has-content': !!this.state.choices.tome,
+                                    })}
+                                    value={this.state.choices.tome}
+                                    onChange={(event) => this.setState({
+                                        choices: {
+                                            ...this.state.choices,
+                                            tome: event.target.value
+                                        }
+                                    })}/>
+                                <label htmlFor="choice-tome">Tome</label>
+                                <span className="form__input__border--focus"/>
+                            </div>}
+                        </div>
                     </div>
                     <div className="creator__choice">
                         <DragDropContext
@@ -479,6 +489,7 @@ class CreationModal extends React.Component {
                                         toggleSelection={this.toggleSelection}
                                         toggleSelectionInGroup={this.toggleSelectionInGroup}
                                         multiSelectTo={this.multiSelectTo}
+                                        deleteCreator={creatorId => this.deleteCreator(creatorId, columnId)}
                                     />
                                 ))}
                             </MultiDragContainer>
@@ -743,8 +754,10 @@ class CreationModal extends React.Component {
                         </form>
                     </div>
                     <div className="modal__footer">
-                        {this.state.isbn && this.state.isbn.length === 13 &&
-                        <a className="button" onClick={this.handleLookUp}>Importer depuis amazon</a>}
+                        <div className="modal__footer__left">
+                            {this.state.isbn && this.state.isbn.length === 13 &&
+                            <a className="button" onClick={this.handleLookUp}>Importer depuis amazon</a>}
+                        </div>
                         <a className="button" onClick={this.handleSubmit}>Enregister</a>
                         <a className="button" onClick={this.handleCloseButton}>
                             Annuler

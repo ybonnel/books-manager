@@ -180,7 +180,7 @@ function getHomeColumn(entities, creatorId) {
     return entities.columns[columnId];
 }
 
-function withNewCreatorIds(column, creatorIds) {
+export function withNewCreatorIds(column, creatorIds) {
     return {
         id: column.id,
         title: column.title,

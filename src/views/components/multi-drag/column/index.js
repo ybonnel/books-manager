@@ -44,6 +44,7 @@ export class Column extends React.Component {
                                         toggleSelection={this.props.toggleSelection}
                                         toggleSelectionInGroup={this.props.toggleSelectionInGroup}
                                         multiSelectTo={this.props.multiSelectTo}
+                                        deleteCreator={this.props.deleteCreator}
                                     />
                                 );
                             })}
@@ -63,5 +64,6 @@ Column.propTypes = {
     multiSelectTo: PropTypes.func,
     draggingCreatorId: PropTypes.string,
     toggleSelection: PropTypes.func,
-    toggleSelectionInGroup: PropTypes.func
+    toggleSelectionInGroup: PropTypes.func,
+    deleteCreator: PropTypes.func
 };

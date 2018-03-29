@@ -16,6 +16,17 @@
   padding: 5px 50px;
 }
 
+.modal.choices-modal {
+  width: 50%;
+  margin: calc(5% + 40px) auto;
+  background-color: #fff;
+
+  transition: all .35s ease-in-out;
+  border: 1px solid black;
+
+  padding: 5px 50px;
+}
+
 .creation-form {
   display: flex;
   flex-direction: row;
@@ -193,12 +204,10 @@ textarea.form__input {
 }
 
 .Select-value-icon {
-  //display: none !important;
   border-color: $color-gray !important;
   color: $color ;
 }
 .Select-value-icon:hover {
-  //display: none !important;
   color: $color !important;
   background-color: transparent !important;
 }
@@ -213,7 +222,7 @@ textarea.form__input {
   .ReactModal__Overlay {
     overflow-y: auto;
   }
-  .creation-modal {
+  .creation-modal, .choices-modal {
     width: calc(100% - 10px) !important;
     box-sizing: border-box;
     padding: 5px !important;
