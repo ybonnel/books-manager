@@ -1,0 +1,11 @@
+@import "../../../styles/variables.scss";
+
+.multi-drag__column__title {
+  margin-left: 10px;
+  padding-bottom: 5px;
+  text-transform: capitalize;
+  letter-spacing: .5px;
+  font-size: 12px;
+  color: $color;
+  font-family: Roboto, sans-serif;
+}

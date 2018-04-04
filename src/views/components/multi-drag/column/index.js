@@ -6,6 +6,8 @@ import memoizeOne from 'memoize-one';
 
 import {ColumnContainer, List} from "../wrappers";
 
+import './column.css';
+
 const getSelectedMap = memoizeOne(selectedCreatorIds =>
     selectedCreatorIds.reduce((previous, current) => {
         previous[current] = true;
@@ -20,8 +22,8 @@ export class Column extends React.Component {
         const draggingCreatorId = this.props.draggingCreatorId;
 
         return (
-            <ColumnContainer className="creator__choice__container__column creators">
-                <h3>{column.title}</h3>
+            <ColumnContainer className="multi-drag__column creators">
+                <h3 className="multi-drag__column__title">{column.title}</h3>
                 <Droppable droppableId={column.id}>
                     {(provided, snapshot) => (
                         <List

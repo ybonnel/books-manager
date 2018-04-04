@@ -25,18 +25,19 @@ function getColor({isSelected, isGhosting}) {
 
 export const List = styled.div`
   padding: ${grid}px;
-  min-height: 200px;
+  height: 200px;
+  overflow: auto;
   flex-grow: 1;
   transition: background-color 0.2s ease;
-  ${props => (props.isDraggingOver ? `background-color: ${colors.grey.darker}` : '')};
+  ${props => (props.isDraggingOver ? `background-color: ${colors.grey.dark}` : '')};
 `;
 
 export const ColumnContainer = styled.div`
   width: 300px;
   margin: ${grid}px;
   border-radius: ${borderRadius}px;
-  border: 1px solid ${colors.grey.dark};
-  background-color: ${colors.grey.medium};
+  border: 1px solid ${colors.grey.alfred};
+  flex-grow: 1;
 
   /* we want the column to take up its full height */
   display: flex;
@@ -82,4 +83,5 @@ export const DragItem = styled.div`
 export const MultiDragContainer = styled.div`
   display: flex;
   user-select: none;
+  align-items: center;
 `;
