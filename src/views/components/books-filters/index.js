@@ -59,8 +59,8 @@ class BookFilters extends React.Component {
             className: 'popover__books__filters',
             body: <div className="books__filters">
                 {Object.keys(FILTERS).map(FILTER => {
-                    return <div className="filter">
-                        <a key={FILTER} className={classNames({
+                    return <div className="filter" key={FILTER}>
+                        <a className={classNames({
                             button: true,
                             'button--filter': true,
                             selected: this.props.currentFilter === FILTERS[FILTER]
