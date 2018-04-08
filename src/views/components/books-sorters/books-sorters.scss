@@ -1,0 +1,24 @@
+@import "../../../views/styles/variables.scss";
+
+.books__sorters {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button--sorter {
+  width: 50px;
+
+  &.selected, &.selected:hover {
+    background-color: #fff;
+    color: $color;
+  }
+}
+
+.button--sorter + .button--sorter {
+  margin-top: 5px;
+  margin-left: 0 !important;
+}
+

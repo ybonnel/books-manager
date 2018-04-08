@@ -1,8 +1,9 @@
 import React from 'react';
 import {PropTypes} from 'prop-types';
 import classNames from "classnames";
+import Popover from 'react-popover'
 
-import {ALL, IN, OUT} from "../../../core/books";
+import {FILTERS} from "../../../core/books";
 
 import './books-filters.css';
 
@@ -12,49 +13,79 @@ class BookFilters extends React.Component {
         super(props);
 
         this.handleFilter = this.handleFilter.bind(this);
-        this.state = {filter: ALL}
+        this.togglePopover = this.togglePopover.bind(this);
+        this.getFilterLabel = this.getFilterLabel.bind(this);
+        this.state = {
+            filter: this.props.currentFilter,
+            popoverIsOpen: false
+        }
+    }
+
+    togglePopover() {
+        const popoverIsOpen = !this.state.popoverIsOpen;
+        this.setState({
+            popoverIsOpen
+        })
     }
 
     handleFilter(event) {
-        event.target.classList.toggle("selected");
+        const chosenFilter = event.target.getAttribute('data-filter');
+        if (this.props.currentFilter !== chosenFilter) {
+            event.target.classList.toggle("selected");
 
+            this.props.filter(chosenFilter)
+        }
+    }
 
-        const filter = event.target.getAttribute('data-filter');
-        this.setState({filter});
-        this.props.filter(filter)
+    getFilterLabel(filter) {
+        switch (filter) {
+            case FILTERS.ALL:
+                return 'Tous';
+            case FILTERS.IN:
+                return 'Présent';
+            case FILTERS.OUT:
+                return 'En prêt';
+            default:
+                return undefined;
+        }
     }
 
     render() {
+        const popoverProps = {
+            isOpen: this.state.popoverIsOpen,
+            preferPlace: 'below',
+            place: 'below',
+            onOuterAction: () => this.togglePopover(false),
+            className: 'popover__books__filters',
+            body: <div className="books__filters">
+                {Object.keys(FILTERS).map(FILTER => {
+                    return <div className="filter">
+                        <a key={FILTER} className={classNames({
+                            button: true,
+                            'button--filter': true,
+                            selected: this.props.currentFilter === FILTERS[FILTER]
+                        })} data-filter={FILTERS[FILTER]} onClick={this.handleFilter}>{this.getFilterLabel(FILTERS[FILTER])}</a>
+                    </div>
+                })}
+            </div>
+        };
+
         return (
-            <ul className="books__filters">
-                <li className="filter">
-                    <a className={classNames({
-                        button: true,
-                        'button--filter': true,
-                        selected: this.state.filter === ALL
-                    })} data-filter={ALL} onClick={this.handleFilter}>View All</a>
-                </li>
-                <li className="filter">
-                    <a className={classNames({
-                        button: true,
-                        'button--filter': true,
-                        selected: this.state.filter === IN
-                    })} data-filter={IN} onClick={this.handleFilter}>Present</a>
-                </li>
-                <li className="filter">
-                    <a className={classNames({
-                        button: true,
-                        'button--filter': true,
-                        selected: this.state.filter === OUT
-                    })} data-filter={OUT} onClick={this.handleFilter}>Loaned</a>
-                </li>
-            </ul>
-        );
+            <Popover {...popoverProps}>
+                <div className={classNames({
+                    'popover__button': true,
+                    'popover__button--open': this.state.popoverIsOpen
+                })}>
+                    <a className='button' onClick={this.togglePopover}>Filtrer</a>
+                </div>
+            </Popover>
+        )
     }
 }
 
 BookFilters.propTypes = {
-    filter: PropTypes.func.isRequired
+    filter: PropTypes.func.isRequired,
+    currentFilter: PropTypes.string.isRequired
 };
 
 export default BookFilters;

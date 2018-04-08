@@ -16,7 +16,8 @@ import {
     UPDATE_BOOK_SUCCESS,
     TOGGLE_MOBILE_SELECTION,
     RESET_MOBILE_SELECTION,
-    SEARCH_BOOKS
+    SEARCH_BOOKS,
+    SORT_BOOKS
 } from './action-types';
 import {bookTypes} from './book';
 
@@ -170,6 +171,13 @@ export function filterBooks(filterType) {
         type: FILTER_BOOKS,
         payload: {filterType}
     };
+}
+
+export function sortBooks(sortOption) {
+    return {
+        type: SORT_BOOKS,
+        payload: {sortOption}
+    }
 }
 
 export function loadBooks() {

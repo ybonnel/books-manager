@@ -16,19 +16,22 @@ import {
     LOAD_BOOK,
     TOGGLE_MOBILE_SELECTION,
     RESET_MOBILE_SELECTION,
-    SEARCH_BOOKS
+    SEARCH_BOOKS,
+    SORT_BOOKS
 } from './action-types';
+import {SORT_OPTIONS, FILTERS} from "./variables";
 
 
 export const BooksState = new Record({
     deleted: null,
-    filter: '',
+    filter: FILTERS.ALL,
     list: new List(),
     previous: null,
     selected: null,
     bookToUpdate: null,
     mobileSelection: new Map(),
-    search: ''
+    search: '',
+    sort: SORT_OPTIONS.SERIE
 });
 
 export function booksReducer(state = new BooksState(), {payload, type}) {
@@ -66,6 +69,9 @@ export function booksReducer(state = new BooksState(), {payload, type}) {
 
         case FILTER_BOOKS:
             return state.set('filter', payload.filterType || '');
+
+        case SORT_BOOKS:
+            return state.set('sort', payload.sortOption || '');
 
         case LOAD_BOOKS_SUCCESS:
             return state.set('list', new List(payload.reverse()));

@@ -11,9 +11,7 @@
 
 .books__filters {
   display: flex;
-  flex-direction: row;
-
-  list-style-type: none;
+  flex-direction: column;
 }
 
 .books__actions .search {
@@ -24,7 +22,7 @@
   align-items: center;
 
   + .filter {
-    margin-left: 10px;
+    margin-top: 10px;
   }
 }
 
@@ -37,7 +35,7 @@
 .filter .button.selected {
   border: 1px solid $color;
   color: $color;
-  background-color: transparent;
+  background-color: #fff;
 }
 
 //search books
@@ -86,6 +84,24 @@
 
 .search__box:not(:valid) ~ .clear__search {
   display: none;
+}
+
+.popover__books__filters {
+  box-shadow: 0 1px 35px 0 rgba(0, 0, 0, 0.3);
+  border-radius: $border-radius;
+}
+
+.Popover-body {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 2rem;
+  background: hsl(0, 0%, 27%);
+  color: white;
+  border-radius: 0.3rem;
+}
+
+.Popover-tipShape {
+  fill: hsl(0, 0%, 27%)
 }
 
 @media (max-width: $navigation_mobile_breakpoint) {

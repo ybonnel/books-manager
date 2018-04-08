@@ -8,22 +8,21 @@ import {PlusSquare, Search, X} from 'react-feather';
 import MediaQuery from 'react-responsive';
 
 import {getNotification, notificationActions} from "../../../core/notification";
-import {booksActions, getBookFilter, getVisibleBooks} from "../../../core/books/index";
-import {authorActions} from "../../../core/authors/index";
-import {artistActions} from "../../../core/artists/index";
-import {serieActions} from "../../../core/serie/index";
-import {locationActions} from "../../../core/location/index";
-import {styleActions} from "../../../core/style/index";
-import {collectionActions} from "../../../core/collection/index";
-import {editorActions} from "../../../core/editor/index";
-import {getModal, modalActions} from "../../../core/modal/index";
+import {authorActions} from "../../../core/authors";
+import {artistActions} from "../../../core/artists";
+import {serieActions} from "../../../core/serie";
+import {locationActions} from "../../../core/location";
+import {styleActions} from "../../../core/style";
+import {collectionActions} from "../../../core/collection";
+import {editorActions} from "../../../core/editor";
+import {getModal, modalActions} from "../../../core/modal";
 import {isAuthenticated} from "../../../core/auth/selectors";
 import {CREATION_MODAL} from "../../../core/modal/variables";
-import {getMobileSelection} from "../../../core/books";
-import {getBookSearch} from "../../../core/books/selectors";
+import {booksActions, getBookFilter, getVisibleBooks, getBookSearch, getBookSort, getMobileSelection} from "../../../core/books";
 
 import BookList from "../../components/book-list";
 import BookFilters from "../../components/books-filters";
+import BookSorters from "../../components/books-sorters";
 import Modal from "../../components/modal";
 import Notification from "../../components/notification/index";
 
@@ -38,6 +37,7 @@ export class Books extends Component {
         deleteBook: PropTypes.func.isRequired,
         dismissNotification: PropTypes.func.isRequired,
         filterBooks: PropTypes.func.isRequired,
+        sortBooks: PropTypes.func.isRequired,
         filterType: PropTypes.string.isRequired,
         loadBooks: PropTypes.func.isRequired,
         loadAuthors: PropTypes.func.isRequired,
@@ -133,7 +133,8 @@ export class Books extends Component {
                             <span className="form__input__border--focus"/>
                                 <X className="clear__search" onClick={this.handleClearSearch}/>
                         </div>
-                        <BookFilters filter={this.props.filterBooks}/>
+                        <BookSorters sort={this.props.sortBooks} sortOption={this.props.sortOption}/>
+                        <BookFilters filter={this.props.filterBooks} currentFilter={this.props.filterType}/>
 
                     </div>
                     <Modal/>
@@ -168,14 +169,16 @@ const mapStateToProps = createSelector(
     getModal,
     isAuthenticated,
     getBookSearch,
-    (notification, filterType, books, mobileSelection, modal, isAuthenticated, search) => ({
+    getBookSort,
+    (notification, filterType, books, mobileSelection, modal, isAuthenticated, search, sortOption) => ({
         notification,
         filterType,
         books,
         mobileSelection,
         modal,
         isAuthenticated,
-        search
+        search,
+        sortOption
     })
 );
 

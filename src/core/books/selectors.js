@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import * as filters from './variables';
+import {FILTERS, SORT_OPTIONS} from './variables';
 
 
 export function getBooks(state) {
@@ -30,26 +30,49 @@ export function getMobileSelection(state) {
     return getBooks(state).mobileSelection
 }
 
+export function getBookSort(state) {
+    return getBooks(state).sort;
+}
 
 //=====================================
 //  MEMORIZED SELECTORS
 //-------------------------------------
-
 export const getVisibleBooks = createSelector(
     getBookList,
     getBookFilter,
-    getBookSearch,
-    (books, filter) => {
+    getBookSort,
+    (books, filter, sort) => {
+        const filteredBooks = books.sort((book1, book2) => {
+            switch (sort) {
+                case SORT_OPTIONS.TITLE:
+                    return book1.title > book2.title;
+                case SORT_OPTIONS.SERIE:
+                    if (!book1.serie) {
+                        return 1;
+                    } else if (!book2.serie) {
+                        return -1;
+                    } else if (!book1.serie && !book2.serie) {
+                        return book1.title.localeCompare(book2.title);
+                    } else if (book1.serie.label === book2.serie.label) {
+                        return book1.tome.localeCompare(book2.tome)
+                    }
+                    return book1.serie.label.localeCompare(book2.serie.label);
+                case SORT_OPTIONS.DATE:
+                default:
+                    return book1.date - book2.date;
+            }
+        });
+
         switch (filter) {
-            case filters.OUT:
-            return books.filter(book => !!book.location);
+            case FILTERS.OUT:
+            return filteredBooks.filter(book => !!book.location);
 
-        case filters.IN:
-            return books.filter(book => !book.location);
+        case FILTERS.IN:
+            return filteredBooks.filter(book => !book.location);
 
-        case filters.ALL:
+        case FILTERS.ALL:
         default:
-            return books;
+            return filteredBooks;
         }
     }
 );

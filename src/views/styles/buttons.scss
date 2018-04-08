@@ -1,7 +1,7 @@
 @import "variables.scss";
 
 .button {
-  //border: 1px solid $color;
+  display: block;
   border: none;
   background-color: $color;
   color: $color-hover;
@@ -23,6 +23,16 @@
 
   & + .button {
     margin-left: 10px;
+  }
+}
+
+.popover__button {
+  &.popover__button--open .button {
+    background-color: lighten($color, 20%);
+  }
+
+  & + .popover__button {
+    margin-left: 5px;
   }
 }
 

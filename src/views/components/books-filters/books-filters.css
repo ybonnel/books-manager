@@ -7,8 +7,7 @@
 
 .books__filters {
   display: flex;
-  flex-direction: row;
-  list-style-type: none; }
+  flex-direction: column; }
 
 .books__actions .search {
   margin: unset; }
@@ -16,7 +15,7 @@
 .filter {
   align-items: center; }
   .filter + .filter {
-    margin-left: 10px; }
+    margin-top: 10px; }
 
 .filter .button {
   display: flex;
@@ -26,7 +25,7 @@
 .filter .button.selected {
   border: 1px solid rgba(0, 0, 0, 0.87);
   color: rgba(0, 0, 0, 0.87);
-  background-color: transparent; }
+  background-color: #fff; }
 
 .search__wrapper {
   position: relative;
@@ -65,6 +64,21 @@
 
 .search__box:not(:valid) ~ .clear__search {
   display: none; }
+
+.popover__books__filters {
+  box-shadow: 0 1px 35px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 4px; }
+
+.Popover-body {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 2rem;
+  background: #454545;
+  color: white;
+  border-radius: 0.3rem; }
+
+.Popover-tipShape {
+  fill: #454545; }
 
 @media (max-width: 768px) {
   .books__actions {
