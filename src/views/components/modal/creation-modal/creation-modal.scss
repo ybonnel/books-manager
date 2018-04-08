@@ -112,7 +112,7 @@ textarea.form__input {
 .form__input ~ label {
   position: absolute;
   left: 0;
-  width: 100%;
+  //width: 100%;
   top: 9px;
   color: #aaa;
   transition: 0.3s;
@@ -216,6 +216,16 @@ textarea.form__input {
   font: 15px/24px Arial, sans-serif;
   color: $color-gray;
   letter-spacing: 1px;
+}
+
+.Select-option.is-selected {
+  background-color: $color-light-gray;
+  color: $color;
+}
+
+.Select-option.is-focused {
+  background-color: lighten($color-light-gray, 30%);
+  color: $color;
 }
 
 @media screen and (max-width: $navigation_mobile_breakpoint) {

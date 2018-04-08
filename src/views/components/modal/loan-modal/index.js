@@ -120,6 +120,7 @@ class LoanModal extends React.Component {
                                     onChange={location => this.setState({location, modified: true})}
                                     value={this.state.location}
                                     labelKey="label" valueKey="key"
+                                    promptTextCreator={label => `Créer la localisation ${label}`}
                                 />
                                 <label htmlFor="location">Location</label>
                                 <span className="form__input__border--focus"/>

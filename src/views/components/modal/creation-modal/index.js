@@ -570,6 +570,7 @@ class CreationModal extends React.Component {
                                         onChange={serie => this.setState({serie})}
                                         value={this.state.serie}
                                         labelKey="label" valueKey="key"
+                                        promptTextCreator={label => `Créer la série ${label}`}
                                     />
                                     <label htmlFor="serie">Série</label>
                                     <span className="form__input__border--focus"/>
@@ -610,6 +611,7 @@ class CreationModal extends React.Component {
                                         onChange={authors => this.setState({authors})}
                                         value={this.state.authors}
                                         labelKey="label" valueKey="key"
+                                        promptTextCreator={label => `Créer l'auteur ${label}`}
                                     />
                                     <label htmlFor="authors">Auteur(s)</label>
                                     <span className="form__input__border--focus"/>
@@ -626,6 +628,7 @@ class CreationModal extends React.Component {
                                         onChange={artists => this.setState({artists})}
                                         value={this.state.artists}
                                         labelKey="label" valueKey="key"
+                                        promptTextCreator={label => `Créer l'artiste ${label}`}
                                     />
                                     <label htmlFor="artists">Artiste</label>
                                     <span className="form__input__border--focus"/>
@@ -643,6 +646,7 @@ class CreationModal extends React.Component {
                                         onChange={editor => this.setState({editor})}
                                         value={this.state.editor}
                                         labelKey="label" valueKey="key"
+                                        promptTextCreator={label => `Créer l'éditeur ${label}`}
                                     />
                                     <label htmlFor="editor">Éditeur</label>
                                     <span className="form__input__border--focus"/>
@@ -657,6 +661,7 @@ class CreationModal extends React.Component {
                                         onChange={collection => this.setState({collection})}
                                         value={this.state.collection}
                                         labelKey="label" valueKey="key"
+                                        promptTextCreator={label => `Créer la collection ${label}`}
                                     />
                                     <label htmlFor="collection">Collection</label>
                                     <span className="form__input__border--focus"/>
@@ -683,6 +688,7 @@ class CreationModal extends React.Component {
                                             onChange={style => this.setState({style})}
                                             value={this.state.style}
                                             labelKey="label" valueKey="key"
+                                            promptTextCreator={label => `Créer le style ${label}`}
                                         />
                                         <label htmlFor="collection">Style</label>
                                         <span className="form__input__border--focus"/>
