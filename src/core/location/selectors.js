@@ -3,7 +3,9 @@ export function getLocations(state) {
 }
 
 export function getLocationsList(state) {
-    return getLocations(state).list;
+    return getLocations(state).list.sort((loc1, loc2) => {
+        return loc1.label > loc2.label;
+    });
 }
 
 export function getLocationDeleted(state) {

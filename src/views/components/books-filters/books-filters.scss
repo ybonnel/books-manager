@@ -7,6 +7,7 @@
   align-items: center;
 
   padding: 0 50px;
+  margin-bottom: 25px;
 }
 
 .books__filters {
@@ -51,7 +52,7 @@
 
 .search__box {
   padding-left: 50px;
-  font-size: 24px !important;
+  font-size: 24px;
 }
 
 .search__box__icon__wrapper {
@@ -106,8 +107,35 @@
 
 @media (max-width: $navigation_mobile_breakpoint) {
   .books__actions {
-    flex-wrap: wrap;
+    //flex-wrap: wrap;
     padding: 0;
+    width: 90%;
+    margin: auto;
+  }
+
+  .search__box__icon {
+    left: 5px;
+  }
+
+  .search__box__icon__wrapper svg {
+    height: 15px;
+    width: 15px;
+  }
+
+  .search__box {
+    height: 25px;
+    font-size: 10px;
+  }
+
+  .search__box.form__input {
+    height: 25px;
+  }
+
+  .popover__button .button {
+    height: 25px;
+    line-height: 25px;
+    font-size: 10px;
+    padding: 0 .6rem;
   }
 
   .books__filters {
@@ -120,7 +148,8 @@
   }
 
   .search__wrapper {
-    margin: 0 5px;
+    margin: 0;
+    padding: 0 10px 0 0;
   }
 
 

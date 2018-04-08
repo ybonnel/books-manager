@@ -52,7 +52,7 @@ export const getVisibleBooks = createSelector(
                     } else if (!book2.serie) {
                         return -1;
                     } else if (!book1.serie && !book2.serie) {
-                        return book1.title.localeCompare(book2.title);
+                        return book1.title < book2.title;
                     } else if (book1.serie.label === book2.serie.label) {
                         return book1.tome.localeCompare(book2.tome)
                     }

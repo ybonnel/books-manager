@@ -3,7 +3,9 @@ export function getAuthors(state) {
 }
 
 export function getAuthorsList(state) {
-    return getAuthors(state).list;
+    return getAuthors(state).list.sort((author1, author2) => {
+        return author1.label > author2.label;
+    });
 }
 
 export function getAuthorDeleted(state) {

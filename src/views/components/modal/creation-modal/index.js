@@ -455,7 +455,7 @@ class CreationModal extends React.Component {
                                                     serie: event.target.value
                                                 }
                                             })}/>
-                                        <label htmlFor="choice-title">Serie</label>
+                                        <label htmlFor="choice-serie">Serie</label>
                                         <span className="form__input__border--focus"/>
                                     </div>}
                                     {this.state.choices.tome &&
@@ -560,7 +560,6 @@ class CreationModal extends React.Component {
                                     <Select.Creatable
                                         multi={false}
                                         name="serie"
-                                        menuContainerStyle={{'zIndex': 999}}
                                         className={classNames({
                                             'form__input': true,
                                             'form__input--has-content': !!this.state.serie,

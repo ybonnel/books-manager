@@ -87,7 +87,7 @@
   width: calc(25% - 5px); }
 
 .form__input {
-  font: 15px/24px Roboto, sans-serif;
+  font-family: Roboto, sans-serif;
   color: #4B4B4B;
   box-sizing: border-box;
   letter-spacing: 1px;
@@ -118,7 +118,8 @@ textarea.form__input {
   transition: 0.3s;
   letter-spacing: 0.5px;
   cursor: text;
-  z-index: 0; }
+  z-index: 0;
+  pointer-events: none; }
 
 .form__input:focus ~ label, .form__input--has-content ~ label, .form__input.is-focused ~ label {
   top: -5px;
@@ -203,6 +204,9 @@ textarea.form__input {
 .Select-option.is-focused {
   background-color: #cbcbcb;
   color: rgba(0, 0, 0, 0.87); }
+
+.Select-control {
+  cursor: text; }
 
 @media screen and (max-width: 768px) {
   .ReactModal__Overlay {

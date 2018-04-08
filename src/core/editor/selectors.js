@@ -3,7 +3,9 @@ export function getEditors(state) {
 }
 
 export function getEditorsList(state) {
-    return getEditors(state).list;
+    return getEditors(state).list.sort((editor1, editor2) => {
+        return editor1.label > editor2.label;
+    });
 }
 
 export function getEditorDeleted(state) {

@@ -3,7 +3,9 @@ export function getSeries(state) {
 }
 
 export function getSeriesList(state) {
-    return getSeries(state).list;
+    return getSeries(state).list.sort((serie1, serie2) => {
+        return serie1.label > serie2.label
+    });
 }
 
 export function getSerieDeleted(state) {
