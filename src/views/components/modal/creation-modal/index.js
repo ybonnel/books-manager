@@ -123,6 +123,31 @@ class CreationModal extends React.Component {
         return Promise.resolve(attr);
     }
 
+    createOrUpdateSerie() {
+        if (this.state.serie && !!this.state.serie.className) {
+            const serie = {
+                label: this.state.serie.label,
+                styles: this.state.style ? [mapToObj(this.state.style)] : [],
+                maxTome: this.state.tome
+            };
+
+            return this.props.createSerie(serie)
+                .then(key => ({key, ...serie}));
+        } else {
+            const mods = {};
+            if (Number(this.state.serie.maxTome) < Number(this.state.tome)) {
+                mods.maxTome = this.state.tome;
+            }
+            if (this.state.serie.styles.every(style => style.key !== this.state.style.key)) {
+                mods.styles = [...this.state.serie.styles, {key: this.state.style.key, label: this.state.style.label}];
+            }
+            if (Object.keys(mods).length > 0) {
+                this.props.updateSerie(this.state.serie, mods);
+            }
+        }
+        return Promise.resolve(this.state.serie);
+    }
+
     replaceUndefinedOrNull(key, value) {
         if (value === undefined || value === '') {
             return null;
@@ -141,10 +166,10 @@ class CreationModal extends React.Component {
             .then(authors => this.setState({authors}))
             .then(() => Promise.all((this.state.artists || []).map(artist => this.createAttributeIfNeeded(artist, this.props.createArtist))))
             .then(artists => this.setState({artists}))
-            .then(() => this.createAttributeIfNeeded(this.state.serie, this.props.createSerie))
-            .then(serie => this.setState({serie}))
             .then(() => this.createAttributeIfNeeded(this.state.style, this.props.createStyle))
             .then(style => this.setState({style}))
+            .then(() => this.createOrUpdateSerie())
+            .then(serie => this.setState({serie}))
             .then(() => this.createAttributeIfNeeded(this.state.editor, this.props.createEditor))
             .then(editor => this.setState({editor}))
             .then(() => this.createAttributeIfNeeded(this.state.collection, this.props.createCollection))
@@ -233,7 +258,7 @@ class CreationModal extends React.Component {
 
     makeChoices(info) {
         let serie, tome, title;
-        const awsTitle = info.title.match(/(.+)\s+\W+(Tome|T|t|tome)[\D\s]?([0-9]+)\W+(.+)$/);
+        const awsTitle = info.title.match(/(.+)\W+(Tome|T|t|tome)[\D\s]?([0-9]+)\s?\W*(.*)/);
         serie = awsTitle ? awsTitle[1] : undefined;
         tome = awsTitle ? awsTitle[3] : undefined;
         title = awsTitle ? awsTitle[4] : info.title;
@@ -530,9 +555,11 @@ class CreationModal extends React.Component {
                     </div>
                     <div className="modal__footer">
                         <a className="button" onClick={() => {
+                            const serie = this.findEntry(this.state.choices.serie, this.props.series);
                             this.setState({
                                 title: this.state.choices.title || '',
-                                serie: this.findEntry(this.state.choices.serie, this.props.series),
+                                serie,
+                                style: serie.styles ? serie.styles[0] : undefined,
                                 tome: this.state.choices.tome || '',
                                 artists: this.state.entities.columns.artists.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.artists)),
                                 authors: this.state.entities.columns.authors.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.authors)),
@@ -825,6 +852,7 @@ CreationModal.propTypes = {
     closeModal: PropTypes.func.isRequired,
     createBook: PropTypes.func.isRequired,
     updateBook: PropTypes.func.isRequired,
+    updateSerie: PropTypes.func.isRequired,
     createAuthor: PropTypes.func.isRequired,
     createArtist: PropTypes.func.isRequired,
     createSerie: PropTypes.func.isRequired,

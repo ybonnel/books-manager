@@ -14,9 +14,9 @@ import {
 } from './action-types';
 
 
-export function createSerie({label}) {
+export function createSerie({label, styles, maxTome}) {
     return dispatch => {
-        return serieList.push({label})
+        return serieList.push({label, styles, maxTome})
             .catch(error => dispatch(createSerieError(error)));
     };
 }
@@ -81,6 +81,7 @@ export function updateSerieError(error) {
 }
 
 export function updateSerie(serie, changes) {
+    debugger;
     return dispatch => {
         return serieList.update(serie.key, changes)
             .catch(error => dispatch(updateSerieError(error)));
