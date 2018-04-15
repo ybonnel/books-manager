@@ -1,5 +1,4 @@
 @import "../../../styles/variables.scss";
-@import "../../../styles/modal.scss";
 
 * {
   outline-width: 0;
@@ -14,6 +13,11 @@
   border: 1px solid black;
 
   padding: 5px 50px;
+}
+
+.creation-modal .search__wrapper .search__box,
+.creation-modal .search__wrapper .search__box__icon__wrapper {
+  padding-bottom: 5px;
 }
 
 .modal.choices-modal {

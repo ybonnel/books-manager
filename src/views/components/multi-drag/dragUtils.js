@@ -104,7 +104,7 @@ function reorderMultiDrag({entities, selectedCreatorIds, source, destination}) {
     // doing the ordering now as we are required to look up columns
     // and know original ordering
     const orderedSelectedCreatorIds = [...selectedCreatorIds];
-    orderedSelectedCreatorIds.sort((a, b): number => {
+    orderedSelectedCreatorIds.sort((a, b) => {
         // moving the dragged item to the top of the list
         if (a === dragged) {
             return -1;

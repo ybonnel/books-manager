@@ -7,7 +7,7 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import classNames from "classnames";
-import {CameraOff, Repeat} from 'react-feather';
+import {CameraOff, Repeat, X, Search} from 'react-feather';
 import {Loading} from '../../loading';
 import {DragDropContext} from 'react-beautiful-dnd';
 
@@ -31,6 +31,7 @@ import {mapToObj, fetchWithRetry, arrayToObj, trimWithoutPonctuation} from "../.
 import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
+import '../../../styles/modal.css'
 
 moment.locale('fr');
 
@@ -179,17 +180,36 @@ class CreationModal extends React.Component {
         return recordList.reduce((acc, item) => acc.concat(item), [])
     }
 
-    handleLookUp() {
+    handleLookUp(event) {
+        if (event.type === 'keydown' && event.keyCode !== 13) {
+            return;
+        }
+
+        const searchedIsbn = this.searchInput.value;
+        if (searchedIsbn.length !== 13) {
+            this.setState({
+                loading: false,
+                error: {
+                    error: undefined,
+                    message: 'un isbn = 13 chiffres !!!'
+                },
+                searchedIsbn
+            });
+            return;
+        }
+
+
         this.setState({loading: true, error: undefined});
         fetchWithRetry(process.env.REACT_APP_AWS_ITEM_LOOKUP_URL, 500, 3, {
             method: 'POST',
             headers: new Headers({'Content-Type': 'application/json'}),
-            body: JSON.stringify({"isbn": this.state.isbn})
+            body: JSON.stringify({"isbn": searchedIsbn})
         })
             .then(result => {
                 const bookAwsInfo = this.getBookInformations(result[0]);
                 const choices = this.makeChoices(bookAwsInfo);
                 this.setState({
+                    searchedIsbn,
                     loading: false,
                     choicesWindow: true,
                     bookAwsInfo,
@@ -213,7 +233,7 @@ class CreationModal extends React.Component {
 
     makeChoices(info) {
         let serie, tome, title;
-        const awsTitle = info.title.match(/(.*)(Tome|T)\s?([0-9]*)(.*)/);
+        const awsTitle = info.title.match(/(.+)\s+\W+(Tome|T|t|tome)[\D\s]?([0-9]+)\W+(.+)$/);
         serie = awsTitle ? awsTitle[1] : undefined;
         tome = awsTitle ? awsTitle[3] : undefined;
         title = awsTitle ? awsTitle[4] : info.title;
@@ -249,6 +269,7 @@ class CreationModal extends React.Component {
         const title = Array.isArray(info.Title) ? info.Title[0] : info.Title;
         const price = info.ListPrice[0].Amount / 100;
         const editor = Array.isArray(info.Studio) ? info.Studio[0] : info.Studio;
+        const cover = awsResult.LargeImage[0].URL[0];
 
         let artists, authors;
         if (info.Creator) {
@@ -260,7 +281,7 @@ class CreationModal extends React.Component {
             authors = info.Author;
         }
 
-        return {title, price, editor, authors, artists};
+        return {title, price, editor, authors, artists, cover};
     }
 
     onDragStart(start) {
@@ -517,6 +538,8 @@ class CreationModal extends React.Component {
                                 authors: this.state.entities.columns.authors.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.authors)),
                                 editor: this.findEntry(this.state.bookAwsInfo.editor, this.props.editors),
                                 price: this.state.bookAwsInfo.price || '',
+                                cover: this.state.bookAwsInfo.cover || '',
+                                isbn: this.state.searchedIsbn,
                                 choicesWindow: false
                             })
                         }}>Importer</a>
@@ -535,7 +558,22 @@ class CreationModal extends React.Component {
                 className="modal creation-modal"
                 isOpen={this.props.modal.isOpen}>
                 <div className="wrapper modal__wrapper">
-                    <div className="modal__title">Ajouter un livre</div>
+                    <div className="modal__title__wrapper">
+                        <div className="modal__title">Ajouter un livre</div>
+                        <div className="search__wrapper">
+                            <div className="search__box__icon__wrapper">
+                                <Search className="search__box__icon"/>
+                            </div>
+                            <input type="text" required className="search__box form__input"
+                                   autoFocus
+                                   placeholder="Rechercher par isbn"
+                                   ref={ref => this.searchInput = ref}
+                                   onKeyDown={this.handleLookUp}/>
+                            <span className="form__input__border--focus"/>
+                            <X className="clear__search" onClick={() => this.searchInput.value = ''}/>
+                        </div>
+                        <a className="button" onClick={this.handleLookUp}>Rechercher</a>
+                    </div>
                     {this.state.error && <div>{this.state.error.message}</div>}
                     <div className="modal__content">
                         <form className="form creation-form">
@@ -771,10 +809,6 @@ class CreationModal extends React.Component {
                         </form>
                     </div>
                     <div className="modal__footer">
-                        <div className="modal__footer__left">
-                            {this.state.isbn && this.state.isbn.length === 13 &&
-                            <a className="button" onClick={this.handleLookUp}>Importer depuis amazon</a>}
-                        </div>
                         <a className="button" onClick={this.handleSubmit}>Enregister</a>
                         <a className="button" onClick={this.handleCloseButton}>
                             Annuler
