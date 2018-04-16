@@ -1,31 +1,3 @@
-.modal__title {
-  font-size: 2.3rem;
-  line-height: 110%;
-  margin: 1.2rem 0 1.2rem 0;
-  color: rgba(0, 0, 0, 0.87); }
-
-.modal__footer {
-  padding: 4px 6px;
-  height: 56px;
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  box-sizing: border-box; }
-
-.modal__footer__left {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  box-sizing: border-box; }
-
-.modal__loading {
-  height: 100%;
-  display: flex;
-  align-items: center; }
-
 .drag__item {
   display: flex;
   flex-direction: row;

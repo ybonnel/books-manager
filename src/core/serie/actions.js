@@ -81,7 +81,6 @@ export function updateSerieError(error) {
 }
 
 export function updateSerie(serie, changes) {
-    debugger;
     return dispatch => {
         return serieList.update(serie.key, changes)
             .catch(error => dispatch(updateSerieError(error)));

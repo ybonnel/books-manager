@@ -124,6 +124,10 @@ class CreationModal extends React.Component {
     }
 
     createOrUpdateSerie() {
+        if (!this.state.serie) {
+            return Promise.resolve(this.state.serie)
+        }
+
         if (this.state.serie && !!this.state.serie.className) {
             const serie = {
                 label: this.state.serie.label,
@@ -188,7 +192,10 @@ class CreationModal extends React.Component {
                 this.setState(this.initializeState());
                 this.props.closeModal();
             })
-            .catch(errors => this.setState({errors}))
+            .catch(errors => {
+                console.log(errors);
+                this.setState({errors})
+            })
     }
 
     componentWillReceiveProps(nextProps) {
