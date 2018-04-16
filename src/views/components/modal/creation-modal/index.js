@@ -559,7 +559,7 @@ class CreationModal extends React.Component {
                             this.setState({
                                 title: this.state.choices.title || '',
                                 serie,
-                                style: serie.styles ? serie.styles[0] : undefined,
+                                style: serie && serie.styles ? serie.styles[0] : undefined,
                                 tome: this.state.choices.tome || '',
                                 artists: this.state.entities.columns.artists.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.artists)),
                                 authors: this.state.entities.columns.authors.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.authors)),
