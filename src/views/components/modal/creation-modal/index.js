@@ -55,6 +55,7 @@ class CreationModal extends React.Component {
         this.toggleSelectionInGroup = this.toggleSelectionInGroup.bind(this);
         this.findEntry = this.findEntry.bind(this);
         this.deleteCreator = this.deleteCreator.bind(this);
+        this.createOrUpdateSerie = this.createOrUpdateSerie.bind(this);
 
         const book = this.props.selectedBook ? mapToObj(this.props.selectedBook) : this.initializeState();
         this.state = {...book, errors: {}}
@@ -116,11 +117,13 @@ class CreationModal extends React.Component {
     }
 
     createAttributeIfNeeded(attr, create) {
-        if (attr && !!attr.className) {
+        if (!attr) {
+            return Promise.resolve(attr);
+        } else if (attr && !!attr.className) {
             return create({label: attr.label})
                 .then(key => ({key, label: attr.label}));
         }
-        return Promise.resolve(attr);
+        return Promise.resolve({key: attr.key, label: attr.label});
     }
 
     createOrUpdateSerie() {
@@ -139,14 +142,32 @@ class CreationModal extends React.Component {
                 .then(key => ({key, ...serie}));
         } else {
             const mods = {};
-            if (Number(this.state.serie.maxTome) < Number(this.state.tome)) {
+            if (!this.state.serie.maxTome || Number(this.state.serie.maxTome) < Number(this.state.tome)) {
                 mods.maxTome = this.state.tome;
             }
-            if (this.state.serie.styles.every(style => style.key !== this.state.style.key)) {
-                mods.styles = [...this.state.serie.styles, {key: this.state.style.key, label: this.state.style.label}];
+
+            if (!this.state.serie.styles || this.state.serie.styles.every(style => style.key !== this.state.style.key)) {
+                mods.styles = [{key: this.state.style.key, label: this.state.style.label}];
             }
             if (Object.keys(mods).length > 0) {
-                this.props.updateSerie(this.state.serie, mods);
+                //todo: if serie is updated here ==> something happened...wtf
+                // return this.props.updateSerie(this.state.serie, mods)
+                //     .then(() => (
+                //         {
+                //             key: this.state.serie.key,
+                //             label: this.state.serie.label,
+                //             styles: this.state.serie.styles,
+                //             maxTome: this.state.serie.maxTome,
+                //             ...mods
+                //         }
+                //     ));
+                return Promise.resolve({
+                                key: this.state.serie.key,
+                                label: this.state.serie.label,
+                                styles: this.state.serie.styles,
+                                maxTome: this.state.serie.maxTome,
+                                ...mods
+                            });
             }
         }
         return Promise.resolve(this.state.serie);
@@ -186,6 +207,12 @@ class CreationModal extends React.Component {
                 } else {
                     this.props.createBook(this.cleanJson(this.state))
                 }
+
+                //fixme: this.state.serie = this.props.selectedBook.serie WTF !!!!!!! => serie never updated
+                //fixme, maybe the answer of the big fucking issue
+                if (!!this.state.key && JSON.stringify(this.state.serie) !== JSON.stringify(this.props.selectedBook.serie)) {
+                    this.props.updateSerie(this.state.serie, this.state.serie)
+                }
             })
             .then(() => this.props.unselectBook())
             .then(() => {
@@ -193,7 +220,6 @@ class CreationModal extends React.Component {
                 this.props.closeModal();
             })
             .catch(errors => {
-                console.log(errors);
                 this.setState({errors})
             })
     }

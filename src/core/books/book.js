@@ -4,7 +4,7 @@ Object.freeze(bookTypes);
 
 export const Book = new Record({
     key: null,
-    title: null,
+    title: undefined,
     tome: null,
     authors: [],
     artists: undefined,
@@ -13,7 +13,7 @@ export const Book = new Record({
     collection: undefined,
     location: undefined,
     style: undefined,
-    isbn: null,
+    isbn: undefined,
     comment: null,
     date: null,
     cover: null,

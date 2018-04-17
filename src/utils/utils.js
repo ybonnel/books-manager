@@ -1,15 +1,16 @@
-export const mapToObj = map => {
-    let obj = {};
-    map.forEach((value, key) => obj[key] = value);
-    return obj;
-};
+import {Record} from 'immutable';
+
+export function mapToObj(record) {
+    if (record instanceof Record) {
+        let obj = {};
+        record.forEach((value, key) => obj[key] = value);
+        return obj;
+    }
+    return record;
+}
 
 export function normalizeString(string) {
     return string.normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim().toUpperCase();
-}
-
-export function capitalize(string) {
-    return string[0].toUpperCase() + string.toLowerCase().slice(1)
 }
 
 export function fetchWithRetry(url, delay, limit, fetchOptions = {}) {
