@@ -32,6 +32,7 @@ import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './creation-modal.css';
 import '../../../styles/modal.css'
+import {bookTypes} from "../../../../core/books/book";
 
 moment.locale('fr');
 
@@ -77,6 +78,7 @@ class CreationModal extends React.Component {
             price: '',
             comment: '',
             cover: undefined,
+            type: undefined,
             loading: false
         }
     }
@@ -150,24 +152,16 @@ class CreationModal extends React.Component {
                 mods.styles = [{key: this.state.style.key, label: this.state.style.label}];
             }
             if (Object.keys(mods).length > 0) {
-                //todo: if serie is updated here ==> something happened...wtf
-                // return this.props.updateSerie(this.state.serie, mods)
-                //     .then(() => (
-                //         {
-                //             key: this.state.serie.key,
-                //             label: this.state.serie.label,
-                //             styles: this.state.serie.styles,
-                //             maxTome: this.state.serie.maxTome,
-                //             ...mods
-                //         }
-                //     ));
-                return Promise.resolve({
-                                key: this.state.serie.key,
-                                label: this.state.serie.label,
-                                styles: this.state.serie.styles,
-                                maxTome: this.state.serie.maxTome,
-                                ...mods
-                            });
+                return this.props.updateSerie(this.state.serie, mods)
+                    .then(() => (
+                        {
+                            key: this.state.serie.key,
+                            label: this.state.serie.label,
+                            styles: this.state.serie.styles,
+                            maxTome: this.state.serie.maxTome,
+                            ...mods
+                        }
+                    ));
             }
         }
         return Promise.resolve(this.state.serie);
@@ -205,13 +199,23 @@ class CreationModal extends React.Component {
                 if (!!this.state.key) {
                     this.props.updateBook(this.props.selectedBook, this.cleanJson(this.state))
                 } else {
-                    this.props.createBook(this.cleanJson(this.state))
-                }
-
-                //fixme: this.state.serie = this.props.selectedBook.serie WTF !!!!!!! => serie never updated
-                //fixme, maybe the answer of the big fucking issue
-                if (!!this.state.key && JSON.stringify(this.state.serie) !== JSON.stringify(this.props.selectedBook.serie)) {
-                    this.props.updateSerie(this.state.serie, this.state.serie)
+                    this.props.createBook(this.cleanJson({
+                        title: this.state.title,
+                        tome: this.state.tome,
+                        authors: this.state.authors,
+                        artists: this.state.artists,
+                        serie: this.state.serie,
+                        editor: this.state.editor,
+                        collection: this.state.collection,
+                        location: undefined,
+                        style: this.state.style,
+                        isbn: this.state.isbn,
+                        comment: this.state.comment,
+                        date: this.state.date,
+                        cover: this.state.cover,
+                        price: this.state.price,
+                        type: bookTypes.COMIC
+                    }))
                 }
             })
             .then(() => this.props.unselectBook())
@@ -225,7 +229,7 @@ class CreationModal extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.selectedBook) {
+        if (!this.props.selectedBook && nextProps.selectedBook) {
             const selectedBook = mapToObj(nextProps.selectedBook);
             this.setState({...selectedBook, date: moment(selectedBook.date)});
         }
