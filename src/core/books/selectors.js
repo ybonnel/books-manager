@@ -54,7 +54,7 @@ export const getVisibleBooks = createSelector(
                     } else if (!book1.serie && !book2.serie) {
                         return book1.title < book2.title;
                     } else if (book1.serie.label === book2.serie.label) {
-                        return book1.tome.localeCompare(book2.tome)
+                        return Number.parseInt(book1.tome) < Number.parseInt(book2.tome) ? -1 : 1
                     }
                     return book1.serie.label.localeCompare(book2.serie.label);
                 case SORT_OPTIONS.DATE:

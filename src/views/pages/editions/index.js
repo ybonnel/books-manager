@@ -220,6 +220,8 @@ export class Editions extends Component {
             return 'no list';
         }
 
+        const filteredList = this.list
+            .filter(item => item.label.trim().toUpperCase().includes(this.state.filter.toUpperCase()));
         return (
             <section className="edition">
                 <div className="wrapper">
@@ -231,9 +233,9 @@ export class Editions extends Component {
                         <span className="search__icon"><Search/></span>
                     </div>
                     {
-                        this.list
+                        filteredList
                             .slice(this.state.offset, this.state.offset + PAGE_NUMBER)
-                            .filter(item => item.label.trim().toUpperCase().includes(this.state.filter.toUpperCase()))
+                            .sort((item1, item2) => item1.label > item2.label)
                             .map((attr) => {
                                 return (
                                     <EditionItem item={attr} key={attr.key} deleteItem={this.deleteItem}
@@ -245,7 +247,7 @@ export class Editions extends Component {
                                 nextLabel={<ArrowRight/>}
                                 breakLabel='...'
                                 breakClassName={"break"}
-                                pageCount={Math.ceil(this.list.size / PAGE_NUMBER)}
+                                pageCount={Math.ceil(filteredList.size / PAGE_NUMBER)}
                                 marginPagesDisplayed={1}
                                 pageRangeDisplayed={5}
                                 onPageChange={this.handlePageClick}

@@ -26,7 +26,7 @@ import {Column} from '../../multi-drag/column';
 import {multiDragAwareReorder, multiSelectTo as multiSelect, withNewCreatorIds} from '../../multi-drag/dragUtils';
 import {MultiDragContainer} from "../../multi-drag/wrappers";
 
-import {mapToObj, fetchWithRetry, arrayToObj, trimWithoutPonctuation} from "../../../../utils/utils"
+import {mapToObj, fetchWithRetry, arrayToObj, trimWithoutPonctuation, normalizeString} from "../../../../utils/utils"
 
 import 'react-select/dist/react-select.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -299,8 +299,8 @@ class CreationModal extends React.Component {
         serie = awsTitle ? awsTitle[1] : undefined;
         tome = awsTitle ? awsTitle[3] : undefined;
         title = awsTitle ? awsTitle[4] : info.title;
-        const authors = (info.authors || []).map((name, idx) => ({id: `author-${idx}`, label: name}));
-        const artists = (info.artists || []).map((name, idx) => ({id: `artist-${idx}`, label: name}));
+        const artists = (info.artists || []).map((name, idx) => ({id: `artist-${idx}`, ...this.findEntry(name, this.props.artists, 'ARTIST')}));
+        const authors = (info.authors || []).map((name, idx) => ({id: `author-${idx}`, ...this.findEntry(name, this.props.authors, 'AUTHOR')}));
 
         return {
             serie: serie && trimWithoutPonctuation(serie),
@@ -464,18 +464,30 @@ class CreationModal extends React.Component {
         this.setState({entities});
     }
 
-    findEntry(entry, list) {
+    findEntry(entry, list, type) {
         if (!entry) {
             return undefined;
         }
 
+        const normEntry = JSON.stringify(normalizeString(entry).split(' ').sort());
         const item = this.getAutocompleteData(list)
-            .find(item => item.label.toUpperCase() === entry.toUpperCase());
+            .map(item => ({item, test: JSON.stringify(normalizeString(item.label).split(' ').sort())}))
+            .find(item => item.test === normEntry);
 
         if (!item) {
             return {label: entry, className: 'need to create'};
         }
-        return item;
+        return {...mapToObj(item.item), type};
+    }
+
+    getCreatorFromEntities(id, type) {
+        const creator = this.state.entities.creators[id];
+        if (!creator.key || creator.type === type) {
+            return creator;
+        }
+
+        const list = type === 'ARTIST' ? this.props.artists : this.props.authors;
+        return this.findEntry(creator.label, list, type);
     }
 
     render() {
@@ -598,8 +610,8 @@ class CreationModal extends React.Component {
                                 serie,
                                 style: serie && serie.styles ? serie.styles[0] : undefined,
                                 tome: this.state.choices.tome || '',
-                                artists: this.state.entities.columns.artists.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.artists)),
-                                authors: this.state.entities.columns.authors.creatorIds.map(id => this.findEntry(this.state.entities.creators[id].label, this.props.authors)),
+                                artists: this.state.entities.columns.artists.creatorIds.map(id => this.getCreatorFromEntities(id, 'ARTIST')),
+                                authors: this.state.entities.columns.authors.creatorIds.map(id => this.getCreatorFromEntities(id, 'AUTHOR')),
                                 editor: this.findEntry(this.state.bookAwsInfo.editor, this.props.editors),
                                 price: this.state.bookAwsInfo.price || '',
                                 cover: this.state.bookAwsInfo.cover || '',
@@ -623,20 +635,22 @@ class CreationModal extends React.Component {
                 isOpen={this.props.modal.isOpen}>
                 <div className="wrapper modal__wrapper">
                     <div className="modal__title__wrapper">
-                        <div className="modal__title">Ajouter un livre</div>
-                        <div className="search__wrapper">
-                            <div className="search__box__icon__wrapper">
-                                <Search className="search__box__icon"/>
-                            </div>
-                            <input type="text" required className="search__box form__input"
-                                   autoFocus
-                                   placeholder="Rechercher par isbn"
-                                   ref={ref => this.searchInput = ref}
-                                   onKeyDown={this.handleLookUp}/>
-                            <span className="form__input__border--focus"/>
-                            <X className="clear__search" onClick={() => this.searchInput.value = ''}/>
-                        </div>
-                        <a className="button" onClick={this.handleLookUp}>Rechercher</a>
+                        <div className="modal__title">{this.state.key ? 'Modifier un livre' : 'Ajouter un livre'}</div>
+                        {!this.state.key && [
+                            <div className="search__wrapper" key="wrapper">
+                                <div className="search__box__icon__wrapper">
+                                    <Search className="search__box__icon"/>
+                                </div>
+                                <input type="text" required className="search__box form__input"
+                                       autoFocus
+                                       placeholder="Rechercher par isbn"
+                                       ref={ref => this.searchInput = ref}
+                                       onKeyDown={this.handleLookUp}/>
+                                <span className="form__input__border--focus"/>
+                                <X className="clear__search" onClick={() => this.searchInput.value = ''}/>
+                            </div>,
+                            < a className="button" key="button" onClick={this.handleLookUp}>Rechercher</a>]
+                        }
                     </div>
                     {this.state.error && <div>{this.state.error.message}</div>}
                     <div className="modal__content">
