@@ -148,7 +148,7 @@ class CreationModal extends React.Component {
                 mods.maxTome = this.state.tome;
             }
 
-            if (!this.state.serie.styles || this.state.serie.styles.every(style => style.key !== this.state.style.key)) {
+            if (this.state.style && (this.state.serie.styles || []).every(style => style.key !== this.state.style.key)) {
                 mods.styles = [{key: this.state.style.key, label: this.state.style.label}];
             }
             if (Object.keys(mods).length > 0) {
@@ -482,7 +482,7 @@ class CreationModal extends React.Component {
 
     getCreatorFromEntities(id, type) {
         const creator = this.state.entities.creators[id];
-        if (!creator.key || creator.type === type) {
+        if (creator.key || creator.type === type) {
             return creator;
         }
 
