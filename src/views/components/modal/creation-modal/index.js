@@ -295,7 +295,7 @@ class CreationModal extends React.Component {
 
     makeChoices(info) {
         let serie, tome, title;
-        const awsTitle = info.title.match(/(.+)\W+(Tome|T|t|tome)[\D\s]?([0-9]+)\s?\W*(.*)/);
+        const awsTitle = info.title.match(/(.+)\W+([Tt](?:ome)?|[Vv](?:ol)(?:ume)?|[nN]°)[\D\s]*([0-9]+)\s?\W*(.*)/);
         serie = awsTitle ? awsTitle[1] : undefined;
         tome = awsTitle ? awsTitle[3] : undefined;
         title = awsTitle ? awsTitle[4] : info.title;
@@ -329,7 +329,7 @@ class CreationModal extends React.Component {
     getBookInformations(awsResult) {
         const info = awsResult.ItemAttributes[0];
         const title = Array.isArray(info.Title) ? info.Title[0] : info.Title;
-        const price = info.ListPrice[0].Amount / 100;
+        const price = info.listPrice ? info.ListPrice[0].Amount / 100 : undefined;
         const editor = Array.isArray(info.Studio) ? info.Studio[0] : info.Studio;
         const cover = awsResult.LargeImage[0].URL[0];
 
@@ -509,7 +509,8 @@ class CreationModal extends React.Component {
 
             return (
                 <Modal className="modal choices-modal"
-                       isOpen={this.props.modal.isOpen}>
+                       isOpen={this.props.modal.isOpen}
+                       onRequestClose={() => this.setState({choicesWindow: false})}>
                     <div className="wrapper modal__wrapper">
                         <div className="modal__title">Modifier les informations à importer</div>
                         <div className="modal__content">
@@ -627,10 +628,7 @@ class CreationModal extends React.Component {
 
         return (
             <Modal
-                onRequestClose={() => {
-                    this.setState(this.initializeState());
-                    this.props.closeModal();
-                }}
+                onRequestClose={this.handleCloseButton}
                 className="modal creation-modal"
                 isOpen={this.props.modal.isOpen}>
                 <div className="wrapper modal__wrapper">
