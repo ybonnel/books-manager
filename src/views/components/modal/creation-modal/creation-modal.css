@@ -62,6 +62,15 @@
 .input__group--quarter {
   width: calc(25% - 5px); }
 
+.input__group.checkbox__group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column; }
+
+.checkbox__group label {
+  position: relative; }
+
 .form__input {
   font-family: Roboto, sans-serif;
   color: #4B4B4B;
@@ -98,7 +107,7 @@ textarea.form__input {
   z-index: 0;
   pointer-events: none; }
 
-.form__input:focus ~ label, .form__input--has-content ~ label, .form__input.is-focused ~ label {
+.form__input:focus ~ label, .form__input--has-content ~ label, .form__input.is-focused ~ label, .checkbox__group label {
   top: -5px;
   font-size: 12px;
   color: rgba(0, 0, 0, 0.87);

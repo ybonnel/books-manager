@@ -83,6 +83,17 @@
   width: calc(25% - 5px);
 }
 
+.input__group.checkbox__group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.checkbox__group label {
+  position: relative;
+}
+
 .form__input {
   font-family: Roboto, sans-serif;
   color: $color-gray;
@@ -114,6 +125,7 @@ textarea.form__input {
     max-height: 90px;
   }
 }
+
 .form__input ~ label {
   position: absolute;
   left: 0;
@@ -127,7 +139,7 @@ textarea.form__input {
   pointer-events: none;
 }
 
-.form__input:focus ~ label, .form__input--has-content ~ label, .form__input.is-focused ~ label {
+.form__input:focus ~ label, .form__input--has-content ~ label, .form__input.is-focused ~ label, .checkbox__group label {
   top: -5px;
   font-size: 12px;
   color: $color;
@@ -140,8 +152,7 @@ textarea.form__input {
 
 .form__input:focus ~ .form__input__border--focus,
 .form__input--has-content ~ .form__input__border--focus,
-.form__input.is-focused ~ .form__input__border--focus
-{
+.form__input.is-focused ~ .form__input__border--focus {
   width: 100%;
   transition: 0.4s;
 }
@@ -156,8 +167,7 @@ textarea.form__input {
   transition: 0.4s;
 }
 
-.form__input--has-error ~ .form__input__border--focus
-{
+.form__input--has-error ~ .form__input__border--focus {
   width: 100%;
   background-color: $color-error;
 }
@@ -211,8 +221,9 @@ textarea.form__input {
 
 .Select-value-icon {
   border-color: $color-gray !important;
-  color: $color ;
+  color: $color;
 }
+
 .Select-value-icon:hover {
   color: $color !important;
   background-color: transparent !important;

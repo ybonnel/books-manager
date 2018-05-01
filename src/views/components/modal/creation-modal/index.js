@@ -7,7 +7,7 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import classNames from "classnames";
-import {CameraOff, Repeat, X, Search} from 'react-feather';
+import {CameraOff, Repeat, X, Search, Square, CheckSquare} from 'react-feather';
 import {Loading} from '../../loading';
 import {DragDropContext} from 'react-beautiful-dnd';
 
@@ -59,6 +59,8 @@ class CreationModal extends React.Component {
         this.createOrUpdateSerie = this.createOrUpdateSerie.bind(this);
 
         const book = this.props.selectedBook ? mapToObj(this.props.selectedBook) : this.initializeState();
+        console.debug(this.props.selectedBook)
+        debugger;
         this.state = {...book, errors: {}}
     }
 
@@ -67,6 +69,7 @@ class CreationModal extends React.Component {
             title: '',
             serie: undefined,
             tome: '',
+            isSpecialIssue: false,
             date: moment(),
             artists: [],
             authors: [],
@@ -94,7 +97,7 @@ class CreationModal extends React.Component {
     validate() {
         return new Promise((resolve, reject) => {
             const errors = {};
-            if (!this.state.title && (!this.state.serie)) {
+            if (!this.state.title && !this.state.serie) {
                 errors.title = "Le titre est obligatoire si l'entrée n'est pas une série.";
             }
 
@@ -102,12 +105,16 @@ class CreationModal extends React.Component {
                 errors.authors = "L'entrée doit comporter au moins un auteur.";
             }
 
-            if (!!this.state.serie && !this.state.tome) {
+            if (!!this.state.serie && !this.state.tome && !this.state.isSpecialIssue) {
                 errors.serie = "Veuillez renseigner le numéro de série correspondant."
             }
 
             if (!this.state.serie && !!this.state.tome) {
                 errors.tome = "Veuillez renseigner la série correspondante."
+            }
+
+            if (this.state.isSpecialIssue && !this.state.serie) {
+                errors.isSpecialIssue = 'Un hors-série sans série ?'
             }
 
             if (!!Object.keys(errors).length) {
@@ -202,6 +209,7 @@ class CreationModal extends React.Component {
                     this.props.createBook(this.cleanJson({
                         title: this.state.title,
                         tome: this.state.tome,
+                        isSpecialIssue: this.state.isSpecialIssue,
                         authors: this.state.authors,
                         artists: this.state.artists,
                         serie: this.state.serie,
@@ -689,26 +697,34 @@ class CreationModal extends React.Component {
                                     <span className="form__input__border--focus"/>
                                     {this.state.errors.serie &&
                                     <span className="form__input__error">{this.state.errors.serie}</span>}
+                                    {this.state.errors.isSpecialIssue &&
+                                    <span className="form__input__error">{this.state.errors.isSpecialIssue}</span>}
                                 </div>
-                                <div className="input__group input__group--third">
-                                    <input
-                                        type="number" min="0" step="1"
-                                        id="tome"
-                                        className={classNames({
-                                            'form__input': true,
-                                            'form__input--has-content': !!this.state.tome,
-                                            'form__input--has-error': !!this.state.errors.tome
-                                        })}
-                                        onChange={(event) => this.setState({tome: event.target.value})}
-                                        value={this.state.tome}
-                                    />
-                                    <label htmlFor="tome">Tome</label>
-                                    <span className="form__input__border--focus"/>
-                                    {this.state.errors.tome &&
-                                    <span className="form__input__error">{this.state.errors.tome}</span>}
+                                <div className="input__group__subgroup input__group--third">
+                                    <div className="input__group input__group--two-third">
+                                        <input
+                                            type="number" min="0" step="1"
+                                            id="tome"
+                                            className={classNames({
+                                                'form__input': true,
+                                                'form__input--has-content': !!this.state.tome,
+                                                'form__input--has-error': !!this.state.errors.tome
+                                            })}
+                                            onChange={(event) => this.setState({tome: event.target.value})}
+                                            value={this.state.tome}
+                                        />
+                                        <label htmlFor="tome">Tome</label>
+                                        <span className="form__input__border--focus"/>
+                                        {this.state.errors.tome &&
+                                        <span className="form__input__error">{this.state.errors.tome}</span>}
+                                    </div>
+                                    <div className="input__group input__group--third checkbox__group"
+                                         onClick={() => this.setState({isSpecialIssue: !this.state.isSpecialIssue})}>
+                                        <label htmlFor="special">Hors-Série</label>
+                                        {this.state.isSpecialIssue ? <CheckSquare/> : <Square/>}
+                                    </div>
                                 </div>
                             </div>
-
                             <div className="form__group">
                                 <div className="input__group input__group--full">
                                     <Select.Creatable

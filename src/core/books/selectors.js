@@ -53,7 +53,9 @@ export const getVisibleBooks = createSelector(
                         return -1;
                     } else if (!book1.serie && !book2.serie) {
                         return book1.title < book2.title;
-                    } else if (book1.serie.label === book2.serie.label) {
+                    } else if (book1.serie.label === book2.serie.label && book1.isSpecialIssue !== book2.isSpecialIssue) {
+                        return book1.isSpecialIssue > book2.isSpecialIssue;
+                    } else if (book1.serie.label === book2.serie.label && book1.isSpecialIssue === book2.isSpecialIssue) {
                         return Number.parseInt(book1.tome) < Number.parseInt(book2.tome) ? -1 : 1
                     }
                     return book1.serie.label.localeCompare(book2.serie.label);

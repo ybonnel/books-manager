@@ -2,9 +2,7 @@ import {Record} from 'immutable';
 
 export function mapToObj(record) {
     if (record instanceof Record) {
-        let obj = {};
-        record.forEach((value, key) => obj[key] = value);
-        return obj;
+        return record.toJSON();
     }
     return record;
 }

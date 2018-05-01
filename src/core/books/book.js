@@ -6,6 +6,7 @@ export const Book = new Record({
     key: null,
     title: undefined,
     tome: null,
+    isSpecialIssue: false,
     authors: [],
     artists: undefined,
     serie: undefined,

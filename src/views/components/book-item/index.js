@@ -27,7 +27,7 @@ class BookItem extends Component {
         if (book.serie && book.serie.label) {
             return (
                 <div className="card__right__header">
-                    <h2 className="book__title">{book.serie.label} Tome {book.tome}</h2>
+                    <h2 className="book__title">{book.serie.label} {book.isSpecialIssue ? 'H.S. ' : ''}Tome {book.tome}</h2>
                     {book.title && <div className="book__subtitle"><p>{book.title}</p></div>}
                 </div>
             );
