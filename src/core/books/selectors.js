@@ -56,6 +56,13 @@ export const getVisibleBooks = createSelector(
                     } else if (book1.serie.label === book2.serie.label && book1.isSpecialIssue !== book2.isSpecialIssue) {
                         return book1.isSpecialIssue > book2.isSpecialIssue;
                     } else if (book1.serie.label === book2.serie.label && book1.isSpecialIssue === book2.isSpecialIssue) {
+                        if (!book1.tome && book2.tome) {
+                            return -1;
+                        } else if (!book2.tome && book1.tome) {
+                            return 1
+                        } else if (!book2.tome && !book1.tome) {
+                            return (book1.title || '').localeCompare(book2.title || '');
+                        }
                         return Number.parseInt(book1.tome) < Number.parseInt(book2.tome) ? -1 : 1
                     }
                     return book1.serie.label.localeCompare(book2.serie.label);
